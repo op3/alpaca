@@ -130,4 +130,7 @@ if(BUILD_TESTS)
     add_executable(test_cascade_rejection_sampler test_cascade_rejection_sampler.cc)
     target_link_libraries(test_cascade_rejection_sampler angular_correlation cascadeRejectionSampler transition)
     add_test(test_cascade_rejection_sampler test_cascade_rejection_sampler)
+
+    add_executable(benchmark benchmark.cc)
+    target_link_libraries(benchmark angular_correlation cascadeRejectionSampler transition state)
 endif(BUILD_TESTS)
