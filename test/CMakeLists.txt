@@ -48,7 +48,7 @@ if(BUILD_TESTS)
     add_test(test_kappa_coefficient test_kappa_coefficient)
 
     add_executable(test_ev_coefficient test_Ev_coefficient.cc)
-    target_link_libraries(test_ev_coefficient alphavCoefficient evCoefficient)
+    target_link_libraries(test_ev_coefficient alphavCoefficient)
     add_test(test_ev_coefficient test_ev_coefficient)
 
     add_executable(test_w_pol_dir test_w_pol_dir.cc)

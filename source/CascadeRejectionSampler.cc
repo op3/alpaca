@@ -38,28 +38,3 @@ CascadeRejectionSampler::CascadeRejectionSampler(vector<AngularCorrelation> &cas
         );
     }
 }
-
-vector<array<double, 2>> CascadeRejectionSampler::operator()(){
-    vector<array<double, 2>> directions;
-    vector<array<double, 3>> reference_frames;
-
-    if(initial_direction_random){
-        const array<double, 2> initial_theta_phi = uniform_direction_sampler();
-        reference_frames.push_back({0., initial_theta_phi[0], phi_to_Psi(initial_theta_phi[1])}); 
-    } else {
-        reference_frames.push_back(PhiThetaPsi);
-    }
-
-    if(return_first_direction){
-        directions.push_back({reference_frames[0][1], Psi_to_phi(reference_frames[0][2])});
-    }
-
-    array<double, 2> theta_phi_random;
-    for(size_t i = 0; i < angular_correlation_samplers.size(); ++i){
-        theta_phi_random = angular_correlation_samplers[i](reference_frames[i]);
-        directions.push_back(theta_phi_random);
-        reference_frames.push_back({0., theta_phi_random[0], phi_to_Psi(theta_phi_random[1])});
-    }
-
-    return directions;
-}

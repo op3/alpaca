@@ -25,13 +25,12 @@ using std::function;
 
 #include <random>
 
-using std::mt19937;
+using std::mt19937_64;
 using std::uniform_real_distribution;
 
 #include <utility>
 
 using std::pair;
-using std::tuple;
 
 #include "EulerAngleRotation.hh"
 
@@ -117,7 +116,17 @@ public:
      * \f$\left( \theta_\mathrm{rand}, \varphi_\mathrm{rand} \right)\f$
      * before the algorithm terminates without success and returns \f$\left( 0, 0 \right)\f$ (default: 1000).
      */
-    SphereRejectionSampler(function<double(const double, const double)> dis, const double dis_max, const int seed, const unsigned int max_tri = 1000);
+    SphereRejectionSampler(function<double(const double, const double)> dis, const double dis_max, const int seed, const unsigned int max_tri = 1000) :
+		distribution(dis),
+		distribution_maximum(dis_max),
+		max_tries(max_tri),
+		random_engine(seed),
+		uniform_random_val(0., distribution_maximum),
+		uniform_random_unit(-1., 1.),
+		uniform_random_phi(0., 2.*M_PI),
+		euler_angle_rotation(EulerAngleRotation())
+	{
+	}
 
     /**
      * \brief Sample a random vector from probability distribution and record the number of tries.
@@ -136,7 +145,11 @@ public:
      * Returns \f$\left( 0, 0 \right)\f$ if the maximum number of trials \f$N_\mathrm{max}\f$ is
      * reached by the algorithm and no random vector was accepted.
      */
-    array<double, 2> operator()();
+    inline array<double, 2> operator()() {
+		pair<unsigned int, array<double, 2>> sampled_theta_phi = sample();
+
+		return {sampled_theta_phi.second[0], sampled_theta_phi.second[1]};
+	}
 
     /**
      * \brief Sample a random vector from an arbitrarily rotated probability distribution.
@@ -157,7 +170,9 @@ public:
      * Returns \f$\left( 0, 0 \right)\f$ if the maximum number of trials \f$N_\mathrm{max}\f$ is
      * reached by the algorithm and no random vector was accepted.
      */
-    array<double, 2> operator()(const array<double, 3> euler_angles);
+    array<double, 2> operator()(const array<double, 3> euler_angles) {
+		return euler_angle_rotation.rotate(operator()(), euler_angles);
+	}
 
     /**
      * \brief Estimate the efficiency of rejection sampling for the given distribution.
@@ -177,14 +192,18 @@ protected:
      * 
      * \return \f$\theta_\mathrm{rand}\f$, random polar angle.
      */
-    double sample_theta();
+    inline double sample_theta() {
+		return acos(uniform_random_unit(random_engine));
+	}
 
     /**
      * \brief Sample azimuthal angle of a uniformly randomly distributed point on a sphere surface.
      * 
      * \return \f$\varphi_\mathrm{rand}\f$, random azimuthal angle.
      */
-    double sample_phi();
+    inline double sample_phi() {
+		return uniform_random_phi(random_engine);
+	};
 
     /**
      * \brief Sample uniformly randomly distributed point on a sphere surface.
@@ -192,13 +211,17 @@ protected:
      * \return \f$\left( \theta_\mathrm{rand}, \varphi_\mathrm{rand} \right)\f$, random point on
      * sphere surface.
      */
-    array<double, 2> sample_theta_phi();
+    inline array<double, 2> sample_theta_phi() {
+		return {sample_theta(), sample_phi()};
+	}
 
     function<double(const double, const double)> distribution; /**< \f$W \left( \theta, \varphi \right)\f$, (unnormalized) probability distribution. */
     const double distribution_maximum; /**< \f$W_\mathrm{max}\f$, maximum of probability distribution. */
     const unsigned int max_tries; /**< \f$N_\mathrm{max}\f$, maximum number of tries to find a random vector. */
 
-    mt19937 random_engine; /**< Deterministic random number engine. */
-    uniform_real_distribution<double> uniform_random; /**< Uniform distribution from which all random numbers are derived here. */
+    mt19937_64 random_engine; /**< Deterministic random number engine. */
+    uniform_real_distribution<double> uniform_random_val; /**< Uniform distribution from which all random numbers for values are derived. */
+    uniform_real_distribution<double> uniform_random_unit; /**< Uniform distribution from which all random numbers within [-1, 1] are derived. */
+    uniform_real_distribution<double> uniform_random_phi; /**< Uniform distribution from which all random phi angles are derived. */
     const EulerAngleRotation euler_angle_rotation; /**< Instance of the EulerAngleRotation class */
 };

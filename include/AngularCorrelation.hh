@@ -228,7 +228,9 @@ public:
      * 
      * \return \f$W_{\gamma \gamma} \left( \theta, \varphi \right)\f$
      */
-    double operator()(const double theta, const double phi) const;
+    inline double operator()(const double theta, const double phi) const {
+        return w_gamma_gamma->operator()(theta, phi);
+    }
 
     /**
      * \brief Return the angular correlation for an arbitrary coordinate system.
@@ -251,14 +253,18 @@ public:
      * 
      * \return \f$W_{\gamma \gamma} \left( \theta, \varphi \right)\f$
      */
-    double operator()(const double theta, const double phi, const array<double, 3> euler_angles) const;
+    double operator()(const double theta, const double phi, const array<double, 3> euler_angles) const {
+        array<double, 2> thetap_phip = euler_angle_rotation.rotate_back(array<double, 2>{theta, phi}, euler_angles);
+
+        return (*this)(thetap_phip[0], thetap_phip[1]);
+    }
 
 	/**
 	 * \brief Return the initial state of the angular correlation.
 	 * 
 	 * \return Initial state.
 	 */
-    State get_initial_state() const {
+    inline State get_initial_state() const {
         return w_gamma_gamma->get_initial_state();
     }
 
@@ -267,7 +273,7 @@ public:
 	 * 
 	 * \return vector of Transition-State pairs.
 	 */
-    vector<pair<Transition, State>> get_cascade_steps() const {
+    inline vector<pair<Transition, State>> get_cascade_steps() const {
         return w_gamma_gamma->get_cascade_steps();
     }
 
@@ -295,7 +301,7 @@ public:
 	 * | W \left( \theta, \varphi \right) | \f$, or an upper limit for this quantity.
 	 * If no useful upper limit can be given or if there is no limit, a negative number is returned.
 	 */
-    double get_upper_limit() const {
+    inline double get_upper_limit() const {
         return w_gamma_gamma->get_upper_limit();
     }
 

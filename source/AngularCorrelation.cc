@@ -110,16 +110,6 @@ Transition AngularCorrelation::infer_transition(const pair<State, State> states)
     return Transition(em, two_L, emp, two_L + 2, 0.);
 }
 
-double AngularCorrelation::operator()(const double theta, const double phi) const {
-    return w_gamma_gamma->operator()(theta, phi);
-}
-
-double AngularCorrelation::operator()(const double theta, const double phi, const array<double, 3> euler_angles) const {
-    array<double, 2> thetap_phip = euler_angle_rotation.rotate_back(array<double, 2>{theta, phi}, euler_angles);
-
-    return (*this)(thetap_phip[0], thetap_phip[1]);
-}
-
 void AngularCorrelation::check_cascade(const State ini_sta, const vector<pair<Transition, State>> cas_ste) const {
 
     if(cas_ste.size() < 2){

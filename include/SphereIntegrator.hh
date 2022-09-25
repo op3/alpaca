@@ -84,6 +84,6 @@ public:
     double operator()(double f(double theta, double phi), const unsigned int n, bool is_in_omega(double theta, double phi));
 
 protected:
-    const SpherePointSampler sph_poi_samp; /**< Instance of the SpherePointSampler class. */
+    SpherePointSampler sph_poi_samp; /**< Instance of the SpherePointSampler class. */
 
 };

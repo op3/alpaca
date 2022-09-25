@@ -132,6 +132,7 @@ using std::vector;
  * of iterations for all of its random-number sampling members (\f$n-2\f$ instances of 
  * AngCorrRejectionSampler, and a single instance of SphereRejectionSampler).
  */
+
 class CascadeRejectionSampler{
 
 public:
@@ -185,16 +186,39 @@ public:
      * 
      * \return List of pairs of polar- and azimuthal angle in spherical coordinates in radians. The first pair describes the direction of emission of the first (depends on the setting of return_first_direction) gamma ray in the cascade, the second pair describes the second gamma ray, and so on.
      */
-    vector<array<double, 2>> operator()();
+    inline vector<array<double, 2>> operator()() {
+		vector<array<double, 2>> directions;
+		vector<array<double, 3>> reference_frames;
+
+		if(initial_direction_random){
+			const array<double, 2> initial_theta_phi = uniform_direction_sampler();
+			reference_frames.push_back({0., initial_theta_phi[0], phi_to_Psi(initial_theta_phi[1])}); 
+		} else {
+			reference_frames.push_back(PhiThetaPsi);
+		}
+
+		if(return_first_direction){
+			directions.push_back({reference_frames[0][1], Psi_to_phi(reference_frames[0][2])});
+		}
+
+		array<double, 2> theta_phi_random;
+		for(size_t i = 0; i < angular_correlation_samplers.size(); ++i){
+			theta_phi_random = angular_correlation_samplers[i](reference_frames[i]);
+			directions.push_back(theta_phi_random);
+			reference_frames.push_back({0., theta_phi_random[0], phi_to_Psi(theta_phi_random[1])});
+		}
+
+		return directions;
+	}
 
 protected:
-    double phi_to_Psi(const double phi) const { return M_PI_2 - phi; } /**< Conversion from the azimuthal angle \f$\varphi\f$ in spherical coordinates to the first Euler angle \f$\Psi\f$ in the x convention. See also the EulerAngleRotation class.*/
-    double Psi_to_phi(const double Psi) const { return M_PI_2 - Psi; } /**< Conversion from the first Euler angle \f$\Psi\f$ in the x convention to the azimuthal angle \f$\varphi\f$ in spherical coordinates. See also the EulerAngleRotation class.*/
+    inline double phi_to_Psi(const double phi) const { return M_PI_2 - phi; } /**< Conversion from the azimuthal angle \f$\varphi\f$ in spherical coordinates to the first Euler angle \f$\Psi\f$ in the x convention. See also the EulerAngleRotation class.*/
+    inline double Psi_to_phi(const double Psi) const { return M_PI_2 - Psi; } /**< Conversion from the first Euler angle \f$\Psi\f$ in the x convention to the azimuthal angle \f$\varphi\f$ in spherical coordinates. See also the EulerAngleRotation class.*/
 
-    const bool initial_direction_random; /**< Indicates whether the direction of the first gamma ray was given by the user (false) or should be sampled (true).*/
+    bool initial_direction_random; /**< Indicates whether the direction of the first gamma ray was given by the user (false) or should be sampled (true).*/
     array<double, 3> PhiThetaPsi; /**< Euler angles to control the orientation of the first gamma ray. */
-    const bool return_first_direction; /**< Indicates whether the direction of the first gamma ray should be returned or not */
+    bool return_first_direction; /**< Indicates whether the direction of the first gamma ray should be returned or not */
     vector<AngCorrRejectionSampler> angular_correlation_samplers; /**< List of AngCorrRejectionSamplers which are initialized on construction with AngularCorrelation objects. */
     SphereRejectionSampler uniform_direction_sampler; /**< Instance of SphereRejectionSampler with an uniform distribution to sample the direction of the first gamma ray. */
-    const EulerAngleRotation euler_angle_rotation; /**< Instance of EulerAngleRotation. */
+    EulerAngleRotation euler_angle_rotation; /**< Instance of EulerAngleRotation. */
 };

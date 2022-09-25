@@ -211,7 +211,17 @@ public:
      * \param two_L \f$2 L_{m+1}\f$
      * \param two_jp \f$2 j_{m+1}\f$
      */
-    UvCoefficient(const unsigned int two_nu, const int two_j, const int two_L, const int two_jp);
+    UvCoefficient(const unsigned int two_nu, const int two_j, const int two_L, const int two_jp) :
+        two_nu(two_nu),
+        two_j(two_j),
+        two_L(two_L),
+        two_Lp(two_L+2),
+        delta(0.),
+        two_jp(two_jp),
+        value_L(phase_norm_6j_symbol(two_nu, two_j, two_L, two_jp)),
+        value_Lp(0.),
+        value(value_L)
+    {}
 
     /**
      * \brief Constructor, \f$U_\nu\f$ coefficient for a mixed transition.
@@ -229,7 +239,17 @@ public:
      * \param delta \f$\delta_m\f$
      * \param two_jp \f$2 j_{m+1}\f$
      */
-    UvCoefficient(const unsigned int two_nu, const int two_j, const int two_L, const int two_Lp, const double delta, const int two_jp);
+    UvCoefficient(const unsigned int two_nu, const int two_j, const int two_L, const int two_Lp, const double delta, const int two_jp) :
+        two_nu(two_nu),
+        two_j(two_j),
+        two_L(two_L),
+        two_Lp(two_Lp),
+        delta(delta),
+        two_jp(two_jp),
+        value_L(phase_norm_6j_symbol(two_nu, two_j, two_L, two_jp)),
+        value_Lp((delta != 0.) ? delta*delta*phase_norm_6j_symbol(two_nu, two_j, two_Lp, two_jp) : 0.),
+        value(value_L + value_Lp)
+    {}
 
     double get_value() const { return value; };
 
@@ -239,12 +259,12 @@ protected:
 
     double phase_norm_6j_symbol(const int two_nu, const int two_j, const int two_L, const int two_jp) const;
 
-    const int two_nu;
-    const int two_j;
-    const int two_L;
-    const int two_Lp;
-    const double delta;
-    const int two_jp;
+    int two_nu;
+    int two_j;
+    int two_L;
+    int two_Lp;
+    double delta;
+    int two_jp;
 
-    double value, value_L, value_Lp;
+    double value_L, value_Lp, value;
 };

@@ -55,11 +55,6 @@ target_link_libraries(alphavCoefficient fCoefficient kappa_coefficient)
 target_include_directories(alphavCoefficient PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 set_target_properties(alphavCoefficient PROPERTIES PUBLIC_HEADER include/AlphavCoefficient.hh)
 
-add_library(evCoefficient EvCoefficient.cc)
-target_link_libraries(evCoefficient fCoefficient)
-target_include_directories(evCoefficient PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(evCoefficient PROPERTIES PUBLIC_HEADER include/EvCoefficient.hh)
-
 add_library(uvCoefficient UvCoefficient.cc)
 target_link_libraries(uvCoefficient ${GSL_LIBRARIES})
 target_include_directories(uvCoefficient PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

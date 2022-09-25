@@ -62,7 +62,23 @@ public:
 	 * \param two_j Angular momentum quantum number \f$2 j\f$ of the intermediate state
 	 * 	of a transition 
 	 */
-	AlphavCoefficient(const int two_nu, const int two_L, const int two_Lp, const int two_jn, const int two_j);	
+	AlphavCoefficient(const int two_nu, const int two_L, const int two_Lp, const int two_jn, const int two_j) :
+		two_nu(two_nu),
+        two_L(two_L),
+        two_Lp(two_Lp),
+        two_jn(two_jn),
+        two_j(two_j),
+        constant_f_coefficient(two_nu, two_L, two_L, two_jn, two_j),
+        linear_f_coefficient(two_nu, two_L, two_Lp, two_jn, two_j),
+        quadratic_f_coefficient(two_nu, two_Lp, two_Lp, two_jn, two_j),
+        constant_kappa_coefficient(two_nu, two_L, two_L),
+        linear_kappa_coefficient(two_nu, two_L, two_Lp),
+        quadratic_kappa_coefficient(two_nu, two_Lp, two_Lp),
+		constant_coefficient(-constant_kappa_coefficient.get_value()*constant_f_coefficient.get_value()),
+		linear_coefficient(2.*linear_kappa_coefficient.get_value()*linear_f_coefficient.get_value()),
+		quadratic_coefficient(quadratic_kappa_coefficient.get_value()*quadratic_f_coefficient.get_value())
+	{
+	}
 
 	/**
 	 * \brief Return value of a specific \f$\alpha_\nu\f$ coefficient.
@@ -71,19 +87,23 @@ public:
 	 *
 	 * \return \f$\alpha_\nu \left( L, L^\prime, j_n, j, \delta_n \right)\f$
 	 */
-	double operator()(const double delta) const;
+	inline double operator()(const double delta) const {
+		return 
+			constant_coefficient + delta*linear_coefficient 
+			+ delta*delta*quadratic_coefficient;
+	}
 
 	string string_representation(const unsigned int n_digits = 0, const vector<string> variable_names = {}) const;
 
 protected:
-	const int two_nu;
-	const int two_L;
-	const int two_Lp;
-	const int two_jn;
-	const int two_j;
+	int two_nu;
+	int two_L;
+	int two_Lp;
+	int two_jn;
+	int two_j;
 
-	const FCoefficient constant_f_coefficient, linear_f_coefficient, quadratic_f_coefficient;
-	const KappaCoefficient constant_kappa_coefficient, linear_kappa_coefficient, quadratic_kappa_coefficient;
+	FCoefficient constant_f_coefficient, linear_f_coefficient, quadratic_f_coefficient;
+	KappaCoefficient constant_kappa_coefficient, linear_kappa_coefficient, quadratic_kappa_coefficient;
 
 	double constant_coefficient;
 	double linear_coefficient;

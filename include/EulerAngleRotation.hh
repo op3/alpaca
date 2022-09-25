@@ -126,7 +126,18 @@ public:
      * 
      * \return \f$v^\prime\f$, 3D vector
      */
-    array<double, 3> rotate(const array<double, 3> x_y_z, const array<double, 3> Phi_Theta_Psi) const;
+    inline array<double, 3> rotate(const array<double, 3> x_y_z, const array<double, 3> Phi_Theta_Psi) const {
+        if(no_rotation_required(Phi_Theta_Psi)){
+            return x_y_z;
+        }
+
+        const array<array<double, 3>, 3> A = rotation_matrix(Phi_Theta_Psi);
+        return array<double, 3>{
+            A[0][0]*x_y_z[0] + A[0][1]*x_y_z[1] + A[0][2]*x_y_z[2],
+            A[1][0]*x_y_z[0] + A[1][1]*x_y_z[1] + A[1][2]*x_y_z[2],
+            A[2][0]*x_y_z[0] + A[2][1]*x_y_z[1] + A[2][2]*x_y_z[2]
+        };
+    }
 
     /**
      * \brief Rotate a 3D vector.
@@ -136,7 +147,12 @@ public:
      * 
      * \return \f$v^\prime\f$, spherical coordinates \f$\theta\f$ and \f$\varphi\f$ in radians.
      */
-    array<double, 2> rotate(const array<double, 2> theta_phi, const array<double, 3> Phi_Theta_Psi) const;
+    inline array<double, 2> rotate(const array<double, 2> theta_phi, const array<double, 3> Phi_Theta_Psi) const {
+        if(no_rotation_required(Phi_Theta_Psi)){
+            return theta_phi;
+        }
+        return get_theta_phi(rotate(get_x_y_z_norm(theta_phi), Phi_Theta_Psi));
+    }
 
     /**
      * \brief Rotate a 3D vector back.
@@ -150,8 +166,14 @@ public:
      * 
      * \return \f$v\f$, 3D vector
      */
-    array<double, 3> rotate_back(const array<double, 3> xp_yp_zp, const array<double, 3> Phi_Theta_Psi) const;
-    
+    inline array<double, 3> rotate_back(const array<double, 3> xp_yp_zp, const array<double, 3> Phi_Theta_Psi) const {
+        if(no_rotation_required(Phi_Theta_Psi)){
+            return xp_yp_zp;
+        }
+     
+        return rotate(xp_yp_zp, {-Phi_Theta_Psi[2], -Phi_Theta_Psi[1], -Phi_Theta_Psi[0]});
+    }
+
     /**
      * \brief Rotate a 3D vector back.
      * 
@@ -162,7 +184,14 @@ public:
      * 
      * \return \f$v\f$, spherical coordinates \f$\theta\f$ and \f$\varphi\f$ in radians.
      */
-    array<double, 2> rotate_back(const array<double, 2> thetap_phip, const array<double, 3> Phi_Theta_Psi) const;
+    inline array<double, 2> rotate_back(const array<double, 2> thetap_phip, const array<double, 3> Phi_Theta_Psi) const {
+        if(no_rotation_required(Phi_Theta_Psi)){
+            return thetap_phip;
+        }
+
+        return get_theta_phi(rotate_back(get_x_y_z_norm(thetap_phip), Phi_Theta_Psi));
+    }
+
 
     /**
      * \brief Convert Cartesian to spherical coordinates.
@@ -211,5 +240,7 @@ protected:
      * 
      * \return true, if all Euler angles are zero, else false.
      */
-    bool no_rotation_required(const array<double, 3> Phi_Theta_Psi) const;
+    inline bool no_rotation_required(const array<double, 3> Phi_Theta_Psi) const {
+       return (Phi_Theta_Psi[0] == 0. && Phi_Theta_Psi[1] == 0. && Phi_Theta_Psi[2] == 0.);
+   }
 };

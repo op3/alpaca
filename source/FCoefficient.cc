@@ -62,7 +62,7 @@ FCoefficient::FCoefficient(const int two_nu, const int two_L, const int two_Lp, 
 }
 
 bool FCoefficient::is_nonzero(const int two_nu, const int two_L, const int two_Lp, const int two_j1, const int two_j){
-	if(
+	return (
 		cg_is_nonzero(
 			two_L, two_Lp, two_nu,
 			2, -2, 0)
@@ -70,10 +70,7 @@ bool FCoefficient::is_nonzero(const int two_nu, const int two_L, const int two_L
 			two_j, two_j, two_nu,
 			two_Lp, two_L, two_j1
 			)
-	)
-		return true;
-
-	return false;
+	);
 }
 
 bool FCoefficient::cg_is_nonzero(const int two_j1, const int two_j2, const int two_J, const int two_m1, const int two_m2, const int two_M){
@@ -99,19 +96,16 @@ bool FCoefficient::cg_is_nonzero(const int two_j1, const int two_j2, const int t
 
 bool FCoefficient::racah_is_nonzero(const int two_j1, const int two_j2, const int two_j3, const int two_J1, const int two_J2, const int two_J3){
 
-	if(
-		   !sum_is_even(two_j1, two_j2, two_j3)
-		|| !fulfils_triangle_inequality<int>(two_j1, two_j2, two_j3)
-		|| !sum_is_even(two_j1, two_J2, two_J3)
-		|| !fulfils_triangle_inequality<int>(two_j1, two_J2, two_J3)
-		|| !sum_is_even(two_J1, two_j2, two_J3)
-		|| !fulfils_triangle_inequality<int>(two_J1, two_j2, two_J3)
-		|| !sum_is_even(two_J1, two_J2, two_j3)
-		|| !fulfils_triangle_inequality<int>(two_J1, two_J2, two_j3)
-	)
-		return false;
-
-	return true;
+	return (
+		   sum_is_even(two_j1, two_j2, two_j3)
+		&& fulfils_triangle_inequality<int>(two_j1, two_j2, two_j3)
+		&& sum_is_even(two_j1, two_J2, two_J3)
+		&& fulfils_triangle_inequality<int>(two_j1, two_J2, two_J3)
+		&& sum_is_even(two_J1, two_j2, two_J3)
+		&& fulfils_triangle_inequality<int>(two_J1, two_j2, two_J3)
+		&& sum_is_even(two_J1, two_J2, two_j3)
+		&& fulfils_triangle_inequality<int>(two_J1, two_J2, two_j3)
+	);
 }
 
 string FCoefficient::string_representation(const unsigned int n_digits, [[maybe_unused]] vector<string> variable_names) const {

@@ -36,7 +36,7 @@ pair<unsigned int, array<double, 2>> AngCorrRejectionSampler::sample(){
     for(unsigned int i = 0; i < max_tries; ++i){
 
         theta_phi = sample_theta_phi();
-        dis_val = uniform_random(random_engine)*distribution_maximum;
+        dis_val = uniform_random_val(random_engine);
 
         if(dis_val <= angular_correlation(theta_phi[0], theta_phi[1])){
             return {i+1, {theta_phi[0], theta_phi[1]}};
