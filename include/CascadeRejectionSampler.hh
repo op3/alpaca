@@ -211,6 +211,10 @@ public:
 		return directions;
 	}
 
+    inline size_t size() const {
+	return angular_correlation_samplers.size();
+    }
+
 protected:
     inline double phi_to_Psi(const double phi) const { return M_PI_2 - phi; } /**< Conversion from the azimuthal angle \f$\varphi\f$ in spherical coordinates to the first Euler angle \f$\Psi\f$ in the x convention. See also the EulerAngleRotation class.*/
     inline double Psi_to_phi(const double Psi) const { return M_PI_2 - Psi; } /**< Conversion from the first Euler angle \f$\Psi\f$ in the x convention to the azimuthal angle \f$\varphi\f$ in spherical coordinates. See also the EulerAngleRotation class.*/
