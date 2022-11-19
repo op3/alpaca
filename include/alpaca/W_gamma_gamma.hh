@@ -20,16 +20,16 @@
 #pragma once
 
 #include <vector>
-
-using std::vector;
-
 #include <utility>
 
+using std::vector;
 using std::pair;
 
-#include "State.hh"
-#include "StringRepresentable.hh"
-#include "Transition.hh"
+#include "alpaca/State.hh"
+#include "alpaca/StringRepresentable.hh"
+#include "alpaca/Transition.hh"
+
+namespace alpaca {
 
 /**
  * \brief Abstract class for angular correlations of two photons.
@@ -146,3 +146,5 @@ protected:
   int nu_max; /**< Maximum value of \f$\nu\f$ for which the coefficients do not
                  vanish */
 };
+
+}

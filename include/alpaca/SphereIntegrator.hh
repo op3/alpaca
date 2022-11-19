@@ -19,7 +19,9 @@
 
 #pragma once
 
-#include "SpherePointSampler.hh"
+#include "alpaca/SpherePointSampler.hh"
+
+namespace alpaca {
 
 /**
  * \brief Simple integration of a function of 2 variables on a sphere surface
@@ -89,3 +91,5 @@ protected:
   SpherePointSampler
       sph_poi_samp; /**< Instance of the SpherePointSampler class. */
 };
+
+} // namespace alpaca

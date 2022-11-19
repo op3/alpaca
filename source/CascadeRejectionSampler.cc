@@ -17,7 +17,9 @@
     Copyright (C) 2021 Udo Friman-Gayer
 */
 
-#include "CascadeRejectionSampler.hh"
+#include "alpaca/CascadeRejectionSampler.hh"
+
+namespace alpaca {
 
 CascadeRejectionSampler::CascadeRejectionSampler(
     vector<AngularCorrelation> &cascade, const int seed,
@@ -51,3 +53,5 @@ CascadeRejectionSampler::CascadeRejectionSampler(
         AngCorrRejectionSampler(cascade[i], seed, max_tri));
   }
 }
+
+} // namespace alpaca

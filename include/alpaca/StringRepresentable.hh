@@ -20,20 +20,16 @@
 #pragma once
 
 #include <iomanip>
-
-using std::setprecision;
-
 #include <sstream>
-
-using std::stringstream;
-
 #include <string>
-
-using std::string;
-
 #include <vector>
 
+using std::setprecision;
+using std::string;
+using std::stringstream;
 using std::vector;
+
+namespace alpaca {
 
 /**'
  * \brief Abstract class for string-representable expressions
@@ -72,3 +68,5 @@ protected:
     return str_rep.str();
   };
 };
+
+}

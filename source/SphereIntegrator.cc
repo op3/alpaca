@@ -19,13 +19,14 @@
 
 #include <array>
 #include <vector>
-
 #include <gsl/gsl_math.h>
 
-#include "SphereIntegrator.hh"
+#include "alpaca/SphereIntegrator.hh"
 
 using std::array;
 using std::vector;
+
+namespace alpaca {
 
 double SphereIntegrator::operator()(double f(double theta, double phi),
                                     const unsigned int n,
@@ -43,4 +44,6 @@ double SphereIntegrator::operator()(double f(double theta, double phi),
   }
 
   return 4. * M_PI / (double)n * integral;
+}
+
 }

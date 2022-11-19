@@ -18,13 +18,14 @@
 */
 
 #include <cmath>
-
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sf.h>
 
-#include "W_pol_dir.hh"
+#include "alpaca/W_pol_dir.hh"
 
 using std::min;
+
+namespace alpaca {
 
 W_pol_dir::W_pol_dir(const State &ini_sta,
                      const vector<pair<Transition, State>> cas_ste)
@@ -166,4 +167,6 @@ string W_pol_dir::string_representation(const unsigned int n_digits,
   str_rep += "\\left.\\right\\}";
 
   return str_rep;
+}
+
 }

@@ -19,8 +19,10 @@
 
 #pragma once
 
-#include "FCoefficient.hh"
-#include "StringRepresentable.hh"
+#include "alpaca/FCoefficient.hh"
+#include "alpaca/StringRepresentable.hh"
+
+namespace alpaca {
 
 /**
  * \brief Class for an \f$A_\nu\f$ coefficient.
@@ -375,3 +377,5 @@ protected:
 
   double constant_coefficient, linear_coefficient, quadratic_coefficient;
 };
+
+} // namespace alpaca

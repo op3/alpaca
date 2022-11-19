@@ -17,7 +17,9 @@
     Copyright (C) 2021 Udo Friman-Gayer
 */
 
-#include "Transition.hh"
+#include "alpaca/Transition.hh"
+
+namespace alpaca {
 
 Transition::Transition(const int t_L, const int t_Lp, const double del)
     : em_char(em_unknown), two_L(check_two_L(t_L)), em_charp(em_unknown),
@@ -73,3 +75,5 @@ int Transition::check_two_L(const int two_L) const {
 
   return two_L;
 }
+
+} // namespace alpaca

@@ -21,8 +21,10 @@
 
 #include <gsl/gsl_sf.h>
 
-#include "FCoefficient.hh"
-#include "Transition.hh"
+#include "alpca/FCoefficient.hh"
+#include "alpca/Transition.hh"
+
+namespace alpaca {
 
 /**
  * \brief Class for an \f$E_\nu\f$ coefficient.
@@ -39,13 +41,13 @@
  * \right)^{\sigma_{L_n}} F_\nu \left( L_n, L_n, j_n, j \right) \frac{2 \nu
  * \left( \nu + 1 \right) L_n \left( L_n + 1 \right)}{\nu \left( \nu + 1 \right)
  * - 2 L_n \left( L_n + 1 \right)} \f] \f[
- * 		+ 2 \delta_n \left( -1 \right)^{\sigma_{L_n^\prime}} F_\nu \left(
- * L_n, L_n^\prime, j_n, j \right) \left( L_1^\prime - L_1 \right) \left(
+ * 		+ 2 \delta_n \left( -1 \right)^{\sigma_{L_n^\prime}} F_\nu
+ * \left( L_n, L_n^\prime, j_n, j \right) \left( L_1^\prime - L_1 \right) \left(
  * L_1^\prime + L_1 +1 \right) \f] \f[
- * 		+ \delta_n^2 \left( -1 \right)^{\sigma_{L_n^\prime}} F_\nu \left(
- * L_n^\prime, L_n^\prime, j_n, j \right) \frac{2\nu \left( \nu + 1 \right)
- * L_n^\prime \left( L_n^\prime + 1 \right)}{\nu \left( \nu + 1 \right) - 2
- * L_n^\prime \left( L_n^\prime + 1 \right)} \Bigg \rbrace \f] \f[ \times
+ * 		+ \delta_n^2 \left( -1 \right)^{\sigma_{L_n^\prime}} F_\nu
+ * \left( L_n^\prime, L_n^\prime, j_n, j \right) \frac{2\nu \left( \nu + 1
+ * \right) L_n^\prime \left( L_n^\prime + 1 \right)}{\nu \left( \nu + 1 \right)
+ * - 2 L_n^\prime \left( L_n^\prime + 1 \right)} \Bigg \rbrace \f] \f[ \times
  * \frac{\left( \nu - 2 \right)!}{\left( \nu + 2 \right)!} \f]
  *
  * In the equation above, the symbol \f$\sigma_L\f$ is equal to \f$1\f$ if the
@@ -125,3 +127,5 @@ protected:
   FCoefficient constant_f_coefficient, linear_f_coefficient,
       quadratic_f_coefficient;
 };
+
+} // namespace alpaca

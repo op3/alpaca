@@ -18,15 +18,15 @@
 */
 
 #include <cmath>
-
+#include <gsl/gsl_sf.h>
 #include <string>
 
 using std::to_string;
 
-#include <gsl/gsl_sf.h>
+#include "alpaca/FCoefficient.hh"
+#include "alpaca/TestUtilities.hh"
 
-#include "FCoefficient.hh"
-#include "TestUtilities.hh"
+namespace alpaca {
 
 FCoefficient::FCoefficient(const int two_nu, const int two_L, const int two_Lp,
                            const int two_j1, const int two_j)
@@ -113,3 +113,5 @@ string FCoefficient::string_representation(
 
   return str_rep;
 }
+
+} // namespace alpaca

@@ -17,7 +17,9 @@
     Copyright (C) 2021 Udo Friman-Gayer
 */
 
-#include "State.hh"
+#include "alpaca/State.hh"
+
+namespace alpaca {
 
 string State::parity_str_rep(const Parity parity) const {
 
@@ -66,3 +68,5 @@ double State::check_excitation_energy(const double e_x) const {
 
   return e_x;
 }
+
+} // namespace alpaca

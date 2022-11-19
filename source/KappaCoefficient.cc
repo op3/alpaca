@@ -18,19 +18,17 @@
 */
 
 #include <cmath>
-
 #include <stdexcept>
-
-using std::invalid_argument;
-
 #include <string>
-
-using std::to_string;
-
 #include <gsl/gsl_sf.h>
 
-#include "KappaCoefficient.hh"
-#include "TestUtilities.hh"
+using std::invalid_argument;
+using std::to_string;
+
+#include "alpaca/KappaCoefficient.hh"
+#include "alpaca/TestUtilities.hh"
+
+namespace alpaca {
 
 KappaCoefficient::KappaCoefficient(const int two_nu, const int two_L,
                                    const int two_Lp)
@@ -76,4 +74,6 @@ string KappaCoefficient::string_representation(
   }
   return "\\kappa_{" + to_string(two_nu / 2) + "}" + "\\left(" +
          to_string(two_L / 2) + "," + to_string(two_Lp / 2) + "\\right)";
+}
+
 }

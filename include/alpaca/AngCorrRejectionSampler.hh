@@ -19,8 +19,10 @@
 
 #pragma once
 
-#include "AngularCorrelation.hh"
-#include "SphereRejectionSampler.hh"
+#include "alpaca/AngularCorrelation.hh"
+#include "alpaca/SphereRejectionSampler.hh"
+
+namespace alpaca {
 
 /**
  * \brief Sample directions in spherical coordinates from an angular
@@ -70,3 +72,5 @@ protected:
   AngularCorrelation
       angular_correlation; /**< Gamma-gamma angular correlation */
 };
+
+}

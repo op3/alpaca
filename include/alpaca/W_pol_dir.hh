@@ -23,10 +23,12 @@
 
 using std::vector;
 
-#include "AlphavCoefficient.hh"
-#include "AvCoefficient.hh"
-#include "W_dir_dir.hh"
-#include "W_gamma_gamma.hh"
+#include "alpaca/AlphavCoefficient.hh"
+#include "alpaca/AvCoefficient.hh"
+#include "alpaca/W_dir_dir.hh"
+#include "alpaca/W_gamma_gamma.hh"
+
+namespace alpaca {
 
 /**
  * \brief Class for a polarization-direction (pol-dir) correlation
@@ -112,8 +114,8 @@ public:
    * Starting from the exact expression
    *
    * \f[
-   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[ 0,
-   * 2\pi \right]} | W \left( \theta, \varphi \right) | \f] \f[ =
+   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[
+   * 0, 2\pi \right]} | W \left( \theta, \varphi \right) | \f] \f[ =
    * \mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[ 0, 2\pi
    * \right]} | \sum_\nu A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left(
    * L_2, L_2^\prime, j_3, j_2 \right)  P_\nu \left[ \cos \left( \theta \right)
@@ -126,9 +128,9 @@ public:
    * obtains:
    *
    * \f[
-   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[ 0,
-   * 2\pi \right]} | W \left( \theta, \varphi \right) | \f] \f[ \leq \sum_\nu |
-   * A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left( L_2, L_2^\prime,
+   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[
+   * 0, 2\pi \right]} | W \left( \theta, \varphi \right) | \f] \f[ \leq \sum_\nu
+   * | A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left( L_2, L_2^\prime,
    * j_3, j_2 \right) | \mathrm{max}_{\theta \in \left[ 0, \pi \right]} P_\nu
    * \left[ \cos \left( \theta \right) \right] + \lbrace \mathrm{max}_{\varphi
    * \in \left[ 0, 2\pi \right]} \cos \left( 2 \varphi \right) \rbrace \sum_\nu
@@ -152,11 +154,11 @@ public:
    * this function is given by:
    *
    * \f[
-   * 		\sum_\nu | A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left(
-   * L_2, L_2^\prime, j_3, j_2 \right) | + \sum_\nu | \kappa_\nu \left( L_1,
-   * L_1^\prime \right) A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left(
-   * L_2, L_2^\prime, j_3, j_2 \right)| \frac{4}{\pi^{3/4}} \sqrt{\frac{\left(
-   * \nu + 2 \right)!}{\left( \nu-2 \right)!}} \f]
+   * 		\sum_\nu | A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v
+   * \left( L_2, L_2^\prime, j_3, j_2 \right) | + \sum_\nu | \kappa_\nu \left(
+   * L_1, L_1^\prime \right) A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v
+   * \left( L_2, L_2^\prime, j_3, j_2 \right)| \frac{4}{\pi^{3/4}}
+   * \sqrt{\frac{\left( \nu + 2 \right)!}{\left( \nu-2 \right)!}} \f]
    *
    * Note that the first part of the sum is the upper limit for the dir-dir
    * correlation.
@@ -227,3 +229,5 @@ protected:
       expansion_coefficients; /**< Vector to store expansion coefficients */
   W_dir_dir w_dir_dir;        /**< Instance of the W_dir_dir class */
 };
+
+} // namespace alpaca

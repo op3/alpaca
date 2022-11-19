@@ -19,7 +19,9 @@
 
 #include <cmath>
 
-#include "EulerAngleRotation.hh"
+#include "alpaca/EulerAngleRotation.hh"
+
+namespace alpaca {
 
 array<double, 2>
 EulerAngleRotation::get_theta_phi(const array<double, 3> x_y_z_norm) const {
@@ -53,3 +55,5 @@ array<array<double, 3>, 3> EulerAngleRotation::rotation_matrix(
                        cos_psi * sin_the},
       array<double, 3>{sin_the * sin_phi, -sin_the * cos_phi, cos_the}};
 }
+
+} // namespace alpaca

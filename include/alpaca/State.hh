@@ -27,6 +27,8 @@ using std::runtime_error;
 using std::string;
 using std::to_string;
 
+namespace alpaca {
+
 /**
  * \brief Enum for the possible values of the parity quantum number.
  */
@@ -158,3 +160,5 @@ struct State {
    */
   double check_excitation_energy(const double e_x) const;
 };
+
+} // namespace alpaca

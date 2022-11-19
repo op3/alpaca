@@ -32,7 +32,9 @@ using std::uniform_real_distribution;
 
 using std::pair;
 
-#include "EulerAngleRotation.hh"
+#include "alpaca/EulerAngleRotation.hh"
+
+namespace alpaca {
 
 /**
  * \brief Sample from a probability distribution in spherical coordinates using
@@ -246,3 +248,5 @@ protected:
   const EulerAngleRotation
       euler_angle_rotation; /**< Instance of the EulerAngleRotation class */
 };
+
+} // namespace alpaca

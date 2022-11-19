@@ -17,7 +17,9 @@
     Copyright (C) 2021 Udo Friman-Gayer
 */
 
-#include "AvCoefficient.hh"
+#include "alpaca/AvCoefficient.hh"
+
+namespace alpaca {
 
 string AvCoefficient::string_representation(
     const unsigned int n_digits, const vector<string> variable_names) const {
@@ -32,3 +34,5 @@ string AvCoefficient::string_representation(
          quadratic_f_coefficient.string_representation(n_digits, {}) +
          (n_digits ? "\\times" : "") + multipole_mixing_ratio_variable + "^{2}";
 }
+
+} // namespace alpaca

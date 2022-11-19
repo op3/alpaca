@@ -19,16 +19,16 @@
 
 #include <algorithm>
 #include <cmath>
+#include <gsl/gsl_sf.h>
 #include <iostream>
 
-#include "State.hh"
-
-#include <gsl/gsl_sf.h>
-
-#include "W_dir_dir.hh"
+#include "alpaca/State.hh"
+#include "alpaca/W_dir_dir.hh"
 
 using std::max;
 using std::min;
+
+namespace alpaca {
 
 W_dir_dir::W_dir_dir(const State &ini_sta,
                      const vector<pair<Transition, State>> cas_ste)
@@ -216,3 +216,5 @@ string W_dir_dir::string_representation(const unsigned int n_digits,
 
   return str_rep;
 }
+
+} // namespace alpaca

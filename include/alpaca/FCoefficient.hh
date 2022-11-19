@@ -19,6 +19,10 @@
 
 #pragma once
 
+#include "alpaca/StringRepresentable.hh"
+
+namespace alpaca {
+
 /**
  * \brief Class for an F coefficient.
  *
@@ -115,8 +119,6 @@
  * \f$^1\f$ For better compatibility to the other literature used here, the
  *label \f$k\f$ of Ref. \cite FerentzRosenzweig1955 is replaced by \f$\nu\f$.
  */
-
-#include "StringRepresentable.hh"
 
 class FCoefficient : public StringRepresentable {
 public:
@@ -240,3 +242,5 @@ protected:
   const int two_j;
   double value;
 };
+
+} // namespace alpaca

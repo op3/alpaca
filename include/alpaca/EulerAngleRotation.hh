@@ -23,6 +23,8 @@
 
 using std::array;
 
+namespace alpaca {
+
 /**
  * \brief Class to perform arbitrary rotations of 3D vectors using Euler angles.
  *
@@ -264,3 +266,5 @@ protected:
             Phi_Theta_Psi[2] == 0.);
   }
 };
+
+} // namespace alpaca

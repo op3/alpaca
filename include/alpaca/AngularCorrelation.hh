@@ -24,15 +24,17 @@
 #include <utility>
 #include <vector>
 
-#include "EulerAngleRotation.hh"
-#include "State.hh"
-#include "Transition.hh"
-#include "W_gamma_gamma.hh"
+#include "alpaca/EulerAngleRotation.hh"
+#include "alpaca/State.hh"
+#include "alpaca/Transition.hh"
+#include "alpaca/W_gamma_gamma.hh"
 
 using std::array;
 using std::pair;
 using std::unique_ptr;
 using std::vector;
+
+namespace alpaca {
 
 /**
  * \brief Class for a gamma-gamma correlation.
@@ -310,8 +312,8 @@ public:
    * the maximum absolute value of \f$W \left( \theta, \varphi \right)\f$, i.e.:
    *
    * \f[
-   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[ 0,
-   * 2\pi \right]} | W \left( \theta, \varphi \right) |. \f]
+   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[
+   * 0, 2\pi \right]} | W \left( \theta, \varphi \right) |. \f]
    *
    * If a useful upper limit estimate exists for a given angular correlation,
    * this function will return it. If no useful upper limit exists, or the
@@ -476,3 +478,5 @@ protected:
    */
   unique_ptr<W_gamma_gamma> w_gamma_gamma;
 };
+
+} // namespace alpaca

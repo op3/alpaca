@@ -24,11 +24,13 @@
 #include <gsl/gsl_sf_ellint.h>
 #include <gsl/gsl_sf_elljac.h>
 
-#include "SpherePointSampler.hh"
-
 using std::invalid_argument;
 using std::runtime_error;
 using std::stringstream;
+
+#include "alpaca/SpherePointSampler.hh"
+
+namespace alpaca {
 
 array<vector<double>, 2>
 SpherePointSampler::sample(const unsigned int n) const {
@@ -302,3 +304,5 @@ double SpherePointSampler::elliptic_integral_1st_kind_arbitrary_m(
   return kappa_prime *
          elliptic_integral_1st_kind_arbitrary_m(theta, kappa * kappa);
 }
+
+} // namespace alpaca

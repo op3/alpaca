@@ -19,9 +19,11 @@
 
 #pragma once
 
-#include "AvCoefficient.hh"
-#include "UvCoefficient.hh"
-#include "W_gamma_gamma.hh"
+#include "alpaca/AvCoefficient.hh"
+#include "alpaca/UvCoefficient.hh"
+#include "alpaca/W_gamma_gamma.hh"
+
+namespace alpaca {
 
 /**
  * \brief Class for a direction-direction (dir-dir) correlation
@@ -51,9 +53,9 @@
  * notation is similar to the one used by Biedenharn \cite AjzenbergSelove1960}:
  *
  * \f[
- * 		j_1 \left( \begin{array}{c} L_1 \\ L_1^\prime \end{array} \right)
- * j_2 \left( \begin{array}{c} L_2 \\ L_2^\prime \end{array} \right) ... j_n,
- * \f]
+ * 		j_1 \left( \begin{array}{c} L_1 \\ L_1^\prime \end{array}
+ * \right) j_2 \left( \begin{array}{c} L_2 \\ L_2^\prime \end{array} \right) ...
+ * j_n, \f]
  *
  * where the dots may represent an arbitrary number of intermediate transitions.
  * The entire sequence of transitions, whose first and last transition are
@@ -83,9 +85,10 @@ public:
    * {Eqs. (I-1) and (I-2) in Ref. \cite FaggHanna1959}:
    *
    * \f[
-   * 		W \left( \theta, \varphi \right) = W \left( \theta \right) = \sum_\nu
-   * A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left( L_2, L_2^\prime,
-   * j_3, j_2 \right) P_\nu \left[ \cos \left( \theta \right) \right]. \f]
+   * 		W \left( \theta, \varphi \right) = W \left( \theta \right) =
+   * \sum_\nu A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left( L_2,
+   * L_2^\prime, j_3, j_2 \right) P_\nu \left[ \cos \left( \theta \right)
+   * \right]. \f]
    *
    * The first transition proceeds via the multipolarities \f$L_1\f$ and
    * \f$L_1^\prime\f$, while the second has the multipolarities \f$L_2\f$ and
@@ -100,10 +103,10 @@ public:
    * FaggHanna1959}:
    *
    * \f[
-   * 		W \left( \theta \right) = \sum_\nu A_v \left( L_1, L_1^\prime, j_1,
-   * j_2 \right) U_\nu \left( j_2, L_2, L_2^\prime, j_3 \right) ... A_v \left(
-   * L_{n-1}, L_{n-1}^\prime, j_n, j_{n-1} \right) P_\nu \left[ \cos \left(
-   * \theta \right) \right]. \f]
+   * 		W \left( \theta \right) = \sum_\nu A_v \left( L_1, L_1^\prime,
+   * j_1, j_2 \right) U_\nu \left( j_2, L_2, L_2^\prime, j_3 \right) ... A_v
+   * \left( L_{n-1}, L_{n-1}^\prime, j_n, j_{n-1} \right) P_\nu \left[ \cos
+   * \left( \theta \right) \right]. \f]
    *
    * \param theta Polar angle between the direction of the incoming and
    * the outgoing photon in radians.
@@ -143,8 +146,8 @@ public:
    * {Eq. (I-1') in Ref. \cite FaggHanna1959} and apply the triangle inequality:
    *
    * \f[
-   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[ 0,
-   * 2\pi \right]} | W \left( \theta, \varphi \right) | = \f] \f[ =
+   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[
+   * 0, 2\pi \right]} | W \left( \theta, \varphi \right) | = \f] \f[ =
    * \mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[ 0, 2\pi
    * \right]} | \sum_\nu A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left(
    * L_2, L_2^\prime, j_3, j_2 \right) P_\nu \left[ \cos \left( \theta \right)
@@ -173,16 +176,16 @@ public:
    * (18.7.9) therein]:
    *
    * \f[
-   * 		|P_\nu \left[ \cos \left( \theta \right) \right]| \leq P_\nu \left( 1
-   * \right) = 1. \f]
+   * 		|P_\nu \left[ \cos \left( \theta \right) \right]| \leq P_\nu \left(
+   * 1 \right) = 1. \f]
    *
    * Therefore, this function returns
    *
    * \f[
-   * 		\sum_\nu | A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left(
-   * L_2, L_2^\prime, j_3, j_2 \right) | \geq \mathrm{max}_{\theta \in \left[ 0,
-   * \pi \right], \varphi \in \left[ 0, 2\pi \right]} | W \left( \theta, \varphi
-   * \right) | \f]
+   * 		\sum_\nu | A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v
+   * \left( L_2, L_2^\prime, j_3, j_2 \right) | \geq \mathrm{max}_{\theta \in
+   * \left[ 0, \pi \right], \varphi \in \left[ 0, 2\pi \right]} | W \left(
+   * \theta, \varphi \right) | \f]
    *
    * as an upper limit.
    *
@@ -383,3 +386,5 @@ protected:
   vector<double>
       expansion_coefficients; /**< Vector to store expansion coefficients */
 };
+
+} // namespace alpaca

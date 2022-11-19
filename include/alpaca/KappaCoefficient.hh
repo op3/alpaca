@@ -19,7 +19,9 @@
 
 #pragma once
 
-#include "StringRepresentable.hh"
+#include "alpaca/StringRepresentable.hh"
+
+namespace alpaca {
 
 /**
  * \brief Class for a polarization coefficient
@@ -118,3 +120,5 @@ protected:
 
   double value;
 };
+
+} // namespace alpaca

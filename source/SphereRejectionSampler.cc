@@ -18,20 +18,19 @@
 */
 
 #include <array>
-
-using std::array;
-
+#include <gsl/gsl_math.h>
 #include <numeric>
 #include <utility>
 #include <vector>
 
 using std::accumulate;
+using std::array;
 using std::get;
 using std::vector;
 
-#include <gsl/gsl_math.h>
+#include "alpaca/SphereRejectionSampler.hh"
 
-#include "SphereRejectionSampler.hh"
+namespace alpaca {
 
 pair<unsigned int, array<double, 2>> SphereRejectionSampler::sample() {
 
@@ -65,3 +64,5 @@ double SphereRejectionSampler::estimate_efficiency(const unsigned int n_tries) {
          static_cast<double>(
              accumulate(required_tries.begin(), required_tries.end(), 0));
 }
+
+} // namespace alpaca

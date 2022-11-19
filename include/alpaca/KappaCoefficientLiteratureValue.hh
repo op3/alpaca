@@ -21,22 +21,22 @@
 
 using std::vector;
 
-/**
- * \brief Struct to store F-coefficient parameters and their values from
- * literature data.
- */
-struct FCoefficientLiteratureValue {
-  /**
-   * \brief Constructor for FCoefficientLiteratureValue
-   *
-   * The order of the parameters corresponds to the order in the tables of
-   * Ref. \cite FerentzRosenzweig1955.
-   */
-  FCoefficientLiteratureValue(int t_j, int t_jp, int t_L, int t_Lp, int t_nu,
-                              double val)
-      : two_j(t_j), two_jp(t_jp), two_L(t_L), two_Lp(t_Lp), two_nu(t_nu),
-        value(val){};
+namespace alpaca {
 
-  int two_j, two_jp, two_L, two_Lp, two_nu;
+/**
+ * \brief Struct to store \f$\kappa_\nu\f$ coefficient parameters and their
+ * values from literature data.
+ */
+struct KappaCoefficientLiteratureValue {
+  /**
+   * \brief Constructor for KappaCoefficientLiteratureValue
+   *
+   */
+  KappaCoefficientLiteratureValue(int t_nu, int t_L, int t_Lp, double val)
+      : two_nu(t_nu), two_L(t_L), two_Lp(t_Lp), value(val){};
+
+  int two_nu, two_L, two_Lp;
   double value;
 };
+
+} // namespace alpaca

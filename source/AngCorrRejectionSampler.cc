@@ -21,7 +21,9 @@
 
 using std::array;
 
-#include "AngCorrRejectionSampler.hh"
+#include "alpaca/AngCorrRejectionSampler.hh"
+
+namespace alpaca {
 
 AngCorrRejectionSampler::AngCorrRejectionSampler(AngularCorrelation &w,
                                                  const int seed,
@@ -46,3 +48,5 @@ pair<unsigned int, array<double, 2>> AngCorrRejectionSampler::sample() {
 
   return {max_tries, {0., 0.}};
 }
+
+} // namespace alpaca

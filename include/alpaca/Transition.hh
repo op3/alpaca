@@ -22,11 +22,13 @@
 #include <stdexcept>
 #include <string>
 
-#include "State.hh"
+#include "alpaca/State.hh"
 
 using std::invalid_argument;
 using std::runtime_error;
 using std::string;
+
+namespace alpaca {
 
 /**
  * \brief Enum for the possible values of the electromagnetic (EM) character.
@@ -127,3 +129,5 @@ struct Transition {
    */
   int check_two_L(const int two_L) const;
 };
+
+} // namespace alpaca

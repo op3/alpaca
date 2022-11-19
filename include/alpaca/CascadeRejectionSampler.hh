@@ -29,8 +29,10 @@ using std::vector;
 
 #include <gsl/gsl_math.h>
 
-#include "AngCorrRejectionSampler.hh"
-#include "AngularCorrelation.hh"
+#include "alpaca/AngCorrRejectionSampler.hh"
+#include "alpaca/AngularCorrelation.hh"
+
+namespace alpaca {
 
 /**
  * \brief Sample directions of emission from an arbitrarily long cascade of
@@ -278,3 +280,5 @@ protected:
   EulerAngleRotation
       euler_angle_rotation; /**< Instance of EulerAngleRotation. */
 };
+
+} // namespace alpaca

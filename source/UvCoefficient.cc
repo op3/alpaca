@@ -18,14 +18,14 @@
 */
 
 #include <cmath>
-
+#include <gsl/gsl_sf.h>
 #include <string>
 
 using std::to_string;
 
-#include <gsl/gsl_sf.h>
+#include "alpaca/UvCoefficient.hh"
 
-#include "UvCoefficient.hh"
+namespace alpaca {
 
 double UvCoefficient::phase_norm_6j_symbol(const int two_nu, const int two_j,
                                            const int two_L,
@@ -69,3 +69,5 @@ UvCoefficient::string_representation(const unsigned int n_digits,
          to_string(two_j / 2) + "," + to_string(two_Lp / 2) + "," +
          to_string(two_jp / 2) + "\\right)" + delta_variable + "^{2}";
 }
+
+} // namespace alpaca

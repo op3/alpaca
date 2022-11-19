@@ -19,9 +19,11 @@
 
 #pragma once
 
-#include "FCoefficient.hh"
-#include "KappaCoefficient.hh"
-#include "StringRepresentable.hh"
+#include "alpaca/FCoefficient.hh"
+#include "alpaca/KappaCoefficient.hh"
+#include "alpaca/StringRepresentable.hh"
+
+namespace alpaca {
 
 /**
  * \brief Class for an \f$\alpha_\nu\f$ coefficient.
@@ -35,8 +37,8 @@
  * FaggHanna1959}:
  *
  * \f[
- * 		\alpha_\nu \left( n \right)\left( L_n, L_n^\prime, j_n, j, \delta_n
- * \right) = \f] \f[
+ * 		\alpha_\nu \left( n \right)\left( L_n, L_n^\prime, j_n, j,
+ * \delta_n \right) = \f] \f[
  * - \kappa_nu \left( L_n, L_n \right) F_\nu \left( L_n, L_n, j_n, j \right)
  * \f]
  * \f[
@@ -108,3 +110,5 @@ protected:
   double linear_coefficient;
   double quadratic_coefficient;
 };
+
+} // namespace alpaca
