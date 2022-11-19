@@ -83,8 +83,6 @@ set(installable_libs
     fCoefficient
     kappa_coefficient
     sphereRejectionSampler
-    state
-    transition
     uvCoefficient
     w_dir_dir
     w_gamma_gamma

@@ -26,6 +26,7 @@
 
 using std::runtime_error;
 using std::string;
+using std::to_string;
 
 namespace alpaca {
 
@@ -60,7 +61,16 @@ struct Transition {
    * L^\prime\f$ was given, or if the two are equal.
    */
   Transition(const EMCharacter em, const int t_L, const EMCharacter emp,
-             const int t_Lp, const double del);
+             const int t_Lp, const double del)
+      : two_L(check_two_L(t_L)), em_char(em), two_Lp(check_two_L(t_Lp)),
+        em_charp(emp), delta(del) {
+    if (two_L == two_Lp) {
+      throw std::invalid_argument(
+          "The two multipolarities for a transition may not be equal. This "
+          "holds "
+          "even if the coupling allows only a single multipolarity.");
+    }
+  }
 
   /**
    * \brief Constructor which does not take information about the EM character
@@ -75,7 +85,16 @@ struct Transition {
    * \throw invalid_argument if an invalid value for \f$2 L\f$ or \f$2
    * L^\prime\f$ was given, or if the two are equal.
    */
-  Transition(const int t_L, const int t_Lp, const double del = 0.);
+  Transition(const int t_L, const int t_Lp, const double del = 0.)
+      : two_L(check_two_L(t_L)), em_char(EMCharacter::unknown),
+        two_Lp(check_two_L(t_Lp)), em_charp(EMCharacter::unknown), delta(del) {
+    if (two_L == two_Lp) {
+      throw std::invalid_argument(
+          "The two multipolarities for a transition may not be equal. This "
+          "holds "
+          "even if the coupling allows only a single multipolarity.");
+    }
+  }
 
   /**
    * \brief Constructor which automatically assigns second transition and does
@@ -103,6 +122,15 @@ struct Transition {
       : Transition(em, t_L, alt_character(em), t_L + 2, del){};
 
   /**
+   * \brief Named constructor for dipole radiation
+   *
+   * \param del Multipole mixing ratio.
+   */
+  inline static Transition D1(double delta = 0.) {
+    return Transition(2, delta);
+  }
+
+  /**
    * \brief Named constructor for E1 radiation
    *
    * \param del Multipole mixing ratio.
@@ -118,6 +146,15 @@ struct Transition {
    */
   inline static Transition M1(double delta = 0.) {
     return Transition(EMCharacter::magnetic, 2, delta);
+  }
+
+  /**
+   * \brief Named constructor for quadrupole radiation
+   *
+   * \param del Multipole mixing ratio.
+   */
+  inline static Transition D2(double delta = 0.) {
+    return Transition(4, delta);
   }
 
   /**
@@ -138,6 +175,21 @@ struct Transition {
     return Transition(EMCharacter::magnetic, 4, delta);
   }
 
+  explicit inline Transition(State from, State to, double a_delta = 0.)
+      : two_L(std::max(2, std::abs(to.two_J - from.two_J))),
+        em_char(deduce_character(two_L, from.parity, to.parity)),
+        two_Lp(two_L + 2), em_charp(alt_character(em_char)), delta(a_delta) {}
+
+  static inline EMCharacter deduce_character(int two_L, Parity p1, Parity p2) {
+    if (p1 == Parity::unknown || p2 == Parity::unknown) {
+      return EMCharacter::unknown;
+    }
+    if ((p1 != p2) != !(two_L % 4)) {
+      return EMCharacter::electric;
+    }
+    return EMCharacter::magnetic;
+  }
+
   /**
    * \brief String representation of EM characters.
    *
@@ -147,7 +199,7 @@ struct Transition {
    *
    * \throw runtime_error if em is neither electric nor magnetic.
    */
-  static string em_str_rep(const EMCharacter em) {
+  inline static string em_str_rep(const EMCharacter em) {
 
     if (em == EMCharacter::electric) {
       return "E";
@@ -172,12 +224,34 @@ struct Transition {
    *
    * \return String representation
    */
-  string str_rep(const State initial_state, const State final_state) const;
+  string str_rep(const State initial_state, const State final_state) const {
+    string string_representation = initial_state.str_rep() + " -- ( ";
 
-  EMCharacter em_char;  /**< Primary EM character. */
+    if (em_char != EMCharacter::unknown) {
+      string_representation += em_str_rep(em_char) + to_string(two_L / 2);
+    } else {
+      string_representation += to_string(two_L / 2);
+    }
+
+    string_representation += " , ";
+
+    if (em_charp != EMCharacter::unknown) {
+      string_representation += em_str_rep(em_charp) + to_string(two_Lp / 2);
+    } else {
+      string_representation += to_string(two_Lp / 2);
+    }
+
+    string_representation += " ) --> " + final_state.str_rep();
+
+    return string_representation;
+  }
+
+  friend bool operator==(Transition const &, Transition const &) = default;
+
   int two_L;            /**< Two times the primary multipolarity. */
-  EMCharacter em_charp; /**< Secondary EM character. */
+  EMCharacter em_char;  /**< Primary EM character. */
   int two_Lp;           /**< Two times the secondary multipolarity. */
+  EMCharacter em_charp; /**< Secondary EM character. */
   double delta;         /**< Multipole mixing ratio. */
 
   /**
@@ -192,7 +266,15 @@ struct Transition {
    *
    * \throw std::invalid_argument if two_L is invalid
    */
-  static int check_two_L(const int two_L);
+  static inline int check_two_L(const int two_L) {
+
+    if (two_L < 1) {
+      throw std::invalid_argument(
+          "two_L (two_Lp) must be a nonzero, nonnegative integer.");
+    }
+
+    return two_L;
+  }
 };
 
 } // namespace alpaca
