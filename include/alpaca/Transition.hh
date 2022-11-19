@@ -85,8 +85,9 @@ struct Transition {
    *
    * \param t_L Two times the multipolarity. The second transition corresponds
    * to the next multipolarity order. \param del Multipole mixing ratio.
+   * \param del Multipole mixing ratio.
    */
-  Transition(int t_L, double del = 0.) : Transition(t_L, t_L + 2, del){};
+  inline Transition(int t_L, double del = 0.) : Transition(t_L, t_L + 2, del){};
 
   /**
    * \brief Constructor which automatically assigns second transition
@@ -96,9 +97,46 @@ struct Transition {
    * \param t_L Two times the multipolarity. The second
    * transition corresponds to the next multipolarity order. \param del
    * Multipole mixing ratio.
+   * \param del Multipole mixing ratio.
    */
-  Transition(EMCharacter em, int t_L, double del = 0.)
+  inline Transition(EMCharacter em, int t_L, double del = 0.)
       : Transition(em, t_L, alt_character(em), t_L + 2, del){};
+
+  /**
+   * \brief Named constructor for E1 radiation
+   *
+   * \param del Multipole mixing ratio.
+   */
+  inline static Transition E1(double delta = 0.) {
+    return Transition(EMCharacter::electric, 2, delta);
+  }
+
+  /**
+   * \brief Named constructor for M1 radiation
+   *
+   * \param del Multipole mixing ratio.
+   */
+  inline static Transition M1(double delta = 0.) {
+    return Transition(EMCharacter::magnetic, 2, delta);
+  }
+
+  /**
+   * \brief Named constructor for E2 radiation
+   *
+   * \param del Multipole mixing ratio.
+   */
+  inline static Transition E2(double delta = 0.) {
+    return Transition(EMCharacter::electric, 4, delta);
+  }
+
+  /**
+   * \brief Named constructor for M2 radiation
+   *
+   * \param del Multipole mixing ratio.
+   */
+  inline static Transition M2(double delta = 0.) {
+    return Transition(EMCharacter::magnetic, 4, delta);
+  }
 
   /**
    * \brief String representation of EM characters.
