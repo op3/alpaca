@@ -19,19 +19,21 @@
 
 #include <cassert>
 
-#include "TestUtilities.hh"
+#include "alpaca/TestUtilities.hh"
 
-int main(){
+using namespace alpaca;
 
-    bool error_thrown = false;
+int main() {
 
-    test_numerical_equality<double>(1.000, 1.001, 1e-3);
+  bool error_thrown = false;
 
-    try{
-        test_numerical_equality<double>(1.000, 1.001, 1e-4);
-    } catch(const runtime_error &e){
-        error_thrown = true;
-    }
+  test_numerical_equality<double>(1.000, 1.001, 1e-3);
 
-    assert(error_thrown);
+  try {
+    test_numerical_equality<double>(1.000, 1.001, 1e-4);
+  } catch (const runtime_error &e) {
+    error_thrown = true;
+  }
+
+  assert(error_thrown);
 }

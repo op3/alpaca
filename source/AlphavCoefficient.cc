@@ -26,7 +26,7 @@ using std::stringstream;
 namespace alpaca {
 
 string AlphavCoefficient::string_representation(
-    const unsigned int n_digits, const vector<string> variable_names) const {
+    const int n_digits, const vector<string> variable_names) const {
 
   string multipole_mixing_ratio_variable =
       variable_names.size() ? variable_names[0] : "\\delta";

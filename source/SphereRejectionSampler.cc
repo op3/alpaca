@@ -25,7 +25,6 @@
 
 using std::accumulate;
 using std::array;
-using std::get;
 using std::vector;
 
 #include "alpaca/SphereRejectionSampler.hh"

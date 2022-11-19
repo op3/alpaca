@@ -20,10 +20,11 @@
 #include <cmath>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sf.h>
+#include <string>
+
+using std::to_string;
 
 #include "alpaca/W_pol_dir.hh"
-
-using std::min;
 
 namespace alpaca {
 
@@ -41,13 +42,13 @@ double W_pol_dir::operator()(const double theta, const double phi) const {
 
   double sum_over_nu{0.};
 
-  for (int i = 1; i <= nu_max / 2; ++i) {
+  for (size_t i = 1; i <= nu_max / 2; ++i) {
     sum_over_nu += expansion_coefficients[i - 1] *
-                   gsl_sf_legendre_Plm(2 * i, 2, cos(theta));
+                   gsl_sf_legendre_Plm(static_cast<int>(2 * i), 2, cos(theta));
   }
 
   int polarization_sign = 1;
-  if (cascade_steps[0].first.em_charp == magnetic) {
+  if (cascade_steps[0].first.em_charp == EMCharacter::magnetic) {
     polarization_sign = -1;
   }
 
@@ -61,10 +62,11 @@ double W_pol_dir::get_upper_limit() const {
 
   double associated_Legendre_upper_limit_factor = 4. * pow(M_1_PI, 0.75);
 
-  for (int i = 1; i <= nu_max / 2; ++i) {
+  for (size_t i = 1; i <= nu_max / 2; ++i) {
     upper_limit += fabs(expansion_coefficients[i - 1]) *
                    associated_Legendre_upper_limit_factor *
-                   sqrt(gsl_sf_fact(2 * i + 2) / gsl_sf_fact(2 * i - 2));
+                   sqrt(gsl_sf_fact(static_cast<unsigned int>(2 * i + 2)) /
+                        gsl_sf_fact(static_cast<unsigned int>(2 * i - 2)));
   }
 
   return w_dir_dir.get_upper_limit() +
@@ -112,7 +114,7 @@ vector<double> W_pol_dir::calculate_expansion_coefficients_alphav_Av() {
   return exp_coef;
 }
 
-string W_pol_dir::string_representation(const unsigned int n_digits,
+string W_pol_dir::string_representation(const int n_digits,
                                         vector<string> variable_names) const {
 
   const string polar_angle_variable =
@@ -133,11 +135,12 @@ string W_pol_dir::string_representation(const unsigned int n_digits,
 
   string str_rep =
       w_dir_dir.string_representation(n_digits, variable_names) + "\\\\";
-  str_rep += cascade_steps[0].first.em_charp == magnetic ? "+" : "-";
+  str_rep +=
+      cascade_steps[0].first.em_charp == EMCharacter::magnetic ? "+" : "-";
   str_rep += "\\cos\\left(2" + azimuthal_angle_variable +
              "\\right)\\left\\{\\right.\\\\";
 
-  for (int i = 1; i <= nu_max / 2; ++i) {
+  for (size_t i = 1; i <= nu_max / 2; ++i) {
     if (i > 1) {
       str_rep += "+";
     }
@@ -169,4 +172,4 @@ string W_pol_dir::string_representation(const unsigned int n_digits,
   return str_rep;
 }
 
-}
+} // namespace alpaca

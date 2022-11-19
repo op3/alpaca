@@ -22,17 +22,14 @@
 #include <stdexcept>
 #include <string>
 
-using std::invalid_argument;
-using std::runtime_error;
 using std::string;
-using std::to_string;
 
 namespace alpaca {
 
 /**
  * \brief Enum for the possible values of the parity quantum number.
  */
-enum Parity : short { negative = -1, positive = 1, parity_unknown = 0 };
+enum class Parity : short { negative = -1, positive = 1, unknown = 0 };
 
 /**
  * \brief Struct to store properties of a nuclear state.
@@ -54,8 +51,8 @@ struct State {
    *
    * \throw std::invalid_argument if two_J is invalid
    */
-  State(const int t_J)
-      : two_J(check_two_J(t_J)), parity(parity_unknown),
+  explicit State(const int t_J)
+      : two_J(check_two_J(t_J)), parity(Parity::unknown),
         excitation_energy(0.){};
   /**
    * \brief Constructor which does not require energy information
@@ -67,7 +64,7 @@ struct State {
    *
    * \throw std::invalid_argument if two_J is invalid
    */
-  State(const int t_J, const Parity p)
+  explicit State(const int t_J, const Parity p)
       : two_J(check_two_J(t_J)), parity(p), excitation_energy(0.){};
   /**
    * \brief Constructor which does not require parity information
@@ -94,7 +91,7 @@ struct State {
    * \throw std::invalid_argument if two_J is invalid
    */
   State(const int t_J, const double e_x)
-      : two_J(check_two_J(t_J)), parity(parity_unknown),
+      : two_J(check_two_J(t_J)), parity(Parity::unknown),
         excitation_energy(check_excitation_energy(e_x)){};
 
   int two_J; /**< Two times the angular momentum quantum number in units of the
@@ -106,23 +103,18 @@ struct State {
   /**
    * \brief String representation of parities.
    *
-   * \param parity Parity
-   *
    * \return "+" or "-"
    *
    * \throw runtime_error if parity is neither negative (-1) or positive (1).
    */
-  string parity_str_rep(const Parity parity) const;
+  string parity_str_rep() const;
 
   /**
    * \brief String representation of angular momentum quantum numbers.
    *
-   * \param two_J Two times the angular momentum quantum number in units of the
-   * reduced Planck constant.
-   *
    * \return String representation
    */
-  string spin_str_rep(const int two_J) const;
+  string spin_str_rep() const;
 
   /**
    * \brief String representation of a State.
@@ -147,7 +139,7 @@ struct State {
    *
    * \throw std::invalid_argument if two_J is invalid
    */
-  int check_two_J(const int two_J) const;
+  static int check_two_J(const int two_J);
 
   /**
    * \brief Ensure that given excitation energy is valid.
@@ -158,7 +150,7 @@ struct State {
    *
    * \throw std::invalid_argument if e_x is invalid.
    */
-  double check_excitation_energy(const double e_x) const;
+  static double check_excitation_energy(const double e_x);
 };
 
 } // namespace alpaca

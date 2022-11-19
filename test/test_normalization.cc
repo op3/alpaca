@@ -19,114 +19,130 @@
 
 #include <gsl/gsl_math.h>
 
-#include "SphereIntegrator.hh"
-#include "TestUtilities.hh"
-#include "W_dir_dir.hh"
-#include "W_pol_dir.hh"
+#include "alpaca/SphereIntegrator.hh"
+#include "alpaca/TestUtilities.hh"
+#include "alpaca/W_dir_dir.hh"
+#include "alpaca/W_pol_dir.hh"
+
+using namespace alpaca;
 
 /**
  * \brief Test the normalization of the angular correlation functions.
- * 
+ *
  * An integral over the entire solid angle should evaluate to \f$4 \pi\f$.
- * 
- * Test some randomly selected direction-direction and polarization-direction correlations
- * for this property using the SphereIntegrator class.
- * 
- * The method of passing the correlation functions to the SphereIntegrator is quite inefficient,
- * since it creates a new function object every time the function is called.
- * This way, no use can be made of precalculated coefficients.
+ *
+ * Test some randomly selected direction-direction and polarization-direction
+ * correlations for this property using the SphereIntegrator class.
+ *
+ * The method of passing the correlation functions to the SphereIntegrator is
+ * quite inefficient, since it creates a new function object every time the
+ * function is called. This way, no use can be made of precalculated
+ * coefficients.
  */
-int main(){
+int main() {
 
-    SphereIntegrator sph_int;
+  SphereIntegrator sph_int;
 
-    const double normalization = 4.*M_PI;
+  const double normalization = 4. * M_PI;
 
-    const unsigned int n = 10000;
+  const unsigned int n = 10000;
 
-    // Test direction-direction correlation with pure transition
-    // double integral_num = sph_int([](double theta, double phi){ 
-    double integral_num = sph_int([](double theta, [[maybe_unused]] double phi){ 
-        
+  // Test direction-direction correlation with pure transition
+  // double integral_num = sph_int([](double theta, double phi){
+  double integral_num = sph_int(
+      [](double theta, [[maybe_unused]] double phi) {
         W_dir_dir w_dir_dir(
-            State(0, parity_unknown),
-            {
-                {Transition(em_unknown, 2, em_unknown, 4, 0.), State(2, parity_unknown)},
-                {Transition(em_unknown, 2, em_unknown, 4, 0.), State(4, parity_unknown)}
-            }
-        );        
+            State(0, Parity::unknown),
+            {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
+              State(2, Parity::unknown)},
+             {Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
+              State(4, Parity::unknown)}});
         return w_dir_dir(theta);
+      },
+      n,
+      []([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
+        return true;
+      });
 
-    }, n, []([[maybe_unused]] double theta, [[maybe_unused]] double phi){ return true ; });
+  test_numerical_equality<double>(integral_num, normalization, 1e-3);
 
-    test_numerical_equality<double>(integral_num, normalization, 1e-3);
-
-    // Test direction-direction correlation with mixed transition
-    integral_num = sph_int([](double theta, [[maybe_unused]] double phi){ 
-        
+  // Test direction-direction correlation with mixed transition
+  integral_num = sph_int(
+      [](double theta, [[maybe_unused]] double phi) {
         W_dir_dir w_dir_dir(
-            State(0, parity_unknown),
-            {
-                {Transition(em_unknown, 2, em_unknown, 4, 0.), State(2, parity_unknown)},
-                {Transition(em_unknown, 2, em_unknown, 4, 2.),
-                State(4, parity_unknown)}
-            }
-        );        
+            State(0, Parity::unknown),
+            {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
+              State(2, Parity::unknown)},
+             {Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 2.),
+              State(4, Parity::unknown)}});
         return w_dir_dir(theta);
+      },
+      n,
+      []([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
+        return true;
+      });
 
-    }, n, []([[maybe_unused]] double theta, [[maybe_unused]] double phi){ return true ; });
+  test_numerical_equality<double>(integral_num, normalization, 1e-3);
 
-    test_numerical_equality<double>(integral_num, normalization, 1e-3);
-
-    // Test direction-direction correlation with mixed unobserved transition
-    integral_num = sph_int([](double theta, [[maybe_unused]] double phi){ 
-        
+  // Test direction-direction correlation with mixed unobserved transition
+  integral_num = sph_int(
+      [](double theta, [[maybe_unused]] double phi) {
         W_dir_dir w_dir_dir(
-            State(0, parity_unknown),
-            {
-                {Transition(em_unknown, 2, em_unknown, 4, 0.), State(2, parity_unknown)},
-                {Transition(em_unknown, 2, em_unknown, 4, 2.), State(2, parity_unknown)},
-                {Transition(em_unknown, 2, em_unknown, 4, 0.),
-                State(4, parity_unknown)}
-            }
-        );        
+            State(0, Parity::unknown),
+            {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
+              State(2, Parity::unknown)},
+             {Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 2.),
+              State(2, Parity::unknown)},
+             {Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
+              State(4, Parity::unknown)}});
         return w_dir_dir(theta);
+      },
+      n,
+      []([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
+        return true;
+      });
 
-    }, n, []([[maybe_unused]] double theta, [[maybe_unused]] double phi){ return true ; });
+  test_numerical_equality<double>(integral_num, normalization, 1e-3);
 
-    test_numerical_equality<double>(integral_num, normalization, 1e-3);
-
-    // Test polarization-direction correlation with mixed transition
-    integral_num = sph_int([](double theta, double phi){ 
-
-        W_pol_dir w_pol_dir(
-            State(3, positive),
-            {
-                {Transition(magnetic, 6, electric, 8, 2.), State(9, positive)},
-                {Transition(magnetic, 2, electric, 4, -2.), State(7, positive)}
-            }
-        );        
+  // Test polarization-direction correlation with mixed transition
+  integral_num = sph_int(
+      [](double theta, double phi) {
+        W_pol_dir w_pol_dir(State(3, Parity::positive),
+                            {{Transition(EMCharacter::magnetic, 6,
+                                         EMCharacter::electric, 8, 2.),
+                              State(9, Parity::positive)},
+                             {Transition(EMCharacter::magnetic, 2,
+                                         EMCharacter::electric, 4, -2.),
+                              State(7, Parity::positive)}});
         return w_pol_dir(theta, phi);
+      },
+      n,
+      []([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
+        return true;
+      });
 
-    }, n, []([[maybe_unused]] double theta, [[maybe_unused]] double phi){ return true ; });
+  test_numerical_equality<double>(integral_num, normalization, 1e-3);
 
-    test_numerical_equality<double>(integral_num, normalization, 1e-3);
-
-    // Test polarization-direction correlation with mixed unobserved transition
-    integral_num = sph_int([](double theta, double phi){ 
-
-        W_pol_dir w_pol_dir(
-            State(3, positive),
-            {
-                {Transition(magnetic, 6, electric, 8, 0.), State(9, positive)},
-                {Transition(magnetic, 2, electric, 4, 2.), State(7, positive)},
-                {Transition(magnetic, 2, electric, 4, 0.), State(7, positive)}
-            }
-        );
+  // Test polarization-direction correlation with mixed unobserved transition
+  integral_num = sph_int(
+      [](double theta, double phi) {
+        W_pol_dir w_pol_dir(State(3, Parity::positive),
+                            {{Transition(EMCharacter::magnetic, 6,
+                                         EMCharacter::electric, 8, 0.),
+                              State(9, Parity::positive)},
+                             {Transition(EMCharacter::magnetic, 2,
+                                         EMCharacter::electric, 4, 2.),
+                              State(7, Parity::positive)},
+                             {Transition(EMCharacter::magnetic, 2,
+                                         EMCharacter::electric, 4, 0.),
+                              State(7, Parity::positive)}});
 
         return w_pol_dir(theta, phi);
+      },
+      n,
+      []([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
+        return true;
+      });
 
-    }, n, []([[maybe_unused]] double theta, [[maybe_unused]] double phi){ return true ; });
-
-    test_numerical_equality<double>(integral_num, normalization, 1e-3);
+  test_numerical_equality<double>(integral_num, normalization, 1e-3);
 }

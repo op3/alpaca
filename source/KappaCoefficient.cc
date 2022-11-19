@@ -18,9 +18,9 @@
 */
 
 #include <cmath>
+#include <gsl/gsl_sf.h>
 #include <stdexcept>
 #include <string>
-#include <gsl/gsl_sf.h>
 
 using std::invalid_argument;
 using std::to_string;
@@ -30,17 +30,17 @@ using std::to_string;
 
 namespace alpaca {
 
-KappaCoefficient::KappaCoefficient(const int two_nu, const int two_L,
-                                   const int two_Lp)
-    : two_nu(two_nu), two_L(two_L), two_Lp(two_Lp), value(0.) {
+KappaCoefficient::KappaCoefficient(const int a_two_nu, const int a_two_L,
+                                   const int a_two_Lp)
+    : two_nu(a_two_nu), two_L(a_two_L), two_Lp(a_two_Lp), value(0.) {
 
-  const int nu = two_nu / 2;
+  const int nu = a_two_nu / 2;
   if (nu < 2) {
     throw invalid_argument("nu must be an integer larger than 1.");
   }
 
   // Avoid division by zero.
-  if (!fulfils_triangle_inequality<int>(two_L, two_Lp, two_nu)) {
+  if (!fulfils_triangle_inequality<int>(a_two_L, a_two_Lp, a_two_nu)) {
     value = 0.;
   } else {
 
@@ -60,15 +60,17 @@ KappaCoefficient::KappaCoefficient(const int two_nu, const int two_L,
        can be used. Note, however, that \f$M\f$ changes its sign when going from
        the CG coefficient to the Wigner-3j symbol.
     */
-    value = -sqrt((double)gsl_sf_fact(nu - 2) / (double)gsl_sf_fact(nu + 2)) *
-            gsl_sf_coupling_3j(two_L, two_Lp, two_nu, 2, 2, -4) /
-            gsl_sf_coupling_3j(two_L, two_Lp, two_nu, 2, -2, 0);
+    value = -sqrt(static_cast<double>(
+                      gsl_sf_fact(static_cast<unsigned int>(nu - 2))) /
+                  static_cast<double>(
+                      gsl_sf_fact(static_cast<unsigned int>(nu + 2)))) *
+            gsl_sf_coupling_3j(a_two_L, a_two_Lp, a_two_nu, 2, 2, -4) /
+            gsl_sf_coupling_3j(a_two_L, a_two_Lp, a_two_nu, 2, -2, 0);
   }
 }
 
 string KappaCoefficient::string_representation(
-    const unsigned int n_digits,
-    [[maybe_unused]] vector<string> variable_names) const {
+    const int n_digits, [[maybe_unused]] vector<string> variable_names) const {
   if (n_digits) {
     return float_string_representation(n_digits, value);
   }
@@ -76,4 +78,4 @@ string KappaCoefficient::string_representation(
          to_string(two_L / 2) + "," + to_string(two_Lp / 2) + "\\right)";
 }
 
-}
+} // namespace alpaca

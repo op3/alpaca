@@ -114,8 +114,8 @@ public:
    * Starting from the exact expression
    *
    * \f[
-   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[
-   * 0, 2\pi \right]} | W \left( \theta, \varphi \right) | \f] \f[ =
+   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in
+   * \left[ 0, 2\pi \right]} | W \left( \theta, \varphi \right) | \f] \f[ =
    * \mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[ 0, 2\pi
    * \right]} | \sum_\nu A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left(
    * L_2, L_2^\prime, j_3, j_2 \right)  P_\nu \left[ \cos \left( \theta \right)
@@ -128,16 +128,16 @@ public:
    * obtains:
    *
    * \f[
-   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[
-   * 0, 2\pi \right]} | W \left( \theta, \varphi \right) | \f] \f[ \leq \sum_\nu
-   * | A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left( L_2, L_2^\prime,
-   * j_3, j_2 \right) | \mathrm{max}_{\theta \in \left[ 0, \pi \right]} P_\nu
-   * \left[ \cos \left( \theta \right) \right] + \lbrace \mathrm{max}_{\varphi
-   * \in \left[ 0, 2\pi \right]} \cos \left( 2 \varphi \right) \rbrace \sum_\nu
-   * | \kappa_\nu \left( L_1, L_1^\prime \right) A_v \left( L_1, L_1^\prime,
-   * j_1, j_2 \right) A_v \left( L_2, L_2^\prime, j_3, j_2 \right)|
-   * \mathrm{max}_{\theta \in \left[ 0, \pi \right]} | P_\nu^{\left( 2 \right)}
-   * \left[ \cos \left( \theta \right) \right] |. \f]
+   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in
+   * \left[ 0, 2\pi \right]} | W \left( \theta, \varphi \right) | \f] \f[ \leq
+   * \sum_\nu | A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left( L_2,
+   * L_2^\prime, j_3, j_2 \right) | \mathrm{max}_{\theta \in \left[ 0, \pi
+   * \right]} P_\nu \left[ \cos \left( \theta \right) \right] + \lbrace
+   * \mathrm{max}_{\varphi \in \left[ 0, 2\pi \right]} \cos \left( 2 \varphi
+   * \right) \rbrace \sum_\nu | \kappa_\nu \left( L_1, L_1^\prime \right) A_v
+   * \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left( L_2, L_2^\prime, j_3,
+   * j_2 \right)| \mathrm{max}_{\theta \in \left[ 0, \pi \right]} |
+   * P_\nu^{\left( 2 \right)} \left[ \cos \left( \theta \right) \right] |. \f]
    *
    * The maximum absolute value of a cosine function of a real scalar is 1.
    * For the associated Legendre Polynomial \f$P_\nu^{\left( 2 \right)}\f$, an
@@ -171,7 +171,7 @@ public:
   double get_upper_limit() const override;
 
   string string_representation(
-      const unsigned int n_digits = 0,
+      const int n_digits = 0,
       const vector<string> variable_names = {}) const override;
 
 protected:

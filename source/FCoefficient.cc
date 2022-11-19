@@ -28,12 +28,13 @@ using std::to_string;
 
 namespace alpaca {
 
-FCoefficient::FCoefficient(const int two_nu, const int two_L, const int two_Lp,
-                           const int two_j1, const int two_j)
-    : two_nu(two_nu), two_L(two_L), two_Lp(two_Lp), two_j1(two_j1),
-      two_j(two_j), value(0.) {
+FCoefficient::FCoefficient(const int a_two_nu, const int a_two_L,
+                           const int a_two_Lp, const int a_two_j1,
+                           const int a_two_j)
+    : two_nu(a_two_nu), two_L(a_two_L), two_Lp(a_two_Lp), two_j1(a_two_j1),
+      two_j(a_two_j), value(0.) {
 
-  double wigner3j{gsl_sf_coupling_3j(two_L, two_Lp, two_nu, 2, -2, 0)};
+  double wigner3j{gsl_sf_coupling_3j(a_two_L, a_two_Lp, a_two_nu, 2, -2, 0)};
 
   double wigner6j;
 
@@ -42,15 +43,17 @@ FCoefficient::FCoefficient(const int two_nu, const int two_L, const int two_Lp,
     value = 0.;
   } else {
 
-    wigner6j = gsl_sf_coupling_6j(two_j, two_j, two_nu, two_Lp, two_L, two_j1);
+    wigner6j = gsl_sf_coupling_6j(a_two_j, a_two_j, a_two_nu, a_two_Lp, a_two_L,
+                                  a_two_j1);
 
     // Another shortcut
     if (wigner6j == 0.) {
       value = 0.;
     } else {
 
-      value = pow(-1, (two_j1 + two_j) / 2 - 1) *
-              sqrt((two_L + 1) * (two_Lp + 1) * (two_j + 1) * (two_nu + 1)) *
+      value = pow(-1, (a_two_j1 + a_two_j) / 2 - 1) *
+              sqrt((a_two_L + 1) * (a_two_Lp + 1) * (a_two_j + 1) *
+                   (a_two_nu + 1)) *
               wigner3j * wigner6j;
     }
   }
@@ -76,10 +79,7 @@ bool FCoefficient::cg_is_nonzero(const int two_j1, const int two_j2,
     return false;
 
   // Triangle inequality for coupling.
-  if (!fulfils_triangle_inequality<int>(two_j1, two_j2, two_J))
-    return false;
-
-  return true;
+  return fulfils_triangle_inequality<int>(two_j1, two_j2, two_J);
 }
 
 bool FCoefficient::racah_is_nonzero(const int two_j1, const int two_j2,
@@ -97,8 +97,7 @@ bool FCoefficient::racah_is_nonzero(const int two_j1, const int two_j2,
 }
 
 string FCoefficient::string_representation(
-    const unsigned int n_digits,
-    [[maybe_unused]] vector<string> variable_names) const {
+    const int n_digits, [[maybe_unused]] vector<string> variable_names) const {
   if (n_digits) {
     return float_string_representation(n_digits, value);
   }

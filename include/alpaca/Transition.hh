@@ -24,7 +24,6 @@
 
 #include "alpaca/State.hh"
 
-using std::invalid_argument;
 using std::runtime_error;
 using std::string;
 
@@ -33,7 +32,11 @@ namespace alpaca {
 /**
  * \brief Enum for the possible values of the electromagnetic (EM) character.
  */
-enum EMCharacter : short { electric = -1, magnetic = 1, em_unknown = 0 };
+enum class EMCharacter : short { electric = -1, magnetic = 1, unknown = 0 };
+
+constexpr EMCharacter alt_character(EMCharacter em) {
+  return static_cast<EMCharacter>(-static_cast<short>(em));
+}
 
 /**
  * \brief Struct to store properties of an EM transition between nuclear states.
@@ -43,20 +46,6 @@ enum EMCharacter : short { electric = -1, magnetic = 1, em_unknown = 0 };
  * ratio.
  */
 struct Transition {
-  /**
-   * \brief Constructor which does not take information about the EM character
-   *
-   * The EM characters are initialized as unknown.
-   *
-   * \param t_L Two times the multipolarity.
-   * \param t_Lp Two times the alternative multipolarity.
-   * Must be different from t_L.
-   * \param del Multipole mixing ratio.
-   *
-   * \throw invalid_argument if an invalid value for \f$2 L\f$ or \f$2
-   * L^\prime\f$ was given, or if the two are equal.
-   */
-  Transition(const int t_L, const int t_Lp, const double del = 0.);
   /**
    * \brief Constructor
    *
@@ -74,6 +63,44 @@ struct Transition {
              const int t_Lp, const double del);
 
   /**
+   * \brief Constructor which does not take information about the EM character
+   *
+   * The EM characters are initialized as unknown.
+   *
+   * \param t_L Two times the multipolarity.
+   * \param t_Lp Two times the alternative multipolarity.
+   * Must be different from t_L.
+   * \param del Multipole mixing ratio.
+   *
+   * \throw invalid_argument if an invalid value for \f$2 L\f$ or \f$2
+   * L^\prime\f$ was given, or if the two are equal.
+   */
+  Transition(const int t_L, const int t_Lp, const double del = 0.);
+
+  /**
+   * \brief Constructor which automatically assigns second transition and does
+   * not take information about the EM character
+   *
+   * The EM characters are initialized as unknown.
+   *
+   * \param t_L Two times the multipolarity. The second transition corresponds
+   * to the next multipolarity order. \param del Multipole mixing ratio.
+   */
+  Transition(int t_L, double del = 0.) : Transition(t_L, t_L + 2, del){};
+
+  /**
+   * \brief Constructor which automatically assigns second transition
+   *
+   * \param em Primary EM character. The secondary EM character is assigned
+   * automatically.
+   * \param t_L Two times the multipolarity. The second
+   * transition corresponds to the next multipolarity order. \param del
+   * Multipole mixing ratio.
+   */
+  Transition(EMCharacter em, int t_L, double del = 0.)
+      : Transition(em, t_L, alt_character(em), t_L + 2, del){};
+
+  /**
    * \brief String representation of EM characters.
    *
    * \param em \f$\lambda\f$, EM character
@@ -84,10 +111,10 @@ struct Transition {
    */
   static string em_str_rep(const EMCharacter em) {
 
-    if (em == electric) {
+    if (em == EMCharacter::electric) {
       return "E";
     }
-    if (em == magnetic) {
+    if (em == EMCharacter::magnetic) {
       return "M";
     }
 
@@ -127,7 +154,7 @@ struct Transition {
    *
    * \throw std::invalid_argument if two_L is invalid
    */
-  int check_two_L(const int two_L) const;
+  static int check_two_L(const int two_L);
 };
 
 } // namespace alpaca

@@ -21,8 +21,8 @@
 
 #include <gsl/gsl_sf.h>
 
-#include "alpca/FCoefficient.hh"
-#include "alpca/Transition.hh"
+#include "alpaca/FCoefficient.hh"
+#include "alpaca/Transition.hh"
 
 namespace alpaca {
 
@@ -76,15 +76,17 @@ public:
    * final state of a transition \param two_j Angular momentum quantum number
    * \f$2 j\f$ of the intermediate state of a transition
    */
-  EvCoefficient(const int two_nu, const EMCharacter em, const int two_L,
-                const EMCharacter emp, const int two_Lp, const int two_jn,
-                const int two_j)
-      : two_nu(two_nu), em(em), two_L(two_L), emp(emp), two_Lp(two_Lp),
-        two_jn(two_jn), two_j(two_j), sign_sigma_L_n((em == magnetic) ? -1 : 1),
-        sign_sigma_Lp_n((emp == magnetic) ? -1 : 1),
-        constant_f_coefficient(two_nu, two_L, two_L, two_jn, two_j),
-        linear_f_coefficient(two_nu, two_L, two_Lp, two_jn, two_j),
-        quadratic_f_coefficient(two_nu, two_Lp, two_Lp, two_jn, two_j) {}
+  EvCoefficient(const int a_two_nu, const EMCharacter a_em, const int a_two_L,
+                const EMCharacter a_emp, const int a_two_Lp, const int a_two_jn,
+                const int a_two_j)
+      : two_nu(a_two_nu), em(a_em), two_L(a_two_L), emp(a_emp),
+        two_Lp(a_two_Lp), two_jn(a_two_jn), two_j(a_two_j),
+        sign_sigma_L_n((a_em == EMCharacter::magnetic) ? -1 : 1),
+        sign_sigma_Lp_n((a_emp == EMCharacter::magnetic) ? -1 : 1),
+        constant_f_coefficient(a_two_nu, a_two_L, a_two_L, a_two_jn, a_two_j),
+        linear_f_coefficient(a_two_nu, a_two_L, a_two_Lp, a_two_jn, a_two_j),
+        quadratic_f_coefficient(a_two_nu, a_two_Lp, a_two_Lp, a_two_jn,
+                                a_two_j) {}
 
   /**
    * \brief Return value of a specific \f$E_\nu\f$ coefficient.

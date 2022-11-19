@@ -18,6 +18,7 @@
 */
 
 #include <cmath>
+#include <numbers>
 #include <sstream>
 #include <stdexcept>
 
@@ -32,6 +33,8 @@ using std::stringstream;
 
 namespace alpaca {
 
+constexpr auto pi = std::numbers::pi;
+
 array<vector<double>, 2>
 SpherePointSampler::sample(const unsigned int n) const {
   array<vector<double>, 2> theta_phi = {vector<double>(n, 0.),
@@ -39,7 +42,7 @@ SpherePointSampler::sample(const unsigned int n) const {
 
   const double c = find_c(n);
 
-  for (size_t j = 1; j <= n; ++j) {
+  for (unsigned int j = 1; j <= n; ++j) {
     theta_phi[0][j] = find_Theta_j(j, n, c);
     theta_phi[1][j] = c * theta_phi[0][j];
   }
@@ -93,7 +96,7 @@ double SpherePointSampler::elliptic_integral_2nd_kind_arbitrary_m(
   const double kappa_squared = kappa * kappa;
   // phi == pi/2 corresponds to the complete elliptic integral
   // This is both a shortcut and an insurance against numerical instabilities.
-  if (phi == M_PI_2) {
+  if (phi == 0.5 * pi) {
     return gsl_sf_ellint_Ecomp(kappa, GSL_PREC_DOUBLE) / kappa_prime;
   }
 
@@ -146,20 +149,20 @@ double SpherePointSampler::elliptic_integral_2nd_kind_arbitrary_m(
 
 double SpherePointSampler::segment_length(const double Theta,
                                           const double c) const {
-  if (Theta >= 0 && Theta <= M_PI_2) {
+  if (Theta >= 0 && Theta <= 0. * std::numbers::pi) {
     return elliptic_integral_2nd_kind_arbitrary_m(Theta, -c * c);
   }
 
   const double negative_c_squared = -c * c;
-  return 2. * elliptic_integral_2nd_kind_arbitrary_m(M_PI_2,
+  return 2. * elliptic_integral_2nd_kind_arbitrary_m(0.5 * std::numbers::pi,
                                                      negative_c_squared) -
-         elliptic_integral_2nd_kind_arbitrary_m(M_PI - Theta,
+         elliptic_integral_2nd_kind_arbitrary_m(std::numbers::pi - Theta,
                                                 negative_c_squared);
 }
 
 double SpherePointSampler::segment_length_linear_interpolation(
     const double Theta, const double c, const unsigned int n_points) const {
-  const double theta_increment = Theta / ((double)n_points - 1.);
+  const double theta_increment = Theta / (static_cast<double>(n_points) - 1.);
   array<double, 3> x_i{0., 0., 1.};
   array<double, 3> x_i_plus_one{0., 0., 0.};
   double phi_i_plus_one{0.}, segment_increment_squared{0.}, segment_length{0.},
@@ -197,21 +200,21 @@ double SpherePointSampler::find_c(const unsigned int n, const double epsilon,
     throw invalid_argument("Number of points smaller than 2 requested.");
   }
 
+  const double n_times_pi = n * pi;
+
   // Initial guess from Ref. \cite Koay2011
-  const double c_0 = sqrt(n * M_PI);
+  const double c_0 = sqrt(n_times_pi);
   double c_j = c_0;
   double c_j_plus_one = 0.;
   double negative_c_j_squared = 0;
   double complete_elliptic_integral_1st{0.}, complete_elliptic_integral_2nd{0.};
 
-  const double n_times_pi = n * M_PI;
-
   for (unsigned int i = 0; i < max_n_iterations; ++i) {
     negative_c_j_squared = -c_j * c_j;
     complete_elliptic_integral_1st =
-        elliptic_integral_1st_kind_arbitrary_m(M_PI_2, negative_c_j_squared);
+        elliptic_integral_1st_kind_arbitrary_m(0.5 * pi, negative_c_j_squared);
     complete_elliptic_integral_2nd =
-        elliptic_integral_2nd_kind_arbitrary_m(M_PI_2, negative_c_j_squared);
+        elliptic_integral_2nd_kind_arbitrary_m(0.5 * pi, negative_c_j_squared);
 
     c_j_plus_one =
         (c_j * n_times_pi *
@@ -251,15 +254,16 @@ SpherePointSampler::find_Theta_j(const unsigned int j, const unsigned int n,
 
   // Initial guess from Ref. \cite Koay2011
   // Note that j is fixed here, and the iteration index is denoted as l
-  const double Theta_j_0 = acos(1. - (2. * j - 1.) / (double)n);
+  const double Theta_j_0 = acos(1. - (2. * j - 1.) / static_cast<double>(n));
   double Theta_j_l = Theta_j_0;
-  const double epsilon_segment = epsilon * segment_length(M_PI, c) / (double)n;
+  const double epsilon_segment =
+      epsilon * segment_length(pi, c) / static_cast<double>(n);
 
   double Theta_j_l_plus_one = 0.;
 
   for (unsigned int i = 0; i < max_n_iterations; ++i) {
     Theta_j_l_plus_one =
-        Theta_j_l + ((2. * j - 1.) * M_PI - c * segment_length(Theta_j_l, c)) /
+        Theta_j_l + ((2. * j - 1.) * pi - c * segment_length(Theta_j_l, c)) /
                         (c * sqrt(1. + c * c * pow(sin(Theta_j_l), 2)));
 
     if (fabs(Theta_j_l_plus_one - Theta_j_l) < epsilon_segment) {
@@ -294,7 +298,7 @@ double SpherePointSampler::elliptic_integral_1st_kind_arbitrary_m(
 
   // phi == pi/2 corresponds to the complete elliptic integral
   // This is both a shortcut and an insurance against numerical instabilities.
-  if (phi == M_PI_2) {
+  if (phi == 0.5 * pi) {
     return kappa_prime * gsl_sf_ellint_Kcomp(kappa, GSL_PREC_DOUBLE);
   }
 

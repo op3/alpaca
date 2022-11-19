@@ -39,10 +39,10 @@ CascadeRejectionSampler::CascadeRejectionSampler(
 
 CascadeRejectionSampler::CascadeRejectionSampler(
     vector<AngularCorrelation> &cascade, const int seed,
-    const array<double, 3> PhiThetaPsi, const bool return_first_direction,
+    const array<double, 3> a_PhiThetaPsi, const bool a_return_first_direction,
     const unsigned int max_tri)
-    : initial_direction_random(false), PhiThetaPsi(PhiThetaPsi),
-      return_first_direction(return_first_direction),
+    : initial_direction_random(false), PhiThetaPsi(a_PhiThetaPsi),
+      return_first_direction(a_return_first_direction),
       uniform_direction_sampler(
           []([[maybe_unused]] const double theta,
              [[maybe_unused]] const double phi) { return 1.; },

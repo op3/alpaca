@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include <vector>
 #include <utility>
+#include <vector>
 
-using std::vector;
 using std::pair;
+using std::vector;
 
 #include "alpaca/State.hh"
 #include "alpaca/StringRepresentable.hh"
@@ -66,7 +66,7 @@ public:
    * posession of a unique_ptr to one of the derived classes, not having this
    * destructor lead to memory leaks in the past.
    */
-  virtual ~W_gamma_gamma(){};
+  virtual ~W_gamma_gamma() = default;
 
   /**
    * \brief Call operator of the gamma-gamma angular correlation
@@ -94,8 +94,8 @@ public:
    * the maximum absolute value of \f$W \left( \theta, \varphi \right)\f$, i.e.:
    *
    * \f[
-   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[ 0,
-   * 2\pi \right]} | W \left( \theta, \varphi \right) |. \f]
+   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in
+   * \left[ 0, 2\pi \right]} | W \left( \theta, \varphi \right) |. \f]
    *
    * If a useful upper limit estimate exists for a given angular correlation,
    * this function will return it. If no useful upper limit exists, or the
@@ -126,7 +126,7 @@ public:
   }
 
   virtual string string_representation(
-      const unsigned int n_digits = 0,
+      const int n_digits = 0,
       const vector<string> variable_names = {}) const override = 0;
 
 protected:
@@ -143,8 +143,8 @@ protected:
   const size_t n_cascade_steps; /**< Number of transitions in the cascade. */
   int two_nu_max; /**< Maximum value of \f$2 \nu\f$ for which the coefficients
                      do not vanish */
-  int nu_max; /**< Maximum value of \f$\nu\f$ for which the coefficients do not
-                 vanish */
+  unsigned int nu_max; /**< Maximum value of \f$\nu\f$ for which the
+                 coefficients do not vanish */
 };
 
-}
+} // namespace alpaca

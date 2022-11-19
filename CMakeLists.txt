@@ -17,6 +17,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(alpaca VERSION 1.0.5)
 
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(GSL REQUIRED)
@@ -47,6 +48,7 @@ add_compile_options(
   -fPIC
   -Wall
   -Wextra
+  -Werror
   -Wshadow # warn if a variable declaration shadows one from a parent context
   -Wconversion # warn on type conversions that may lose data
   -Wpedantic # warn if non-standard C++ is used
@@ -56,7 +58,7 @@ add_compile_options(
   -Wcast-align # warn for potential performance problem casts
   -Wunused # warn on anything being unused
   -Woverloaded-virtual # warn if you overload (not override) a virtual function
-  -Wsign-conversion # warn on sign conversions
+  # -Wsign-conversion # warn on sign conversions
   -Wnull-dereference # warn if a null dereference is detected
   -Wdouble-promotion # warn if float is implicit promoted to double
   -Wformat=2 # warn on security issues around functions that format output (ie

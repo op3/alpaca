@@ -24,7 +24,6 @@
 #include <string>
 #include <vector>
 
-using std::setprecision;
 using std::string;
 using std::stringstream;
 using std::vector;
@@ -37,6 +36,8 @@ namespace alpaca {
 class StringRepresentable {
 
 public:
+  virtual ~StringRepresentable() = default;
+
   /**
    * \brief Return string representation of expression.
    *
@@ -52,11 +53,11 @@ public:
    * \return String representation.
    */
   virtual string
-  string_representation(const unsigned int n_digits = 0,
+  string_representation(const int n_digits = 0,
                         const vector<string> variable_names = {}) const = 0;
 
 protected:
-  string float_string_representation(const unsigned int n_digits,
+  string float_string_representation(const int n_digits,
                                      const double number) const {
     stringstream str_rep;
     if (number < 0.) {
@@ -69,4 +70,4 @@ protected:
   };
 };
 
-}
+} // namespace alpaca

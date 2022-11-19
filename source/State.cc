@@ -17,53 +17,56 @@
     Copyright (C) 2021 Udo Friman-Gayer
 */
 
+#include <stdexcept>
+#include <string>
+
 #include "alpaca/State.hh"
 
 namespace alpaca {
 
-string State::parity_str_rep(const Parity parity) const {
+string State::parity_str_rep() const {
 
-  if (parity == positive) {
+  if (parity == Parity::positive) {
     return "+";
   }
-  if (parity == negative) {
+  if (parity == Parity::negative) {
     return "-";
   }
 
-  throw runtime_error("No string representation for unknown parity.");
+  throw std::runtime_error("No string representation for unknown parity.");
 }
 
-string State::spin_str_rep(const int two_J) const {
+string State::spin_str_rep() const {
 
   if (two_J % 2 == 0) {
-    return to_string(two_J / 2);
+    return std::to_string(two_J / 2);
   }
 
-  return to_string(two_J) + "/2";
+  return std::to_string(two_J) + "/2";
 }
 
 string State::str_rep() const {
 
-  if (parity != parity_unknown) {
-    return spin_str_rep(two_J) + "^" + parity_str_rep(parity);
+  if (parity != Parity::unknown) {
+    return spin_str_rep() + "^" + parity_str_rep();
   }
 
-  return spin_str_rep(two_J);
+  return spin_str_rep();
 }
 
-int State::check_two_J(const int two_J) const {
+int State::check_two_J(const int two_J) {
 
   if (two_J < 0) {
-    throw invalid_argument("two_J must be a nonnegative integer.");
+    throw std::invalid_argument("two_J must be a nonnegative integer.");
   }
 
   return two_J;
 }
 
-double State::check_excitation_energy(const double e_x) const {
+double State::check_excitation_energy(const double e_x) {
 
   if (e_x < 0.) {
-    throw invalid_argument("Excitation energy must not be negative.");
+    throw std::invalid_argument("Excitation energy must not be negative.");
   }
 
   return e_x;

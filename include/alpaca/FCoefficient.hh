@@ -169,7 +169,7 @@ public:
 
   double get_value() const { return value; }
 
-  string string_representation([[maybe_unused]] const unsigned int n_digits = 0,
+  string string_representation([[maybe_unused]] const int n_digits = 0,
                                vector<string> variable_names = {}) const;
 
   /**

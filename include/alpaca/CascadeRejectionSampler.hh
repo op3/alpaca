@@ -20,14 +20,13 @@
 #pragma once
 
 #include <array>
-
-using std::array;
-
+#include <numbers>
 #include <vector>
 
-using std::vector;
-
 #include <gsl/gsl_math.h>
+
+using std::array;
+using std::vector;
 
 #include "alpaca/AngCorrRejectionSampler.hh"
 #include "alpaca/AngularCorrelation.hh"
@@ -252,12 +251,12 @@ public:
 
 protected:
   inline double phi_to_Psi(const double phi) const {
-    return M_PI_2 - phi;
+    return 0.5 * std::numbers::pi - phi;
   } /**< Conversion from the azimuthal angle \f$\varphi\f$ in spherical
        coordinates to the first Euler angle \f$\Psi\f$ in the x convention. See
        also the EulerAngleRotation class.*/
   inline double Psi_to_phi(const double Psi) const {
-    return M_PI_2 - Psi;
+    return 0.5 * std::numbers::pi - Psi;
   } /**< Conversion from the first Euler angle \f$\Psi\f$ in the x convention to
        the azimuthal angle \f$\varphi\f$ in spherical coordinates. See also the
        EulerAngleRotation class.*/

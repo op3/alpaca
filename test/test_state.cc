@@ -19,53 +19,54 @@
 
 #include <cassert>
 
-#include "State.hh"
+#include "alpaca/State.hh"
 
-int main(){
-    // Test IO of the State class.
+using namespace alpaca;
 
-    bool error_thrown = false;
+int main() {
+  // Test IO of the State class.
+
+  bool error_thrown = false;
+
+  {
     const State state(2);
 
     // Error: Unknown parities cannot be converted to string.
     // Usually, a user should never have to call this function.
-    try{
-        state.parity_str_rep(parity_unknown);
+    try {
+      state.parity_str_rep();
     } catch (const std::runtime_error &e) {
-        error_thrown = true;
+      error_thrown = true;
     }
+  }
 
-    assert(error_thrown);
-    error_thrown = false;
+  assert(error_thrown);
+  error_thrown = false;
 
-    // Error: Negative angular momentum quantum number.
-    try{
-        State state(-1);
+  // Error: Negative angular momentum quantum number.
+  {
+    try {
+      State state(-1);
     } catch (const std::invalid_argument &e) {
-        error_thrown = true;
+      error_thrown = true;
     }
+  }
 
-    assert(error_thrown);
-    error_thrown = false;
+  assert(error_thrown);
+  error_thrown = false;
 
-    // Unfortunately, the State class still allows this at the moment:
-    // A user may falsely assume that a half-integer spin is given by a floating-point number.
-    // In this case, alpaca will quietly convert the false argument to an integer, and the
-    // user will end up with a spin of 1 instead of the desired 3/2.
+  // Test alternative constructor that takes an excitation energy as the second
+  // argument.
 
-    State state_with_implicitly_converted_spin(1.5);
+  State state_initialized_with_spin_and_energy(1, 1.);
 
-    // Test alternative constructor that takes an excitation energy as the second argument.
-    
-    State state_initialized_with_spin_and_energy(1, 1.);
+  // Error: Negative excitation energy given.
+  try {
+    State state(1, -1.);
+  } catch (const std::invalid_argument &e) {
+    error_thrown = true;
+  }
 
-    // Error: Negative excitation energy given.
-    try{
-        State state(1, -1.);
-    } catch (const std::invalid_argument &e) {
-        error_thrown = true;
-    }
-
-    assert(error_thrown);
-    error_thrown = false;
+  assert(error_thrown);
+  error_thrown = false;
 }

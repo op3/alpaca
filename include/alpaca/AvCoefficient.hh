@@ -339,13 +339,14 @@ public:
    * final state of a transition \param two_j Angular momentum quantum number
    * \f$2 j\f$ of the intermediate state of a transition
    */
-  AvCoefficient(const int two_nu, const int two_L, const int two_Lp,
-                const int two_jn, const int two_j)
-      : two_nu(two_nu), two_L(two_L), two_Lp(two_Lp), two_jn(two_jn),
-        two_j(two_j),
-        constant_f_coefficient(two_nu, two_L, two_L, two_jn, two_j),
-        linear_f_coefficient(two_nu, two_L, two_Lp, two_jn, two_j),
-        quadratic_f_coefficient(two_nu, two_Lp, two_Lp, two_jn, two_j),
+  AvCoefficient(const int a_two_nu, const int a_two_L, const int a_two_Lp,
+                const int a_two_jn, const int a_two_j)
+      : two_nu(a_two_nu), two_L(a_two_L), two_Lp(a_two_Lp), two_jn(a_two_jn),
+        two_j(a_two_j),
+        constant_f_coefficient(a_two_nu, a_two_L, a_two_L, a_two_jn, a_two_j),
+        linear_f_coefficient(a_two_nu, a_two_L, a_two_Lp, a_two_jn, a_two_j),
+        quadratic_f_coefficient(a_two_nu, a_two_Lp, a_two_Lp, a_two_jn,
+                                a_two_j),
         constant_coefficient(constant_f_coefficient.get_value()),
         linear_coefficient(2. * linear_f_coefficient.get_value()),
         quadratic_coefficient(quadratic_f_coefficient.get_value()) {}
@@ -362,7 +363,7 @@ public:
            delta * delta * quadratic_coefficient;
   }
 
-  string string_representation(const unsigned int n_digits = 0,
+  string string_representation(const int n_digits = 0,
                                const vector<string> variable_names = {}) const;
 
 protected:

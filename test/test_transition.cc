@@ -19,63 +19,69 @@
 
 #include <cassert>
 
-#include "Transition.hh"
+#include "alpaca/Transition.hh"
 
-int main(){
-    // Test IO of the Transition class.
+using namespace alpaca;
+using std::invalid_argument;
 
-    bool error_thrown = false;
+int main() {
+  // Test IO of the Transition class.
 
-    // Error: Both multipolarities are the same.
-    // Test for both possible constructors.
-    try{
-        Transition transition(2, 2, 0.);
-    } catch (const invalid_argument &e){
-        error_thrown = true;
-    }
+  bool error_thrown = false;
 
-    assert(error_thrown);
-    error_thrown = false;
+  // Error: Both multipolarities are the same.
+  // Test for both possible constructors.
+  try {
+    Transition transition(2, 2, 0.);
+  } catch (const invalid_argument &e) {
+    error_thrown = true;
+  }
 
-    try{
-        Transition transition(electric, 2, magnetic, 2, 0.);
-    } catch (const invalid_argument &e){
-        error_thrown = true;
-    }
+  assert(error_thrown);
+  error_thrown = false;
 
-    assert(error_thrown);
-    error_thrown = false;
+  try {
+    Transition transition(EMCharacter::electric, 2, EMCharacter::magnetic, 2,
+                          0.);
+  } catch (const invalid_argument &e) {
+    error_thrown = true;
+  }
 
-    // Check multipolarity IO
+  assert(error_thrown);
+  error_thrown = false;
 
-    // Error: Multipolarity smaller than zero.
-    try{
-        Transition transition(electric, -2, magnetic, 2, 0.);
-    } catch (const invalid_argument &e){
-        error_thrown = true;
-    }
+  // Check multipolarity IO
 
-    assert(error_thrown);
-    error_thrown = false;
+  // Error: Multipolarity smaller than zero.
+  try {
+    Transition transition(EMCharacter::electric, -2, EMCharacter::magnetic, 2,
+                          0.);
+  } catch (const invalid_argument &e) {
+    error_thrown = true;
+  }
 
-    // Error: Multipolarity zero.
-    try{
-        Transition transition(electric, 0, magnetic, 2, 0.);
-    } catch (const invalid_argument &e){
-        error_thrown = true;
-    }
+  assert(error_thrown);
+  error_thrown = false;
 
-    assert(error_thrown);
-    error_thrown = false;
+  // Error: Multipolarity zero.
+  try {
+    Transition transition(EMCharacter::electric, 0, EMCharacter::magnetic, 2,
+                          0.);
+  } catch (const invalid_argument &e) {
+    error_thrown = true;
+  }
 
-    // Check string representation
+  assert(error_thrown);
+  error_thrown = false;
 
-    Transition transition(2, 4, 0.);
-    try{
-        transition.em_str_rep(em_unknown);
-    } catch(const runtime_error &e){
-        error_thrown = true;
-    }
+  // Check string representation
 
-    assert(error_thrown);
+  Transition transition(2, 4, 0.);
+  try {
+    transition.em_str_rep(EMCharacter::unknown);
+  } catch (const runtime_error &e) {
+    error_thrown = true;
+  }
+
+  assert(error_thrown);
 }

@@ -20,17 +20,14 @@
 #pragma once
 
 #include <functional>
-
-using std::function;
-
+#include <numbers>
 #include <random>
-
-using std::mt19937_64;
-using std::uniform_real_distribution;
-
 #include <utility>
 
+using std::function;
+using std::mt19937_64;
 using std::pair;
+using std::uniform_real_distribution;
 
 #include "alpaca/EulerAngleRotation.hh"
 
@@ -111,6 +108,8 @@ namespace alpaca {
 class SphereRejectionSampler {
 
 public:
+  virtual ~SphereRejectionSampler() = default;
+
   /**
    * \brief Constructor
    *
@@ -127,7 +126,8 @@ public:
                          const unsigned int max_tri = 1000)
       : distribution(dis), distribution_maximum(dis_max), max_tries(max_tri),
         random_engine(seed), uniform_random_val(0., distribution_maximum),
-        uniform_random_unit(-1., 1.), uniform_random_phi(0., 2. * M_PI),
+        uniform_random_unit(-1., 1.),
+        uniform_random_phi(0., 2. * std::numbers::pi),
         euler_angle_rotation(EulerAngleRotation()) {}
 
   /**

@@ -19,15 +19,21 @@
 
 #include <gsl/gsl_math.h>
 
-#include "SphereIntegrator.hh"
-#include "TestUtilities.hh"
+#include "alpaca/SphereIntegrator.hh"
+#include "alpaca/TestUtilities.hh"
 
-int main(){
+using namespace alpaca;
 
-    SphereIntegrator sph_int;
+int main() {
 
-    double integral_num = sph_int([]([[maybe_unused]] double theta, [[maybe_unused]] double phi){ return 1.; }, 100000, [](double theta, [[maybe_unused]] double phi){ return theta > M_PI_2 ; });
+  SphereIntegrator sph_int;
 
-    test_numerical_equality<double>(integral_num, 2.*M_PI, 1e-3);
+  double integral_num = sph_int(
+      []([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
+        return 1.;
+      },
+      100000,
+      [](double theta, [[maybe_unused]] double phi) { return theta > M_PI_2; });
 
+  test_numerical_equality<double>(integral_num, 2. * M_PI, 1e-3);
 }

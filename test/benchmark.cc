@@ -20,10 +20,12 @@
 #include <chrono>
 #include <iostream>
 
-#include "AngularCorrelation.hh"
-#include "CascadeRejectionSampler.hh"
-#include "State.hh"
-#include "Transition.hh"
+#include "alpaca/AngularCorrelation.hh"
+#include "alpaca/CascadeRejectionSampler.hh"
+#include "alpaca/State.hh"
+#include "alpaca/Transition.hh"
+
+using namespace alpaca;
 
 /**
  * This script tests the correctness of SphereRejectionSampler by sampling from
@@ -48,10 +50,11 @@ int main() {
 
   vector<AngularCorrelation> cascade{
       AngularCorrelation(
-          State(0, positive),
-          {{Transition(magnetic, 2, electric, 4, 0.), State(2, positive)},
-           {Transition(em_unknown, 2, em_unknown, 4, 0.),
-            State(0, parity_unknown)}}),
+          State(0, Parity::positive),
+          {{Transition(EMCharacter::magnetic, 2, EMCharacter::electric, 4, 0.),
+            State(2, Parity::positive)},
+           {Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
+            State(0, Parity::unknown)}}),
   };
 
   static constexpr int random_number_seed = 1;

@@ -28,8 +28,7 @@ using std::to_string;
 namespace alpaca {
 
 double UvCoefficient::phase_norm_6j_symbol(const int two_nu, const int two_j,
-                                           const int two_L,
-                                           const int two_jp) const {
+                                           const int two_L, const int two_jp) {
 
   // Definition of Fagg and Hanna \cite FaggHanna1959 [Eq. (I-1') and the
   // expression below that one]. Causes some tests to fail.
@@ -52,7 +51,7 @@ double UvCoefficient::phase_norm_6j_symbol(const int two_nu, const int two_j,
 }
 
 string
-UvCoefficient::string_representation(const unsigned int n_digits,
+UvCoefficient::string_representation(const int n_digits,
                                      vector<string> variable_names) const {
 
   string delta_variable = variable_names.size() ? variable_names[0] : "\\delta";
