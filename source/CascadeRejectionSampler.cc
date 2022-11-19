@@ -19,22 +19,35 @@
 
 #include "CascadeRejectionSampler.hh"
 
-CascadeRejectionSampler::CascadeRejectionSampler(vector<AngularCorrelation> &cascade, const int seed, const unsigned int max_tri):
-    initial_direction_random(true), PhiThetaPsi({0., 0., 0.}), return_first_direction(true), uniform_direction_sampler([]([[maybe_unused]] const double theta, [[maybe_unused]] const double phi){return 1.;}, 1., seed, max_tri), euler_angle_rotation(EulerAngleRotation())
-{
-    for(size_t i = 0; i < cascade.size(); ++i){
-        angular_correlation_samplers.push_back(
-            AngCorrRejectionSampler(cascade[i], seed, max_tri)
-        );
-    }
+CascadeRejectionSampler::CascadeRejectionSampler(
+    vector<AngularCorrelation> &cascade, const int seed,
+    const unsigned int max_tri)
+    : initial_direction_random(true), PhiThetaPsi({0., 0., 0.}),
+      return_first_direction(true),
+      uniform_direction_sampler(
+          []([[maybe_unused]] const double theta,
+             [[maybe_unused]] const double phi) { return 1.; },
+          1., seed, max_tri),
+      euler_angle_rotation(EulerAngleRotation()) {
+  for (size_t i = 0; i < cascade.size(); ++i) {
+    angular_correlation_samplers.push_back(
+        AngCorrRejectionSampler(cascade[i], seed, max_tri));
+  }
 }
 
-CascadeRejectionSampler::CascadeRejectionSampler(vector<AngularCorrelation> &cascade, const int seed, const array<double, 3> PhiThetaPsi, const bool return_first_direction, const unsigned int max_tri):
-    initial_direction_random(false), PhiThetaPsi(PhiThetaPsi), return_first_direction(return_first_direction), uniform_direction_sampler([]([[maybe_unused]] const double theta, [[maybe_unused]] const double phi){return 1.;}, 1., seed, max_tri), euler_angle_rotation(EulerAngleRotation())
-{
-    for(size_t i = 0; i < cascade.size(); ++i){
-        angular_correlation_samplers.push_back(
-            AngCorrRejectionSampler(cascade[i], seed, max_tri)
-        );
-    }
+CascadeRejectionSampler::CascadeRejectionSampler(
+    vector<AngularCorrelation> &cascade, const int seed,
+    const array<double, 3> PhiThetaPsi, const bool return_first_direction,
+    const unsigned int max_tri)
+    : initial_direction_random(false), PhiThetaPsi(PhiThetaPsi),
+      return_first_direction(return_first_direction),
+      uniform_direction_sampler(
+          []([[maybe_unused]] const double theta,
+             [[maybe_unused]] const double phi) { return 1.; },
+          1., seed, max_tri),
+      euler_angle_rotation(EulerAngleRotation()) {
+  for (size_t i = 0; i < cascade.size(); ++i) {
+    angular_correlation_samplers.push_back(
+        AngCorrRejectionSampler(cascade[i], seed, max_tri));
+  }
 }

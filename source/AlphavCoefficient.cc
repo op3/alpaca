@@ -21,28 +21,29 @@
 
 using std::stringstream;
 
-#include "AlphavCoefficient.hh"
+#include "alpaca/AlphavCoefficient.hh"
 
-string AlphavCoefficient::string_representation(const unsigned int n_digits, const vector<string> variable_names) const {
+namespace alpaca {
 
-    string multipole_mixing_ratio_variable = variable_names.size() ? variable_names[0] : "\\delta";
+string AlphavCoefficient::string_representation(
+    const unsigned int n_digits, const vector<string> variable_names) const {
 
-    return string("(-1)") + (n_digits ? "\\times" : "")
-        + constant_kappa_coefficient.string_representation(n_digits, {})
-        + (n_digits ? "\\times" : "")
-        + constant_f_coefficient.string_representation(n_digits, {}) 
-        + "+2" + (n_digits ? "\\times" : "") 
-        + linear_kappa_coefficient.string_representation(n_digits, {}) 
-        + (n_digits ? "\\times" : "")
-        + linear_f_coefficient.string_representation(n_digits, {}) 
-        + (n_digits ? "\\times" : "")
-        + multipole_mixing_ratio_variable
-        + "+"
-        + quadratic_kappa_coefficient.string_representation(n_digits, {}) 
-        + (n_digits ? "\\times" : "")
-        + quadratic_f_coefficient.string_representation(n_digits, {}) 
-        + (n_digits ? "\\times" : "")
-        + multipole_mixing_ratio_variable
-        + "^{2}";
+  string multipole_mixing_ratio_variable =
+      variable_names.size() ? variable_names[0] : "\\delta";
 
+  return string("(-1)") + (n_digits ? "\\times" : "") +
+         constant_kappa_coefficient.string_representation(n_digits, {}) +
+         (n_digits ? "\\times" : "") +
+         constant_f_coefficient.string_representation(n_digits, {}) + "+2" +
+         (n_digits ? "\\times" : "") +
+         linear_kappa_coefficient.string_representation(n_digits, {}) +
+         (n_digits ? "\\times" : "") +
+         linear_f_coefficient.string_representation(n_digits, {}) +
+         (n_digits ? "\\times" : "") + multipole_mixing_ratio_variable + "+" +
+         quadratic_kappa_coefficient.string_representation(n_digits, {}) +
+         (n_digits ? "\\times" : "") +
+         quadratic_f_coefficient.string_representation(n_digits, {}) +
+         (n_digits ? "\\times" : "") + multipole_mixing_ratio_variable + "^{2}";
 }
+
+} // namespace alpaca

@@ -19,20 +19,16 @@
 
 #include "AvCoefficient.hh"
 
-string AvCoefficient::string_representation(const unsigned int n_digits, const vector<string> variable_names) const {
+string AvCoefficient::string_representation(
+    const unsigned int n_digits, const vector<string> variable_names) const {
 
-    string multipole_mixing_ratio_variable = variable_names.size() ? variable_names[0] : "\\delta";
+  string multipole_mixing_ratio_variable =
+      variable_names.size() ? variable_names[0] : "\\delta";
 
-    return constant_f_coefficient.string_representation(n_digits, {}) 
-        + "+"
-        + "2" + (n_digits ? "\\times" : "")
-        + linear_f_coefficient.string_representation(n_digits, {}) 
-        + (n_digits ? "\\times" : "")
-        + multipole_mixing_ratio_variable
-        + "+"
-        + quadratic_f_coefficient.string_representation(n_digits, {}) 
-        + (n_digits ? "\\times" : "")
-        + multipole_mixing_ratio_variable
-        + "^{2}";
-
+  return constant_f_coefficient.string_representation(n_digits, {}) + "+" +
+         "2" + (n_digits ? "\\times" : "") +
+         linear_f_coefficient.string_representation(n_digits, {}) +
+         (n_digits ? "\\times" : "") + multipole_mixing_ratio_variable + "+" +
+         quadratic_f_coefficient.string_representation(n_digits, {}) +
+         (n_digits ? "\\times" : "") + multipole_mixing_ratio_variable + "^{2}";
 }

@@ -21,44 +21,35 @@
 
 #include "EulerAngleRotation.hh"
 
-array<double, 2> EulerAngleRotation::get_theta_phi(const array<double, 3> x_y_z_norm) const {
+array<double, 2>
+EulerAngleRotation::get_theta_phi(const array<double, 3> x_y_z_norm) const {
 
-    return {acos(x_y_z_norm[2]), fmod(atan2(x_y_z_norm[1], x_y_z_norm[0])+2.*M_PI, 2.*M_PI)};
-
+  return {acos(x_y_z_norm[2]),
+          fmod(atan2(x_y_z_norm[1], x_y_z_norm[0]) + 2. * M_PI, 2. * M_PI)};
 }
 
-array<double, 3> EulerAngleRotation::get_x_y_z_norm(const array<double, 2> theta_phi) const {
-    
-    double cos_the{cos(theta_phi[0])}, sin_the{sin(theta_phi[0])}, cos_phi{cos(theta_phi[1])}, sin_phi{sin(theta_phi[1])};
+array<double, 3>
+EulerAngleRotation::get_x_y_z_norm(const array<double, 2> theta_phi) const {
 
-    return array<double, 3>{ 
-        sin_the*cos_phi,
-        sin_the*sin_phi,
-        cos_the
-    };
+  double cos_the{cos(theta_phi[0])}, sin_the{sin(theta_phi[0])},
+      cos_phi{cos(theta_phi[1])}, sin_phi{sin(theta_phi[1])};
 
+  return array<double, 3>{sin_the * cos_phi, sin_the * sin_phi, cos_the};
 }
 
-array<array<double, 3>, 3> EulerAngleRotation::rotation_matrix(const array<double, 3> Phi_Theta_Psi) const {
-    
-    const double cos_phi{cos(Phi_Theta_Psi[0])}, sin_phi{sin(Phi_Theta_Psi[0])}, cos_the{cos(Phi_Theta_Psi[1])}, sin_the{sin(Phi_Theta_Psi[1])}, cos_psi{cos(Phi_Theta_Psi[2])}, sin_psi{sin(Phi_Theta_Psi[2])};
+array<array<double, 3>, 3> EulerAngleRotation::rotation_matrix(
+    const array<double, 3> Phi_Theta_Psi) const {
 
-    return array<array<double, 3>, 3> {
-        array<double, 3>{ 
-            cos_psi*cos_phi - cos_the*sin_phi*sin_psi,
-            cos_psi*sin_phi + cos_the*cos_phi*sin_psi,
-            sin_psi*sin_the
-        },
-        array<double, 3>{
-            -sin_psi*cos_phi - cos_the*sin_phi*cos_psi,
-            -sin_psi*sin_phi + cos_the*cos_phi*cos_psi,
-            cos_psi*sin_the
-        },
-        array<double, 3>{
-            sin_the*sin_phi,
-            -sin_the*cos_phi,
-            cos_the
-        }
-    };
+  const double cos_phi{cos(Phi_Theta_Psi[0])}, sin_phi{sin(Phi_Theta_Psi[0])},
+      cos_the{cos(Phi_Theta_Psi[1])}, sin_the{sin(Phi_Theta_Psi[1])},
+      cos_psi{cos(Phi_Theta_Psi[2])}, sin_psi{sin(Phi_Theta_Psi[2])};
 
+  return array<array<double, 3>, 3>{
+      array<double, 3>{cos_psi * cos_phi - cos_the * sin_phi * sin_psi,
+                       cos_psi * sin_phi + cos_the * cos_phi * sin_psi,
+                       sin_psi * sin_the},
+      array<double, 3>{-sin_psi * cos_phi - cos_the * sin_phi * cos_psi,
+                       -sin_psi * sin_phi + cos_the * cos_phi * cos_psi,
+                       cos_psi * sin_the},
+      array<double, 3>{sin_the * sin_phi, -sin_the * cos_phi, cos_the}};
 }

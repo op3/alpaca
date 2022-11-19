@@ -33,34 +33,35 @@ using std::vector;
 
 #include "SphereRejectionSampler.hh"
 
-pair<unsigned int, array<double, 2>> SphereRejectionSampler::sample(){
-    
-    array<double, 2> theta_phi;
-    double dis_val;
+pair<unsigned int, array<double, 2>> SphereRejectionSampler::sample() {
 
-    for(unsigned int i = 0; i < max_tries; ++i){
+  array<double, 2> theta_phi;
+  double dis_val;
 
-        theta_phi = sample_theta_phi();
-        dis_val = uniform_random_val(random_engine);
+  for (unsigned int i = 0; i < max_tries; ++i) {
 
-        if(dis_val <= distribution(theta_phi[0], theta_phi[1])){
-            return {i+1, {theta_phi[0], theta_phi[1]}};
-        }
+    theta_phi = sample_theta_phi();
+    dis_val = uniform_random_val(random_engine);
 
+    if (dis_val <= distribution(theta_phi[0], theta_phi[1])) {
+      return {i + 1, {theta_phi[0], theta_phi[1]}};
     }
+  }
 
-    return {max_tries, {0., 0.}};
+  return {max_tries, {0., 0.}};
 }
 
-double SphereRejectionSampler::estimate_efficiency(const unsigned int n_tries){
-    vector<unsigned int> required_tries(n_tries);
-    
-    pair<unsigned int, array<double, 2>> sampled_theta_phi;
+double SphereRejectionSampler::estimate_efficiency(const unsigned int n_tries) {
+  vector<unsigned int> required_tries(n_tries);
 
-    for(unsigned int i = 0; i < n_tries; ++i){
-        sampled_theta_phi = sample();
-        required_tries[i] = sampled_theta_phi.first;
-    }
+  pair<unsigned int, array<double, 2>> sampled_theta_phi;
 
-    return static_cast<double>(n_tries) / static_cast<double>(accumulate(required_tries.begin(), required_tries.end(), 0));
+  for (unsigned int i = 0; i < n_tries; ++i) {
+    sampled_theta_phi = sample();
+    required_tries[i] = sampled_theta_phi.first;
+  }
+
+  return static_cast<double>(n_tries) /
+         static_cast<double>(
+             accumulate(required_tries.begin(), required_tries.end(), 0));
 }
