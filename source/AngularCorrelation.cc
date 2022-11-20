@@ -30,8 +30,22 @@ using std::to_string;
 
 namespace alpaca {
 
-AngularCorrelation::AngularCorrelation(
-    const State ini_sta, const vector<pair<Transition, State>> cas_ste)
+inline vector<CascadeStep> gen_cascade_steps(State ini_sta,
+                                             const vector<State> cas_sta) {
+  vector<CascadeStep> cascade_steps;
+  cascade_steps.reserve(cas_sta.size());
+
+  cascade_steps.push_back({Transition{ini_sta, cas_sta[0]}, cas_sta[0]});
+
+  for (size_t i = 0; i < cas_sta.size() - 1; ++i) {
+    cascade_steps.push_back(
+        {Transition{cas_sta[i], cas_sta[i + 1]}, cas_sta[i + 1]});
+  }
+  return cascade_steps;
+}
+
+AngularCorrelation::AngularCorrelation(const State ini_sta,
+                                       const vector<CascadeStep> cas_ste)
     : euler_angle_rotation(EulerAngleRotation()), w_gamma_gamma(nullptr) {
   check_cascade(ini_sta, cas_ste);
 
@@ -44,72 +58,10 @@ AngularCorrelation::AngularCorrelation(
 
 AngularCorrelation::AngularCorrelation(const State ini_sta,
                                        const vector<State> cas_sta)
-    : euler_angle_rotation(EulerAngleRotation()), w_gamma_gamma(nullptr) {
+    : AngularCorrelation(ini_sta, gen_cascade_steps(ini_sta, cas_sta)){};
 
-  if (cas_sta.size() < 2) {
-    throw invalid_argument(
-        "Cascade must have at least two transition - state pairs.");
-  }
-
-  vector<pair<Transition, State>> cascade_steps;
-
-  cascade_steps.push_back(
-      {infer_transition({ini_sta, cas_sta[0]}), cas_sta[0]});
-
-  for (size_t i = 0; i < cas_sta.size() - 1; ++i) {
-    cascade_steps.push_back(
-        {infer_transition({cas_sta[i], cas_sta[i + 1]}), cas_sta[i + 1]});
-  }
-
-  if (cascade_steps[0].first.em_char == EMCharacter::unknown) {
-    w_gamma_gamma = std::make_unique<W_dir_dir>(ini_sta, cascade_steps);
-  } else {
-    w_gamma_gamma = std::make_unique<W_pol_dir>(ini_sta, cascade_steps);
-  }
-}
-
-Transition
-AngularCorrelation::infer_transition(const pair<State, State> states) const {
-
-  if (states.first.two_J == 0 and states.second.two_J == 0) {
-    throw invalid_argument(
-        "An electroEMCharacter::magnetic transition between two spin-0 states "
-        "with the "
-        "absorption/emission of a single photon is not possible.");
-  }
-
-  int two_L = abs(states.first.two_J - states.second.two_J);
-  if (two_L == 0) {
-    two_L += 2;
-  }
-  EMCharacter em = EMCharacter::unknown;
-  EMCharacter emp = EMCharacter::unknown;
-  if (states.first.parity != Parity::unknown &&
-      states.second.parity != Parity::unknown) {
-    if (two_L % 4 == 0) {
-      if (states.first.parity == states.second.parity) {
-        em = EMCharacter::electric;
-        emp = EMCharacter::magnetic;
-      } else {
-        em = EMCharacter::magnetic;
-        emp = EMCharacter::electric;
-      }
-    } else {
-      if (states.first.parity == states.second.parity) {
-        em = EMCharacter::magnetic;
-        emp = EMCharacter::electric;
-      } else {
-        em = EMCharacter::electric;
-        emp = EMCharacter::magnetic;
-      }
-    }
-  }
-
-  return Transition(em, two_L, emp, two_L + 2, 0.);
-}
-
-void AngularCorrelation::check_cascade(
-    const State ini_sta, const vector<pair<Transition, State>> cas_ste) const {
+void AngularCorrelation::check_cascade(const State ini_sta,
+                                       const vector<CascadeStep> cas_ste) {
 
   if (cas_ste.size() < 2) {
     throw invalid_argument(
@@ -117,14 +69,12 @@ void AngularCorrelation::check_cascade(
   }
 
   check_angular_momenta(ini_sta, cas_ste);
-
   check_triangle_inequalities(ini_sta, cas_ste);
-
   check_em_transitions(ini_sta, cas_ste);
 }
 
 void AngularCorrelation::check_angular_momenta(
-    const State ini_sta, const vector<pair<Transition, State>> cas_ste) const {
+    const State ini_sta, const vector<CascadeStep> cas_ste) {
 
   const int even_odd = ini_sta.two_J % 2;
 
@@ -137,7 +87,7 @@ void AngularCorrelation::check_angular_momenta(
 }
 
 void AngularCorrelation::check_triangle_inequalities(
-    const State ini_sta, const vector<pair<Transition, State>> cas_ste) const {
+    const State ini_sta, const vector<CascadeStep> cas_ste) {
 
   if (!fulfils_triangle_inequality<int>(ini_sta.two_J, cas_ste[0].second.two_J,
                                         cas_ste[0].first.two_L) &&
@@ -165,7 +115,7 @@ void AngularCorrelation::check_triangle_inequalities(
 }
 
 void AngularCorrelation::check_em_transitions(
-    const State ini_sta, const vector<pair<Transition, State>> cas_ste) const {
+    const State ini_sta, const vector<CascadeStep> cas_ste) {
 
   if (ini_sta.parity != Parity::unknown &&
       cas_ste[0].second.parity != Parity::unknown) {
@@ -271,7 +221,7 @@ void AngularCorrelation::check_em_transitions(
 
 bool AngularCorrelation::valid_em_character(const Parity p0, const Parity p1,
                                             const int two_L,
-                                            const EMCharacter em) const {
+                                            const EMCharacter em) {
 
   if (p0 == p1) {
     if ((two_L / 2) % 2 == 0) {
@@ -302,7 +252,7 @@ double angular_correlation(const double theta, const double phi,
                            short *em_char, int *two_L, short *em_charp,
                            int *two_Lp, double *delta, double *PhiThetaPsi) {
   State initial_state{two_J[0], static_cast<Parity>(par[0])};
-  vector<pair<Transition, State>> cascade_steps;
+  vector<CascadeStep> cascade_steps;
 
   for (size_t i = 0; i < n_cas_ste; ++i) {
     cascade_steps.push_back(
@@ -321,7 +271,7 @@ void *create_angular_correlation(const size_t n_cas_ste, int *two_J, short *par,
                                  int *two_Lp, double *delta) {
 
   State initial_state{two_J[0], static_cast<Parity>(par[0])};
-  vector<pair<Transition, State>> cascade_steps;
+  vector<CascadeStep> cascade_steps;
 
   for (size_t i = 0; i < n_cas_ste; ++i) {
     cascade_steps.push_back(
@@ -373,8 +323,7 @@ void free_angular_correlation(AngularCorrelation *angular_correlation) {
 
 void get_em_char(AngularCorrelation *angular_correlation, short *em_char) {
 
-  vector<pair<Transition, State>> cascade_steps =
-      angular_correlation->get_cascade_steps();
+  vector<CascadeStep> cascade_steps = angular_correlation->get_cascade_steps();
   for (size_t i = 0; i < cascade_steps.size(); ++i) {
     em_char[i] = static_cast<short>(cascade_steps[i].first.em_char);
   }
@@ -382,8 +331,7 @@ void get_em_char(AngularCorrelation *angular_correlation, short *em_char) {
 
 void get_two_L(AngularCorrelation *angular_correlation, int *two_L) {
 
-  vector<pair<Transition, State>> cascade_steps =
-      angular_correlation->get_cascade_steps();
+  vector<CascadeStep> cascade_steps = angular_correlation->get_cascade_steps();
   for (size_t i = 0; i < cascade_steps.size(); ++i) {
     two_L[i] = cascade_steps[i].first.two_L;
   }

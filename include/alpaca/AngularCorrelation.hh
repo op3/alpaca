@@ -312,8 +312,8 @@ public:
    * the maximum absolute value of \f$W \left( \theta, \varphi \right)\f$, i.e.:
    *
    * \f[
-   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[
-   * 0, 2\pi \right]} | W \left( \theta, \varphi \right) |. \f]
+   * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in
+   * \left[ 0, 2\pi \right]} | W \left( \theta, \varphi \right) |. \f]
    *
    * If a useful upper limit estimate exists for a given angular correlation,
    * this function will return it. If no useful upper limit exists, or the
@@ -346,8 +346,8 @@ protected:
    *
    * \throw invalid_argument if the cascade has less than two steps.
    */
-  void check_cascade(const State ini_sta,
-                     const vector<pair<Transition, State>> cas_ste) const;
+  static void check_cascade(const State ini_sta,
+                            const vector<pair<Transition, State>> cas_ste);
 
   /**
    * \brief Check whether angular momenta are either all half integer or all
@@ -366,9 +366,9 @@ protected:
    * \throw invalid_argument if a mixed use of half-integer and integer angular
    * momentum quantum numbers is detected.
    */
-  void
+  static void
   check_angular_momenta(const State ini_sta,
-                        const vector<pair<Transition, State>> cas_ste) const;
+                        const vector<pair<Transition, State>> cas_ste);
   /**
    * \brief Check triangle inequality for all cascade steps.
    *
@@ -393,8 +393,9 @@ protected:
    * \throw invalid_argument if none of the two multipolarities fulfils the
    * triangle inequality for any cascade step.
    */
-  void check_triangle_inequalities(
-      const State ini_sta, const vector<pair<Transition, State>> cas_ste) const;
+  static void
+  check_triangle_inequalities(const State ini_sta,
+                              const vector<pair<Transition, State>> cas_ste);
 
   /**
    * \brief Check parity selections rules for all cascade steps.
@@ -429,9 +430,9 @@ protected:
    * 2. The parity selection rules apply for both multipolarities of the
    * transition.
    */
-  void
+  static void
   check_em_transitions(const State ini_sta,
-                       const vector<pair<Transition, State>> cas_ste) const;
+                       const vector<pair<Transition, State>> cas_ste);
 
   /**
    * \brief Checks the parity selection rule for a single transition.
@@ -446,8 +447,8 @@ protected:
    *
    * \return true, if the parity selection rule is fulfilled, false otherwise.
    */
-  bool valid_em_character(const Parity p0, const Parity p1, const int two_L,
-                          const EMCharacter em) const;
+  static bool valid_em_character(const Parity p0, const Parity p1,
+                                 const int two_L, const EMCharacter em);
 
   /**
    * \brief Infer the most likely transition that connects two given states.

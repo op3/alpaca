@@ -197,6 +197,12 @@ struct Transition {
    */
   constexpr unsigned int selection_rule(unsigned int two_J_1,
                                         unsigned int two_J_2) {
+    if (two_J_1 == 0 && two_J_2 == 0) {
+      throw std::invalid_argument(
+          "An electromagnetic transition between two spin-0 states "
+          "with the "
+          "absorption/emission of a single photon is not possible.");
+    }
     return static_cast<unsigned int>(std::max(
         2, std::abs(static_cast<int>(two_J_1) - static_cast<int>(two_J_2))));
   }
