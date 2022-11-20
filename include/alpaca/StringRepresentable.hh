@@ -37,6 +37,11 @@ class StringRepresentable {
 
 public:
   virtual ~StringRepresentable() = default;
+  StringRepresentable() = default;
+  StringRepresentable(const StringRepresentable &copyFrom) = default;
+  StringRepresentable &operator=(const StringRepresentable &copyFrom) = default;
+  StringRepresentable(StringRepresentable &&) = default;
+  StringRepresentable &operator=(StringRepresentable &&) = default;
 
   /**
    * \brief Return string representation of expression.

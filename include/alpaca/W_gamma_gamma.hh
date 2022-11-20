@@ -58,16 +58,11 @@ public:
       : initial_state(ini_sta), cascade_steps(cas_ste),
         n_cascade_steps(cas_ste.size()) {}
 
-  /**
-   * \brief Destructor
-   *
-   * Virtual destructor needed to ensure that destructors of derived classes
-   * W_dir_dir and W_pol_dir are called whenever a W_gamma_gamma goes out of
-   * scope. Since AngularCorrelation, the main user interface, is always in
-   * posession of a unique_ptr to one of the derived classes, not having this
-   * destructor lead to memory leaks in the past.
-   */
   virtual ~W_gamma_gamma() = default;
+  W_gamma_gamma(const W_gamma_gamma &) = default;
+  W_gamma_gamma &operator=(const W_gamma_gamma &) = default;
+  W_gamma_gamma(W_gamma_gamma &&) = default;
+  W_gamma_gamma &operator=(W_gamma_gamma &&) = default;
 
   /**
    * \brief Call operator of the gamma-gamma angular correlation
@@ -130,20 +125,21 @@ public:
 
 protected:
   State initial_state; /**< Initial state */
-                       /**
-                        * Steps of the gamma-ray cascade following an excitation.
-                        * Each step consists of an electromagnetic transition and a state which is
-                        * populated by                      that transition.
-                        */
+
+  /**
+   * Steps of the gamma-ray cascade following an excitation.
+   * Each step consists of an electromagnetic transition and a state which is
+   * populated by that transition.
+   */
   vector<CascadeStep> cascade_steps;
 
-  double normalization_factor;  /**< Normalization factor for the angular
-                                   distribution */
-  const size_t n_cascade_steps; /**< Number of transitions in the cascade. */
+  double normalization_factor; /**< Normalization factor for the angular
+                                  distribution */
+  size_t n_cascade_steps;      /**< Number of transitions in the cascade. */
   int two_nu_max; /**< Maximum value of \f$2 \nu\f$ for which the coefficients
                      do not vanish */
   unsigned int nu_max; /**< Maximum value of \f$\nu\f$ for which the
-                 coefficients do not vanish */
+                          coefficients do not vanish */
 };
 
 } // namespace alpaca

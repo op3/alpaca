@@ -245,10 +245,10 @@ protected:
   function<double(const double, const double)>
       distribution; /**< \f$W \left( \theta, \varphi \right)\f$, (unnormalized)
                        probability distribution. */
-  const double distribution_maximum; /**< \f$W_\mathrm{max}\f$, maximum of
+  double distribution_maximum; /**< \f$W_\mathrm{max}\f$, maximum of
                                         probability distribution. */
-  const unsigned int max_tries; /**< \f$N_\mathrm{max}\f$, maximum number of
-                                   tries to find a random vector. */
+  unsigned int max_tries;      /**< \f$N_\mathrm{max}\f$, maximum number of
+                                        tries to find a random vector. */
 
   mt19937_64 random_engine; /**< Deterministic random number engine. */
   uniform_real_distribution<double>
@@ -260,7 +260,7 @@ protected:
   uniform_real_distribution<double>
       uniform_random_phi; /**< Uniform distribution from which all random phi
                              angles are derived. */
-  const EulerAngleRotation
+  EulerAngleRotation
       euler_angle_rotation; /**< Instance of the EulerAngleRotation class */
 };
 

@@ -112,8 +112,8 @@ public:
    *
    * \return \f$W \left( \theta, \varphi \right)\f$
    */
-  double operator()(const double theta, const double phi) const override {
-    double sum_over_nu{0.};
+  template <typename T> T operator()(T theta, T phi) override const {
+    T sum_over_nu{0.};
 
     for (size_t i = 1; i <= nu_max / 2; ++i) {
       sum_over_nu +=

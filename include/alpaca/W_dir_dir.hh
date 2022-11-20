@@ -121,8 +121,8 @@ public:
    *
    * \return \f$W \left( \theta \right)\f$
    */
-  double operator()(const double theta) const {
-    double sum_over_nu{0.};
+  template <typename T> T operator()(T theta) const {
+    T sum_over_nu{0.};
 
     for (size_t i = 0; static_cast<unsigned int>(i) <= nu_max / 2; ++i) {
       sum_over_nu += expansion_coefficients[i] *
@@ -148,7 +148,7 @@ public:
    *
    * \return \f$W \left( \theta \right)\f$
    */
-  double operator()(const double theta, const double) const override {
+  template <typename T> inline T operator()(T theta, [[maybe_unused]] T) const {
     return operator()(theta);
   }
 
@@ -216,14 +216,16 @@ public:
   /**
    * \brief Return \f$\nu_\mathrm{max}\f$
    */
-  int get_nu_max() const { return nu_max; };
+  inline int get_nu_max() const { return nu_max; };
 
   /**
    * \brief Return \f$2 \nu_\mathrm{max}\f$
    */
-  int get_two_nu_max() const { return two_nu_max; };
+  inline int get_two_nu_max() const { return two_nu_max; };
 
-  double get_normalization_factor() const { return normalization_factor; };
+  inline double get_normalization_factor() const {
+    return normalization_factor;
+  };
 
   /**
    * \brief Return \f$U_\nu\f$ coefficients for the dir-dir correlation.
@@ -239,7 +241,7 @@ public:
    * index) and the cascade step number (second index, runs from \f$2\f$ to
    * \f$n-1\f$).
    */
-  vector<vector<UvCoefficient>> get_Uv_coefficients() const {
+  inline vector<vector<UvCoefficient>> get_Uv_coefficients() const {
     return uv_coefficients;
   };
 
@@ -260,7 +262,7 @@ public:
    * \return List of products of \f$U_\nu\f$ coefficients for all values of
    * \f$\nu\f$.
    */
-  vector<double> get_Uv_coefficient_products() const {
+  inline vector<double> get_Uv_coefficient_products() const {
     return uv_coefficient_products;
   };
 

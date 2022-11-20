@@ -468,7 +468,7 @@ protected:
    */
   Transition infer_transition(const pair<State, State> states) const;
 
-  const EulerAngleRotation
+  EulerAngleRotation
       euler_angle_rotation; /**< Instance of the EulerAngleRotation class */
 
   /**

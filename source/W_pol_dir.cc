@@ -20,6 +20,7 @@
 #include <cmath>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sf.h>
+#include <numbers>
 #include <string>
 
 using std::to_string;
@@ -31,8 +32,8 @@ namespace alpaca {
 double W_pol_dir::get_upper_limit() const {
 
   double upper_limit = 0.;
-
-  double associated_Legendre_upper_limit_factor = 4. * pow(M_1_PI, 0.75);
+  double associated_Legendre_upper_limit_factor =
+      4. * pow(std::numbers::inv_pi, 0.75);
 
   for (size_t i = 1; i <= nu_max / 2; ++i) {
     upper_limit += fabs(expansion_coefficients[i - 1]) *
