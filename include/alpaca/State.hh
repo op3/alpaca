@@ -60,7 +60,8 @@ struct State {
    * The excitation energy is initialized as 0 MeV.
    *
    * \param t_J Two times the angular momentum quantum number in units of the
-   * reduced Planck constant. \param parity Parity quantum number.
+   * reduced Planck constant.
+   * \param parity Parity quantum number.
    *
    * \throw std::invalid_argument if two_J is invalid
    */
@@ -72,7 +73,8 @@ struct State {
    * The parity quantum number is initialized as unknown.
    *
    * \param t_J Two times the angular momentum quantum number in units of the
-   * reduced Planck constant. \param excitation_energy Excitation energy of the
+   * reduced Planck constant.
+   * \param excitation_energy Excitation energy of the
    * state with respect to the ground state in MeV.
    *
    * \throw std::invalid_argument if two_J is invalid
@@ -84,9 +86,10 @@ struct State {
    * \brief Constructor
    *
    * \param t_J Two times the angular momentum quantum number in units of the
-   * reduced Planck constant. \param parity Parity quantum number. \param
-   * excitation_energy Excitation energy of the state with respect to the ground
-   * state in MeV.
+   * reduced Planck constant.
+   * \param parity Parity quantum number.
+   * \param excitation_energy Excitation energy of the state with respect to the
+   * ground state in MeV.
    *
    * \throw std::invalid_argument if two_J is invalid
    */

@@ -122,7 +122,7 @@ public:
    * 1000).
    */
   SphereRejectionSampler(function<double(const double, const double)> dis,
-                         const double dis_max, const int seed,
+                         const double dis_max, const size_t seed,
                          const unsigned int max_tri = 1000)
       : distribution(dis), distribution_maximum(dis_max), max_tries(max_tri),
         random_engine(seed), uniform_random_val(0., distribution_maximum),
@@ -141,7 +141,22 @@ public:
    * of trials \f$N_\mathrm{max}\f$ is reached by the algorithm and no random
    * vector was accepted.
    */
-  virtual pair<unsigned int, array<double, 2>> sample();
+  virtual pair<unsigned int, array<double, 2>> sample() {
+    array<double, 2> theta_phi;
+    double dis_val;
+
+    for (unsigned int i = 0; i < max_tries; ++i) {
+
+      theta_phi = sample_theta_phi();
+      dis_val = uniform_random_val(random_engine);
+
+      if (dis_val <= distribution(theta_phi[0], theta_phi[1])) {
+        return {i + 1, {theta_phi[0], theta_phi[1]}};
+      }
+    }
+
+    return {max_tries, {0., 0.}};
+  }
 
   /**
    * \brief Sample a random vector from probability distribution.

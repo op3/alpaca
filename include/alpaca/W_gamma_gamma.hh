@@ -31,6 +31,8 @@ using std::vector;
 
 namespace alpaca {
 
+using CascadeStep = pair<Transition, State>;
+
 /**
  * \brief Abstract class for angular correlations of two photons.
  *
@@ -52,8 +54,7 @@ public:
    * initial state. Each step is a pair of a transition and the state which is
    * populated by that transition.
    */
-  W_gamma_gamma(const State &ini_sta,
-                const vector<pair<Transition, State>> cas_ste)
+  W_gamma_gamma(const State &ini_sta, const vector<CascadeStep> cas_ste)
       : initial_state(ini_sta), cascade_steps(cas_ste),
         n_cascade_steps(cas_ste.size()) {}
 
@@ -121,9 +122,7 @@ public:
    *
    * \return vector of Transition-State pairs.
    */
-  vector<pair<Transition, State>> get_cascade_steps() const {
-    return cascade_steps;
-  }
+  vector<CascadeStep> get_cascade_steps() const { return cascade_steps; }
 
   virtual string string_representation(
       const int n_digits = 0,
@@ -136,7 +135,7 @@ protected:
                         * Each step consists of an electromagnetic transition and a state which is
                         * populated by                      that transition.
                         */
-  vector<pair<Transition, State>> cascade_steps;
+  vector<CascadeStep> cascade_steps;
 
   double normalization_factor;  /**< Normalization factor for the angular
                                    distribution */

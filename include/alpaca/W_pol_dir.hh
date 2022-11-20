@@ -59,42 +59,51 @@ public:
    * initial state. Each step is a pair of a transition and the state which is
    * populated by that transition.
    */
-  W_pol_dir(const State &ini_sta,
-            const vector<pair<Transition, State>> cas_ste);
+  W_pol_dir(const State &ini_sta, const vector<CascadeStep> cas_ste)
+      : W_gamma_gamma(ini_sta, cas_ste),
+        w_dir_dir(W_dir_dir(ini_sta, cas_ste)) {
+
+    two_nu_max = w_dir_dir.get_two_nu_max();
+    nu_max = two_nu_max / 2;
+    expansion_coefficients = calculate_expansion_coefficients();
+    normalization_factor = w_dir_dir.get_normalization_factor();
+  }
 
   /**
    * \brief Return value of the pol-dir correlation at angles \f$\theta\f$ and
    * \f$\varphi\f$
    *
    * In Eq. (I-4) of Ref. \cite FaggHanna1959, it is shown that the pol-dir
-   * correlation can be obtained from the dir-dir correlation [Eq. (I-1)] by the
-   * following replacement (note that the polarization is assumed to be known
-   * for the transition \f$j_1 \to j_2\f$ here, instead of \f$j_2 \to j_3\f$):
+   * correlation can be obtained from the dir-dir correlation [Eq. (I-1)] by
+   * the following replacement (note that the polarization is assumed to be
+   * known for the transition \f$j_1 \to j_2\f$ here, instead of \f$j_2 \to
+   * j_3\f$):
    *
    * \f[
    * 		W \left( \theta, \varphi \right) = \sum_\nu A_v \left( L_1,
    * L_1^\prime, j_1, j_2 \right) A_v \left( L_2, L_2^\prime, j_3, j_2 \right)
    * \underbrace{ P_\nu \left[ \cos \left( \theta \right) \right] }_{ P_\nu
-   * \left[ \cos \left( \theta \right) \right] + \left( \pm \right)_{L_1^\prime}
-   * \cos \left( 2 \varphi \right) \kappa_\nu \left( L_1, L_1^\prime \right)
-   * P_\nu^{\left( 2 \right)} \left[ \cos \left( \theta \right) \right]}. \f]
+   * \left[ \cos \left( \theta \right) \right] + \left( \pm
+   * \right)_{L_1^\prime} \cos \left( 2 \varphi \right) \kappa_\nu \left( L_1,
+   * L_1^\prime \right) P_\nu^{\left( 2 \right)} \left[ \cos \left( \theta
+   * \right) \right]}. \f]
    *
    * Compared to the dir-dir correlation, the expression contains a term whose
    * sign is determined by the electromagnetic charactor of the alternative
    * multipolarity of the first transition. Explicitly, \f$\left( \pm
    * \right)_{L_1^\prime} = +1\f$ if it has electric character, and \f$\left(
-   * \pm \right)_{L_1^\prime} = -1\f$ if it has magnetic character. The \f$\cos
-   * \left( 2\varphi \right)\f$ term introduces a dependence on the azimuthal
-   * angle \f$\varphi\f$ with respect to the polarization axis of the first
-   * photon. In Ref. \cite Kneissl1996, the symbol \f$\kappa_\nu \left( L_1,
-   * L_1^\prime \right)\f$ is called the 'polarization coefficient'. It is
-   * defined in Eq. (I-7) of Ref. \cite FaggHanna1959. The symbol
-   * \f$P_\nu^{\left( 2 \right)}\f$ denotes an associated Legendre polynomial of
-   * degree \f$\nu\f$ and order 2.
+   * \pm \right)_{L_1^\prime} = -1\f$ if it has magnetic character. The
+   * \f$\cos \left( 2\varphi \right)\f$ term introduces a dependence on the
+   * azimuthal angle \f$\varphi\f$ with respect to the polarization axis of
+   * the first photon. In Ref. \cite Kneissl1996, the symbol \f$\kappa_\nu
+   * \left( L_1, L_1^\prime \right)\f$ is called the 'polarization
+   * coefficient'. It is defined in Eq. (I-7) of Ref. \cite FaggHanna1959. The
+   * symbol \f$P_\nu^{\left( 2 \right)}\f$ denotes an associated Legendre
+   * polynomial of degree \f$\nu\f$ and order 2.
    *
-   * If unobserved intermediate transitions are present, the equations above can
-   * be generalized by inserting the respective \f$U_\nu\f$ coefficients. See
-   * also the classes W_dir_dir and UvCoefficient for more information.
+   * If unobserved intermediate transitions are present, the equations above
+   * can be generalized by inserting the respective \f$U_\nu\f$ coefficients.
+   * See also the classes W_dir_dir and UvCoefficient for more information.
    *
    * \param theta Polar angle between the direction of the incoming and
    * the outgoing photon in radians.
@@ -103,7 +112,20 @@ public:
    *
    * \return \f$W \left( \theta, \varphi \right)\f$
    */
-  double operator()(const double theta, const double phi) const override;
+  double operator()(const double theta, const double phi) const override {
+    double sum_over_nu{0.};
+
+    for (size_t i = 1; i <= nu_max / 2; ++i) {
+      sum_over_nu +=
+          expansion_coefficients[i - 1] *
+          gsl_sf_legendre_Plm(static_cast<int>(2 * i), 2, cos(theta));
+    }
+
+    auto polarization_sign = -static_cast<int>(cascade_steps[0].first.em_charp);
+
+    return w_dir_dir(theta) + polarization_sign * cos(2. * phi) * sum_over_nu *
+                                  w_dir_dir.get_normalization_factor();
+  }
 
   /**
    * \brief Return upper limit for the pol-dir correlation.
@@ -116,13 +138,14 @@ public:
    * \f[
    * 		\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in
    * \left[ 0, 2\pi \right]} | W \left( \theta, \varphi \right) | \f] \f[ =
-   * \mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[ 0, 2\pi
-   * \right]} | \sum_\nu A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v \left(
-   * L_2, L_2^\prime, j_3, j_2 \right)  P_\nu \left[ \cos \left( \theta \right)
-   * \right] + \left( \pm \right)_{L_1^\prime} \cos \left( 2 \varphi \right)
-   * \sum_\nu \kappa_\nu \left( L_1, L_1^\prime \right) A_v \left( L_1,
-   * L_1^\prime, j_1, j_2 \right) A_v \left( L_2, L_2^\prime, j_3, j_2 \right)
-   * P_\nu^{\left( 2 \right)} \left[ \cos \left( \theta \right) \right] |, \f]
+   * \mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in \left[ 0,
+   * 2\pi \right]} | \sum_\nu A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v
+   * \left( L_2, L_2^\prime, j_3, j_2 \right)  P_\nu \left[ \cos \left( \theta
+   * \right) \right] + \left( \pm \right)_{L_1^\prime} \cos \left( 2 \varphi
+   * \right) \sum_\nu \kappa_\nu \left( L_1, L_1^\prime \right) A_v \left(
+   * L_1, L_1^\prime, j_1, j_2 \right) A_v \left( L_2, L_2^\prime, j_3, j_2
+   * \right) P_\nu^{\left( 2 \right)} \left[ \cos \left( \theta \right)
+   * \right] |, \f]
    *
    * using the triangle inequality and properties of the absolute value, one
    * obtains:
@@ -150,8 +173,8 @@ public:
    * \right)!}}. \f]
    *
    * Using these results and the upper limit for the Legendre polynomial
-   * \f$P_\nu\f$ from W_dir_dir (which is simply 1), the upper limit returned by
-   * this function is given by:
+   * \f$P_\nu\f$ from W_dir_dir (which is simply 1), the upper limit returned
+   * by this function is given by:
    *
    * \f[
    * 		\sum_\nu | A_v \left( L_1, L_1^\prime, j_1, j_2 \right) A_v
@@ -165,8 +188,8 @@ public:
    *
    * \return \f$\mathrm{max}_{\theta \in \left[ 0, \pi \right], \varphi \in
    * \left[ 0, 2\pi \right]} | W \left( \theta, \varphi \right) | \f$, or an
-   * upper limit for this quantity. If no useful upper limit can be given or if
-   * there is no limit, a negative number is returned.
+   * upper limit for this quantity. If no useful upper limit can be given or
+   * if there is no limit, a negative number is returned.
    */
   double get_upper_limit() const override;
 
@@ -186,10 +209,10 @@ protected:
    * This function calls the function
    * W_pol_dir::calculate_expansion_coefficients_alphav_Av() to calculate the
    * products of \f$\alpha_\nu\f$ and \f$A_\nu\f$ coefficients from \f$\nu =
-   * 0\f$ up to, and including, a maximum value of \f$\nu_\mathrm{max}\f$ for a
-   * given set of quantum numbers. If the cascade contains more than two
-   * transitions, the corresponding products of \f$U_\nu\f$ coefficients for the
-   * same values of \f$\nu\f$ are calculated by the
+   * 0\f$ up to, and including, a maximum value of \f$\nu_\mathrm{max}\f$ for
+   * a given set of quantum numbers. If the cascade contains more than two
+   * transitions, the corresponding products of \f$U_\nu\f$ coefficients for
+   * the same values of \f$\nu\f$ are calculated by the
    * W_dir_dir::calculate_expansion_coefficients_Av() function.
    * This function merges the output of the two functions.
    *

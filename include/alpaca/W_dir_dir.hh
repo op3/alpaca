@@ -19,6 +19,9 @@
 
 #pragma once
 
+#include <cmath>
+#include <gsl/gsl_sf.h>
+
 #include "alpaca/AvCoefficient.hh"
 #include "alpaca/UvCoefficient.hh"
 #include "alpaca/W_gamma_gamma.hh"
@@ -75,8 +78,13 @@ public:
    * initial state. Each step is a pair of a transition and the state which is
    * populated by that transition.
    */
-  W_dir_dir(const State &ini_sta,
-            const vector<pair<Transition, State>> cas_ste);
+  W_dir_dir(const State &ini_sta, const vector<CascadeStep> cas_ste)
+      : W_gamma_gamma(ini_sta, cas_ste) {
+    two_nu_max = calculate_two_nu_max();
+    nu_max = two_nu_max / 2;
+    normalization_factor = calculate_normalization_factor();
+    expansion_coefficients = calculate_expansion_coefficients();
+  }
 
   /**
    * \brief Return value of the dir-dir correlation at an angle \f$\theta\f$
@@ -113,7 +121,16 @@ public:
    *
    * \return \f$W \left( \theta \right)\f$
    */
-  double operator()(const double theta) const;
+  double operator()(const double theta) const {
+    double sum_over_nu{0.};
+
+    for (size_t i = 0; static_cast<unsigned int>(i) <= nu_max / 2; ++i) {
+      sum_over_nu += expansion_coefficients[i] *
+                     gsl_sf_legendre_Pl(static_cast<int>(2 * i), cos(theta));
+    }
+
+    return sum_over_nu * normalization_factor;
+  }
 
   /**
    * \brief Return value of the dir-dir correlation at an angle \f$\theta\f$

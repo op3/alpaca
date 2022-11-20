@@ -53,7 +53,9 @@ public:
    * \right)\f$.
    */
   AngCorrRejectionSampler(AngularCorrelation &w, const int seed,
-                          const unsigned int max_tri = 1000);
+                          const unsigned int max_tri = 1000)
+      : SphereRejectionSampler(nullptr, w.get_upper_limit(), seed, max_tri),
+        angular_correlation(w.get_initial_state(), w.get_cascade_steps()) {}
 
   /**
    * \brief Sample random vector from a probability distribution and record the
@@ -66,11 +68,26 @@ public:
    * of trials \f$N_\mathrm{max}\f$ is reached by the algorithm and no random
    * vector was accepted.
    */
-  pair<unsigned int, array<double, 2>> sample() override final;
+  pair<unsigned int, array<double, 2>> sample() override final {
+    array<double, 2> theta_phi;
+    double dis_val;
+
+    for (unsigned int i = 0; i < max_tries; ++i) {
+
+      theta_phi = sample_theta_phi();
+      dis_val = uniform_random_val(random_engine);
+
+      if (dis_val <= angular_correlation(theta_phi[0], theta_phi[1])) {
+        return {i + 1, {theta_phi[0], theta_phi[1]}};
+      }
+    }
+
+    return {max_tries, {0., 0.}};
+  }
 
 protected:
   AngularCorrelation
       angular_correlation; /**< Gamma-gamma angular correlation */
 };
 
-}
+} // namespace alpaca

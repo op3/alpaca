@@ -74,7 +74,6 @@ if(BUILD_TESTS)
 endif(BUILD_TESTS)
 
 set(installable_libs
-    angcorrRejectionSampler
     angular_correlation
     alphavCoefficient
     avCoefficient
@@ -85,7 +84,6 @@ set(installable_libs
     sphereRejectionSampler
     uvCoefficient
     w_dir_dir
-    w_gamma_gamma
     w_pol_dir)
 install(
   TARGETS ${installable_libs}

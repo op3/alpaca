@@ -28,34 +28,6 @@ using std::to_string;
 
 namespace alpaca {
 
-W_pol_dir::W_pol_dir(const State &ini_sta,
-                     const vector<pair<Transition, State>> cas_ste)
-    : W_gamma_gamma(ini_sta, cas_ste), w_dir_dir(W_dir_dir(ini_sta, cas_ste)) {
-
-  two_nu_max = w_dir_dir.get_two_nu_max();
-  nu_max = two_nu_max / 2;
-  expansion_coefficients = calculate_expansion_coefficients();
-  normalization_factor = w_dir_dir.get_normalization_factor();
-}
-
-double W_pol_dir::operator()(const double theta, const double phi) const {
-
-  double sum_over_nu{0.};
-
-  for (size_t i = 1; i <= nu_max / 2; ++i) {
-    sum_over_nu += expansion_coefficients[i - 1] *
-                   gsl_sf_legendre_Plm(static_cast<int>(2 * i), 2, cos(theta));
-  }
-
-  int polarization_sign = 1;
-  if (cascade_steps[0].first.em_charp == EMCharacter::magnetic) {
-    polarization_sign = -1;
-  }
-
-  return w_dir_dir(theta) + polarization_sign * cos(2. * phi) * sum_over_nu *
-                                w_dir_dir.get_normalization_factor();
-}
-
 double W_pol_dir::get_upper_limit() const {
 
   double upper_limit = 0.;

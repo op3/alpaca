@@ -103,7 +103,8 @@ struct Transition {
    * The EM characters are initialized as unknown.
    *
    * \param t_L Two times the multipolarity. The second transition corresponds
-   * to the next multipolarity order. \param del Multipole mixing ratio.
+   * to the next multipolarity order.
+   * \param del Multipole mixing ratio.
    * \param del Multipole mixing ratio.
    */
   inline Transition(int t_L, double del = 0.) : Transition(t_L, t_L + 2, del){};
@@ -114,7 +115,8 @@ struct Transition {
    * \param em Primary EM character. The secondary EM character is assigned
    * automatically.
    * \param t_L Two times the multipolarity. The second
-   * transition corresponds to the next multipolarity order. \param del
+   * transition corresponds to the next multipolarity order.
+   * \param del
    * Multipole mixing ratio.
    * \param del Multipole mixing ratio.
    */
@@ -126,7 +128,7 @@ struct Transition {
    *
    * \param del Multipole mixing ratio.
    */
-  inline static Transition D1(double delta = 0.) {
+  inline static Transition Dipole(double delta = 0.) {
     return Transition(2, delta);
   }
 
@@ -153,7 +155,7 @@ struct Transition {
    *
    * \param del Multipole mixing ratio.
    */
-  inline static Transition D2(double delta = 0.) {
+  inline static Transition Quadrupole(double delta = 0.) {
     return Transition(4, delta);
   }
 
@@ -175,16 +177,35 @@ struct Transition {
     return Transition(EMCharacter::magnetic, 4, delta);
   }
 
+  /**
+   * \brief Construct suitable transition between two states
+   *
+   * \param from Transition from this state
+   * \param to Transition to this state
+   */
   explicit inline Transition(State from, State to, double a_delta = 0.)
-      : two_L(std::max(2, std::abs(to.two_J - from.two_J))),
+      : two_L(to.two_J - from.two_J),
         em_char(deduce_character(two_L, from.parity, to.parity)),
         two_Lp(two_L + 2), em_charp(alt_character(em_char)), delta(a_delta) {}
 
-  static inline EMCharacter deduce_character(int two_L, Parity p1, Parity p2) {
+  /**
+   * \brief Calculate multipolarity according to selection rule
+   *
+   * \param two_J_1 Angular momentum quantum number of first state
+   * \param two_J_2 Angular momentum quantum number of second state
+   * \return Minimum multipolarity of emitted radiation
+   */
+  constexpr unsigned int selection_rule(unsigned int two_J_1,
+                                        unsigned int two_J_2) {
+    return static_cast<unsigned int>(std::max(
+        2, std::abs(static_cast<int>(two_J_1) - static_cast<int>(two_J_2))));
+  }
+
+  constexpr EMCharacter deduce_character(int a_two_L, Parity p1, Parity p2) {
     if (p1 == Parity::unknown || p2 == Parity::unknown) {
       return EMCharacter::unknown;
     }
-    if ((p1 != p2) != !(two_L % 4)) {
+    if ((p1 != p2) != !(a_two_L % 4)) {
       return EMCharacter::electric;
     }
     return EMCharacter::magnetic;

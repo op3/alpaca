@@ -31,24 +31,6 @@ using std::vector;
 
 namespace alpaca {
 
-pair<unsigned int, array<double, 2>> SphereRejectionSampler::sample() {
-
-  array<double, 2> theta_phi;
-  double dis_val;
-
-  for (unsigned int i = 0; i < max_tries; ++i) {
-
-    theta_phi = sample_theta_phi();
-    dis_val = uniform_random_val(random_engine);
-
-    if (dis_val <= distribution(theta_phi[0], theta_phi[1])) {
-      return {i + 1, {theta_phi[0], theta_phi[1]}};
-    }
-  }
-
-  return {max_tries, {0., 0.}};
-}
-
 double SphereRejectionSampler::estimate_efficiency(const unsigned int n_tries) {
   vector<unsigned int> required_tries(n_tries);
 

@@ -108,13 +108,13 @@ int main() {
   assert(trans_M2 == Transition::M2());
 
   auto trans_D1_0 = Transition(s0, s0);
-  assert(trans_D1_0 == Transition::D1());
+  assert(trans_D1_0 == Transition::Dipole());
 
   auto trans_D1 = Transition(s2, s1);
-  assert(trans_D1 == Transition::D1());
+  assert(trans_D1 == Transition::Dipole());
 
   auto trans_D2 = Transition(s0, s2);
-  assert(trans_D2 == Transition::D2());
+  assert(trans_D2 == Transition::Quadrupole());
 
   auto trans_M1_L0 = Transition(s1p, s1p);
   assert(trans_M1_L0 == Transition::M1());

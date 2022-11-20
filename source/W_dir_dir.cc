@@ -18,8 +18,6 @@
 */
 
 #include <algorithm>
-#include <cmath>
-#include <gsl/gsl_sf.h>
 #include <iostream>
 #include <string>
 
@@ -31,27 +29,6 @@ using std::min;
 using std::to_string;
 
 namespace alpaca {
-
-W_dir_dir::W_dir_dir(const State &ini_sta,
-                     const vector<pair<Transition, State>> cas_ste)
-    : W_gamma_gamma(ini_sta, cas_ste) {
-  two_nu_max = calculate_two_nu_max();
-  nu_max = two_nu_max / 2;
-  normalization_factor = calculate_normalization_factor();
-  expansion_coefficients = calculate_expansion_coefficients();
-}
-
-double W_dir_dir::operator()(const double theta) const {
-
-  double sum_over_nu{0.};
-
-  for (size_t i = 0; static_cast<unsigned int>(i) <= nu_max / 2; ++i) {
-    sum_over_nu += expansion_coefficients[i] *
-                   gsl_sf_legendre_Pl(static_cast<int>(2 * i), cos(theta));
-  }
-
-  return sum_over_nu * normalization_factor;
-}
 
 double W_dir_dir::get_upper_limit() const {
 

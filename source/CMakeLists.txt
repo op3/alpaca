@@ -32,13 +32,6 @@ target_include_directories(
 set_target_properties(avCoefficient PROPERTIES PUBLIC_HEADER
                                                include/AvCoefficient.hh)
 
-add_library(w_gamma_gamma W_gamma_gamma.cc)
-target_include_directories(
-  w_gamma_gamma PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(w_gamma_gamma PROPERTIES PUBLIC_HEADER
-                                               include/W_gamma_gamma.hh)
-
 add_library(w_dir_dir W_dir_dir.cc)
 target_link_libraries(w_dir_dir avCoefficient uvCoefficient)
 target_include_directories(
@@ -119,20 +112,8 @@ set_target_properties(
   sphereRejectionSampler PROPERTIES PUBLIC_HEADER
                                     include/SphereRejectionSampler.hh)
 
-add_library(angcorrRejectionSampler AngCorrRejectionSampler.cc)
-target_link_libraries(angcorrRejectionSampler sphereRejectionSampler
-                      angular_correlation)
-target_include_directories(
-  angcorrRejectionSampler
-  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(
-  angcorrRejectionSampler PROPERTIES PUBLIC_HEADER
-                                     include/AngCorrRejectionSampler.hh)
-
 add_library(cascadeRejectionSampler CascadeRejectionSampler.cc)
-target_link_libraries(cascadeRejectionSampler angular_correlation
-                      angcorrRejectionSampler)
+target_link_libraries(cascadeRejectionSampler angular_correlation)
 target_include_directories(
   cascadeRejectionSampler
   PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>

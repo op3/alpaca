@@ -65,8 +65,7 @@ if(BUILD_TESTS)
 
   add_executable(test_angcorr_rejection_sampler
                  test_angcorr_rejection_sampler.cc)
-  target_link_libraries(test_angcorr_rejection_sampler angular_correlation
-                        angcorrRejectionSampler)
+  target_link_libraries(test_angcorr_rejection_sampler angular_correlation)
   add_test(test_angcorr_rejection_sampler test_angcorr_rejection_sampler)
 
   add_executable(test_angular_correlation test_angular_correlation.cc)
@@ -105,8 +104,7 @@ if(BUILD_TESTS)
   add_test(test_find_Theta_j test_find_Theta_j)
 
   add_executable(test_upper_limit test_upper_limit.cc)
-  target_link_libraries(test_upper_limit spherePointSampler w_dir_dir
-                        w_gamma_gamma w_pol_dir)
+  target_link_libraries(test_upper_limit spherePointSampler w_dir_dir w_pol_dir)
   add_test(test_upper_limit test_upper_limit)
 
   add_executable(test_sphere_point_sampler test_sphere_point_sampler.cc)
