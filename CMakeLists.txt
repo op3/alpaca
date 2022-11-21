@@ -65,6 +65,16 @@ add_compile_options(
              # printf)
 )
 
+include(FetchContent)
+
+# enoki
+FetchContent_Declare(
+  enoki
+  GIT_REPOSITORY https://github.com/mitsuba-renderer/enoki
+  GIT_TAG 2a18afa2402e0677887c8439fa3d6a270ea15726)
+
+FetchContent_MakeAvailable(enoki)
+
 include(GNUInstallDirs)
 
 add_subdirectory(python)

@@ -18,9 +18,9 @@
 */
 
 #include <cmath>
+#include <numbers>
 #include <vector>
 
-#include <gsl/gsl_math.h>
 #include <gsl/gsl_sf_ellint.h>
 #include <gsl/gsl_sf_elljac.h>
 
@@ -75,13 +75,13 @@ int main() {
    */
   for (auto val : elliptic_integral_1st_kind_literature_values) {
     ell_int_num = sph_pt_samp.elliptic_integral_1st_kind_arbitrary_m(
-        M_PI_2, one_over_k_to_m(val[0]));
+        0.5 * std::numbers::pi, one_over_k_to_m(val[0]));
     test_numerical_equality<double>(ell_int_num, val[1], epsilon);
   }
 
   for (auto val : elliptic_integral_2nd_kind_literature_values) {
     ell_int_num = sph_pt_samp.elliptic_integral_2nd_kind_arbitrary_m(
-        M_PI_2, one_over_k_to_m(val[0]));
+        0.5 * std::numbers::pi, one_over_k_to_m(val[0]));
     test_numerical_equality<double>(ell_int_num, val[1], epsilon);
   }
 }

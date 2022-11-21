@@ -19,8 +19,8 @@
 
 #include <cassert>
 #include <cmath>
+#include <numbers>
 
-#include <gsl/gsl_math.h>
 #include <gsl/gsl_sf.h>
 
 #include "alpaca/State.hh"
@@ -118,8 +118,8 @@ int main() {
        {Transition(EMCharacter::magnetic, 2, EMCharacter::electric, 4, 0.),
         State(0, Parity::positive)}});
 
-  for (double theta = 0.; theta < M_PI; theta += 0.5) {
-    for (double phi = 0.; phi < M_2_PI; phi += 0.5) {
+  for (double theta = 0.; theta < std::numbers::pi; theta += 0.5) {
+    for (double phi = 0.; phi < (2. * std::numbers::inv_pi); phi += 0.5) {
 
       w_num = w_pol_dir_e1(theta, phi);
       w_ana = w_pol_dir_0_1_0(theta, phi, EMCharacter::electric);
@@ -152,18 +152,20 @@ int main() {
          {Transition(EMCharacter::electric, 4, EMCharacter::magnetic, 6, 0.),
           State(7, Parity::positive)}});
 
-    for (double theta = 0.; theta < M_PI; theta += 0.5) {
-      for (double phi = 0.; phi < M_2_PI; phi += 0.5) {
+    for (double theta = 0.; theta < std::numbers::pi; theta += 0.5) {
+      for (double phi = 0.; phi < (2. * std::numbers::inv_pi); phi += 0.5) {
 
         // Note the different definition of phi and the additional normalization
         // coefficient for the literature data.
         w_num = Wa_num(theta, phi);
-        w_ana = Wa(theta, M_PI_2 - phi, delta) / (1. + delta * delta);
+        w_ana = Wa(theta, 0.5 * std::numbers::pi - phi, delta) /
+                (1. + delta * delta);
 
         test_numerical_equality<double>(w_num, w_ana, epsilon);
 
         w_num = Wb_num(theta, phi);
-        w_ana = Wb(theta, M_PI_2 - phi, delta) / (1. + delta * delta);
+        w_ana = Wb(theta, 0.5 * std::numbers::pi - phi, delta) /
+                (1. + delta * delta);
 
         test_numerical_equality<double>(w_num, w_ana, epsilon);
       }

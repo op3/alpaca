@@ -18,7 +18,6 @@
 */
 
 #include <array>
-#include <gsl/gsl_math.h>
 #include <numeric>
 #include <utility>
 #include <vector>

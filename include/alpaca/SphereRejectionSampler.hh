@@ -24,7 +24,6 @@
 #include <random>
 #include <utility>
 
-using std::function;
 using std::mt19937_64;
 using std::pair;
 using std::uniform_real_distribution;
@@ -106,6 +105,7 @@ namespace alpaca {
  * \rangle\f$ that have to be sampled before a vector is accepted.
  */
 class SphereRejectionSampler {
+  using Distribution = std::function<double(const double, const double)>;
 
 public:
   virtual ~SphereRejectionSampler() = default;
@@ -121,9 +121,8 @@ public:
    * terminates without success and returns \f$\left( 0, 0 \right)\f$ (default:
    * 1000).
    */
-  SphereRejectionSampler(function<double(const double, const double)> dis,
-                         const double dis_max, const size_t seed,
-                         const unsigned int max_tri = 1000)
+  SphereRejectionSampler(Distribution dis, const double dis_max,
+                         const size_t seed, const unsigned int max_tri = 1000)
       : distribution(dis), distribution_maximum(dis_max), max_tries(max_tri),
         random_engine(seed), uniform_random_val(0., distribution_maximum),
         uniform_random_unit(-1., 1.),
@@ -242,9 +241,8 @@ protected:
     return {sample_theta(), sample_phi()};
   }
 
-  function<double(const double, const double)>
-      distribution; /**< \f$W \left( \theta, \varphi \right)\f$, (unnormalized)
-                       probability distribution. */
+  Distribution distribution;   /**< \f$W \left( \theta, \varphi \right)\f$,
+                                  (unnormalized)   probability distribution. */
   double distribution_maximum; /**< \f$W_\mathrm{max}\f$, maximum of
                                         probability distribution. */
   unsigned int max_tries;      /**< \f$N_\mathrm{max}\f$, maximum number of

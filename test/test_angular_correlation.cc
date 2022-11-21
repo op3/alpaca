@@ -18,8 +18,7 @@
 */
 
 #include <cassert>
-
-#include <gsl/gsl_math.h>
+#include <numbers>
 
 #include "alpaca/AngularCorrelation.hh"
 #include "alpaca/State.hh"
@@ -58,8 +57,8 @@ int main() {
        {Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
         State(0, Parity::positive)}}};
 
-  for (double theta = 0.; theta < M_PI; theta += 0.5) {
-    for (double phi = 0.; phi < M_2_PI; phi += 0.5) {
+  for (double theta = 0.; theta < std::numbers::pi; theta += 0.5) {
+    for (double phi = 0.; phi < (2. * std::numbers::inv_pi); phi += 0.5) {
 
       test_numerical_equality<double>(ang_corr_0_1_0(theta, phi),
                                       w_dir_dir_0_1_0(theta, phi), epsilon);
@@ -88,13 +87,13 @@ int main() {
        {Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
         State(0, Parity::positive)}}};
 
-  for (double theta = 0.; theta < M_PI; theta += 0.5) {
-    for (double phi = 0.; phi < M_2_PI; phi += 0.5) {
+  for (double theta = 0.; theta < std::numbers::pi; theta += 0.5) {
+    for (double phi = 0.; phi < (2. * std::numbers::inv_pi); phi += 0.5) {
 
       test_numerical_equality<double>(ang_corr_0p_1p_0p(theta, phi),
                                       w_pol_dir_0p_1p_0p(theta, phi), epsilon);
       test_numerical_equality<double>(
-          ang_corr_0p_1p_0p(theta, phi, {M_PI_2, 0., 0.}),
+          ang_corr_0p_1p_0p(theta, phi, {0.5 * std::numbers::pi, 0., 0.}),
           w_pol_dir_0p_1m_0p(theta, phi), epsilon);
     }
   }

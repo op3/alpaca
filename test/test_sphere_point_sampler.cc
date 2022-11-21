@@ -41,7 +41,7 @@ int main() {
 
   // Test various error messages that should be displayed when the numerical
   // fixed-point searches fail.
-  bool error_thrown = false;
+  [[maybe_unused]] bool error_thrown = false;
 
   try {
     sph_poi_sam.find_c(2, 1e-8, 2);

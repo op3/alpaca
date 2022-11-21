@@ -18,8 +18,7 @@
 */
 
 #include <cmath>
-
-#include <gsl/gsl_sf.h>
+#include <numbers>
 
 #include "alpaca/State.hh"
 #include "alpaca/TestUtilities.hh"
@@ -32,8 +31,8 @@ using namespace alpaca;
  * Eq. (68) in Ref. \cite AjzenbergSelove1960.
  */
 double w_dir_dir_6_4_3_1(const double theta) {
-  return 1. + 0.10204 * gsl_sf_legendre_Pl(2, cos(theta)) +
-         0.00907 * gsl_sf_legendre_Pl(4, cos(theta));
+  return 1. + 0.10204 * std::legendre(2, cos(theta)) +
+         0.00907 * std::legendre(4, cos(theta));
 }
 
 /**
@@ -59,8 +58,8 @@ int main() {
            State(2, Parity::unknown)},
       });
 
-  for (double theta = 0.; theta < M_PI; theta += 0.5) {
-    for (double phi = 0.; phi < M_2_PI; phi += 0.5) {
+  for (double theta = 0.; theta < std::numbers::pi; theta += 0.5) {
+    for (double phi = 0.; phi < (2. * std::numbers::inv_pi); phi += 0.5) {
 
       w_num = w_dir_dir(theta);
       w_ana = w_dir_dir_6_4_3_1(theta);

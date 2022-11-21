@@ -23,8 +23,6 @@
 #include <numbers>
 #include <vector>
 
-#include <gsl/gsl_math.h>
-
 using std::array;
 using std::vector;
 

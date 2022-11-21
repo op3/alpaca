@@ -25,7 +25,7 @@ using namespace alpaca;
 
 int main() {
 
-  bool error_thrown = false;
+  [[maybe_unused]] bool error_thrown = false;
 
   test_numerical_equality<double>(1.000, 1.001, 1e-3);
 

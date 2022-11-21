@@ -662,7 +662,7 @@ int main() {
   const unsigned int n_sphere_points = 1000;
   array<vector<double>, 2> sphere_points = sph_poi_sam.sample(n_sphere_points);
 
-  double ang_cor_max{0.}, ang_cor_val{0.}, ang_cor_upp_lim{0.};
+  [[maybe_unused]] double ang_cor_max{0.}, ang_cor_val{0.}, ang_cor_upp_lim{0.};
 
   for (auto ang_cor : ang_corrs) {
     ang_cor_max = 0.;

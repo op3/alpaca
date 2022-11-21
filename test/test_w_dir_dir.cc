@@ -19,8 +19,7 @@
 
 #include <cassert>
 #include <cmath>
-
-#include <gsl/gsl_math.h>
+#include <numbers>
 
 #include "alpaca/State.hh"
 #include "alpaca/TestUtilities.hh"
@@ -55,7 +54,7 @@ int main() {
                                       {Transition(4, 6, 0.), State(0)},
                                   });
 
-  for (double theta = 0.; theta < M_PI; theta += 0.5) {
+  for (double theta = 0.; theta < std::numbers::pi; theta += 0.5) {
     w_dir_dir_num = w_dir_dir_2(theta);
     w_dir_dir_ana = w_dir_dir_0_2_0(theta);
 

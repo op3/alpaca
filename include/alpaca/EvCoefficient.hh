@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <gsl/gsl_sf.h>
+#include <cmath>
 
 #include "alpaca/FCoefficient.hh"
 #include "alpaca/Transition.hh"
@@ -112,7 +112,7 @@ public:
                 quadratic_f_coefficient.get_value() *
                 (nu_times_nu_plus_one * two_Lp_times_Lp_plus_one) /
                 (nu_times_nu_plus_one - two_Lp_times_Lp_plus_one)) *
-           gsl_sf_fact(nu - 2) / gsl_sf_fact(nu + 2);
+           std::tgamma(nu - 2 + 1) / std::tgamma(nu + 2 + 1);
   }
 
 protected:

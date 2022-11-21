@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <vector>
 
 using std::vector;
@@ -112,13 +113,13 @@ public:
    *
    * \return \f$W \left( \theta, \varphi \right)\f$
    */
-  template <typename T> T operator()(T theta, T phi) override const {
-    T sum_over_nu{0.};
+  double operator()(double theta, double phi) const override {
+    double sum_over_nu{0.};
 
     for (size_t i = 1; i <= nu_max / 2; ++i) {
       sum_over_nu +=
           expansion_coefficients[i - 1] *
-          gsl_sf_legendre_Plm(static_cast<int>(2 * i), 2, cos(theta));
+          std::assoc_legendre(static_cast<unsigned int>(2 * i), 2, cos(theta));
     }
 
     auto polarization_sign = -static_cast<int>(cascade_steps[0].first.em_charp);

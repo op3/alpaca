@@ -154,8 +154,7 @@ The `AngularCorrelation` object can be called using the arguments `(theta, phi)`
 ### 3.i Example (C++)
 
 ```
-#include <gsl/gsl_math.h> // To be able to use pi
-
+#include <numbers>
 #include <iostream>
 
 #include "AngularCorrelation.hh"
@@ -175,7 +174,7 @@ int main(){
         }
     };
 
-    std::cout << ang_cor(0.5*M_PI, 0.) << std::endl;
+    std::cout << ang_cor(0.5 * std::numbers::pi, 0.) << std::endl;
 }
 ```
 

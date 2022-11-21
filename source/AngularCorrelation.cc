@@ -58,7 +58,7 @@ AngularCorrelation::AngularCorrelation(const State ini_sta,
 
 AngularCorrelation::AngularCorrelation(const State ini_sta,
                                        const vector<State> cas_sta)
-    : AngularCorrelation(ini_sta, gen_cascade_steps(ini_sta, cas_sta)){};
+    : AngularCorrelation(ini_sta, gen_cascade_steps(ini_sta, cas_sta)) {}
 
 void AngularCorrelation::check_cascade(const State ini_sta,
                                        const vector<CascadeStep> cas_ste) {

@@ -60,7 +60,7 @@ if(BUILD_TESTS)
 
   add_executable(test_euler_angle_rotation test_euler_angle_rotation.cc)
   target_link_libraries(test_euler_angle_rotation euler_angle_rotation
-                        w_dir_dir w_pol_dir ${GSL_LIBRARIES})
+                        w_dir_dir w_pol_dir)
   add_test(test_euler_angle_rotation test_euler_angle_rotation)
 
   add_executable(test_angcorr_rejection_sampler
@@ -71,7 +71,7 @@ if(BUILD_TESTS)
   add_executable(test_angular_correlation test_angular_correlation.cc)
   target_link_libraries(
     test_angular_correlation angular_correlation euler_angle_rotation w_dir_dir
-    w_pol_dir ${GSL_LIBRARIES})
+    w_pol_dir)
   add_test(test_angular_correlation test_angular_correlation)
 
   add_executable(test_angular_correlation_io test_angular_correlation_io.cc)
@@ -84,7 +84,7 @@ if(BUILD_TESTS)
   add_test(test_elliptic_integral test_elliptic_integral)
 
   add_executable(test_spiral_segment test_spiral_segment.cc)
-  target_link_libraries(test_spiral_segment spherePointSampler ${GSL_LIBRARIES})
+  target_link_libraries(test_spiral_segment spherePointSampler)
   add_test(test_spiral_segment test_spiral_segment)
 
   add_executable(test_find_c test_find_c.cc)
@@ -137,5 +137,7 @@ if(BUILD_TESTS)
   add_test(test_cascade_rejection_sampler test_cascade_rejection_sampler)
 
   add_executable(benchmark benchmark.cc)
+  target_include_directories(
+    benchmark SYSTEM PUBLIC $<BUILD_INTERFACE:${enoki_SOURCE_DIR}/include>)
   target_link_libraries(benchmark angular_correlation cascadeRejectionSampler)
 endif(BUILD_TESTS)

@@ -175,7 +175,7 @@ int main() {
   assert(test_triangle_inequality_violated_for_first_transition());
   assert(test_triangle_inequality_violated_for_second_transition());
 
-  bool error_thrown = false;
+  [[maybe_unused]] bool error_thrown = false;
 
   // Not an error: Triangle inequality fulfilled by second transition
   {

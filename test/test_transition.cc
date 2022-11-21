@@ -28,7 +28,7 @@ using std::invalid_argument;
 int main() {
   // Test IO of the Transition class.
 
-  bool error_thrown = false;
+  [[maybe_unused]] bool error_thrown = false;
 
   // Error: Both multipolarities are the same.
   // Test for both possible constructors.
@@ -95,33 +95,33 @@ int main() {
   auto s2p = State(4, Parity::positive);
   auto s2m = State(4, Parity::negative);
 
-  auto trans_E1 = Transition(s0p, s1m);
+  [[maybe_unused]] auto trans_E1 = Transition(s0p, s1m);
   assert(trans_E1 == Transition::E1());
 
-  auto trans_M1 = Transition(s0p, s1p);
+  [[maybe_unused]] auto trans_M1 = Transition(s0p, s1p);
   assert(trans_M1 == Transition::M1());
 
-  auto trans_E2 = Transition(s0p, s2p);
+  [[maybe_unused]] auto trans_E2 = Transition(s0p, s2p);
   assert(trans_E2 == Transition::E2());
 
-  auto trans_M2 = Transition(s0p, s2m);
+  [[maybe_unused]] auto trans_M2 = Transition(s0p, s2m);
   assert(trans_M2 == Transition::M2());
 
-  auto trans_D1_0 = Transition(s0, s0);
+  [[maybe_unused]] auto trans_D1_0 = Transition(s0, s0);
   assert(trans_D1_0 == Transition::Dipole());
 
-  auto trans_D1 = Transition(s2, s1);
+  [[maybe_unused]] auto trans_D1 = Transition(s2, s1);
   assert(trans_D1 == Transition::Dipole());
 
-  auto trans_D2 = Transition(s0, s2);
+  [[maybe_unused]] auto trans_D2 = Transition(s0, s2);
   assert(trans_D2 == Transition::Quadrupole());
 
-  auto trans_M1_L0 = Transition(s1p, s1p);
+  [[maybe_unused]] auto trans_M1_L0 = Transition(s1p, s1p);
   assert(trans_M1_L0 == Transition::M1());
 
-  auto trans_E1_L0 = Transition(s1p, s1m);
+  [[maybe_unused]] auto trans_E1_L0 = Transition(s1p, s1m);
   assert(trans_E1_L0 == Transition::E1());
 
-  auto trans_M1_0 = Transition(s0p, s0p);
+  [[maybe_unused]] auto trans_M1_0 = Transition(s0p, s0p);
   assert(trans_M1_0 == Transition::M1());
 }

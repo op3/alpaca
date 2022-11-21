@@ -17,7 +17,7 @@
     Copyright (C) 2021 Udo Friman-Gayer
 */
 
-#include <gsl/gsl_math.h>
+#include <numbers>
 
 #include "alpaca/SphereIntegrator.hh"
 #include "alpaca/TestUtilities.hh"
@@ -43,7 +43,7 @@ int main() {
 
   SphereIntegrator sph_int;
 
-  const double normalization = 4. * M_PI;
+  const double normalization = 4. * std::numbers::pi;
 
   const unsigned int n = 10000;
 

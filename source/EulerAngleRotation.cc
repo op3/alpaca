@@ -18,6 +18,7 @@
 */
 
 #include <cmath>
+#include <numbers>
 
 #include "alpaca/EulerAngleRotation.hh"
 
@@ -27,7 +28,8 @@ array<double, 2>
 EulerAngleRotation::get_theta_phi(const array<double, 3> x_y_z_norm) const {
 
   return {acos(x_y_z_norm[2]),
-          fmod(atan2(x_y_z_norm[1], x_y_z_norm[0]) + 2. * M_PI, 2. * M_PI)};
+          fmod(atan2(x_y_z_norm[1], x_y_z_norm[0]) + 2. * std::numbers::pi,
+               2. * std::numbers::pi)};
 }
 
 array<double, 3>

@@ -68,6 +68,8 @@ target_link_libraries(w_pol_dir alphavCoefficient avCoefficient w_dir_dir)
 target_include_directories(
   w_pol_dir PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_include_directories(
+  w_pol_dir SYSTEM PUBLIC $<BUILD_INTERFACE:${enoki_SOURCE_DIR}/include>)
 set_target_properties(w_pol_dir PROPERTIES PUBLIC_HEADER include/W_pol_dir.hh)
 
 add_library(angular_correlation SHARED AngularCorrelation.cc)
@@ -87,10 +89,11 @@ set_target_properties(euler_angle_rotation
                       PROPERTIES PUBLIC_HEADER include/EulerAngleRotation.hh)
 
 add_library(spherePointSampler SpherePointSampler.cc)
-target_link_libraries(spherePointSampler ${GSL_LIBRARIES})
 target_include_directories(
   spherePointSampler PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_include_directories(
+  spherePointSampler SYSTEM PUBLIC $<BUILD_INTERFACE:${enoki_SOURCE_DIR}/include>)
 set_target_properties(spherePointSampler
                       PROPERTIES PUBLIC_HEADER include/SpherePointSampler.hh)
 

@@ -20,8 +20,6 @@
 #include <numbers>
 #include <vector>
 
-#include <gsl/gsl_math.h>
-
 #include "alpaca/SpherePointSampler.hh"
 #include "alpaca/TestUtilities.hh"
 

@@ -22,8 +22,8 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <gsl/gsl_sf_ellint.h>
-#include <gsl/gsl_sf_elljac.h>
+#include <enoki/array.h>
+#include <enoki/special.h>
 
 using std::invalid_argument;
 using std::runtime_error;
@@ -74,39 +74,35 @@ SpherePointSampler::sample_cartesian(const unsigned int n,
 double SpherePointSampler::elliptic_integral_2nd_kind_arbitrary_m(
     const double phi, const double m) const {
 
-  const double abs_m = fabs(m);
+  const double abs_m = enoki::abs(m);
+  const double abs_k = enoki::sqrt(abs_m);
 
-  // Use Eq. (19.6.9) in Ref. \cite DLMF2020.
-  // The GSL implementation cannot handle this case.
-  if (m == 1.) {
-    return sin(phi);
-  }
-
-  const double abs_k = sqrt(abs_m);
-
-  // Direct call of the GSL library function possible.
+  // Direct call of the library function possible.
   if (m >= 0. && abs_m < 1.) {
-    return gsl_sf_ellint_E(phi, abs_k, GSL_PREC_DOUBLE);
+    return enoki::ellint_2(phi, abs_k);
   }
 
   // Use Eq. (19.7.5) in Ref. \cite DLMF2020.
-  const double abs_k_squared = abs_k * abs_k;
-  const double kappa_prime = 1. / sqrt(1. + abs_k_squared);
+  const double abs_k_squared = enoki::sqr(abs_k);
+  const double kappa_prime = enoki::rsqrt(1. + abs_k_squared);
   const double kappa = abs_k * kappa_prime;
-  const double kappa_squared = kappa * kappa;
+  const double kappa_squared = enoki::sqr(kappa);
   // phi == pi/2 corresponds to the complete elliptic integral
   // This is both a shortcut and an insurance against numerical instabilities.
   if (phi == 0.5 * pi) {
-    return gsl_sf_ellint_Ecomp(kappa, GSL_PREC_DOUBLE) / kappa_prime;
+    return enoki::comp_ellint_2(kappa) / kappa_prime;
   }
 
-  const double theta = asin(
-      sin(phi) / (kappa_prime * sqrt(1. + abs_k * abs_k * pow(sin(phi), 2))));
+  const double theta = enoki::asin(
+      enoki::sin(phi) /
+      (kappa_prime *
+       enoki::sqrt(1. + abs_k * abs_k * enoki::pow(enoki::sin(phi), 2))));
 
   return 1. / kappa_prime *
          (elliptic_integral_2nd_kind_arbitrary_m(theta, kappa_squared) -
-          kappa_squared * sin(theta) * cos(theta) /
-              sqrt(1. - kappa_squared * pow(sin(theta), 2)));
+          kappa_squared * enoki::sin(theta) * enoki::cos(theta) *
+              enoki::rsqrt(1. -
+                           kappa_squared * enoki::pow(enoki::sin(theta), 2)));
 
   // Alternative implementation of the cases \f$m < 0\f$ and \f$ |m| > 1 \f$
   // based on Eqs. (17.4.16) and (17.4.18) in \cite AbramowitzStegun1974, which
@@ -284,26 +280,28 @@ SpherePointSampler::find_Theta_j(const unsigned int j, const unsigned int n,
 double SpherePointSampler::elliptic_integral_1st_kind_arbitrary_m(
     const double phi, const double m) const {
 
-  const double abs_m = fabs(m);
-  const double abs_k = sqrt(abs_m);
+  const double abs_m = enoki::abs(m);
+  const double abs_k = enoki::sqrt(abs_m);
 
   if (m >= 0. && abs_m < 1.) {
-    return gsl_sf_ellint_F(phi, abs_k, GSL_PREC_DOUBLE);
+    return enoki::ellint_1(phi, abs_k);
   }
 
   // Use Eq. (19.7.5) in Ref. \cite DLMF2020.
-  const double abs_k_squared = abs_k * abs_k;
-  const double kappa_prime = 1. / sqrt(1. + abs_k_squared);
+  const double abs_k_squared = enoki::sqr(abs_k);
+  const double kappa_prime = enoki::rsqrt(1. + abs_k_squared);
   const double kappa = abs_k * kappa_prime;
 
   // phi == pi/2 corresponds to the complete elliptic integral
   // This is both a shortcut and an insurance against numerical instabilities.
   if (phi == 0.5 * pi) {
-    return kappa_prime * gsl_sf_ellint_Kcomp(kappa, GSL_PREC_DOUBLE);
+    return kappa_prime * enoki::comp_ellint_1(kappa);
   }
 
-  const double theta = asin(
-      sin(phi) / (kappa_prime * sqrt(1. + abs_k_squared * pow(sin(phi), 2))));
+  const double theta = enoki::asin(
+      enoki::sin(phi) /
+      (kappa_prime *
+       enoki::sqrt(1. + abs_k_squared * enoki::pow(enoki::sin(phi), 2))));
 
   return kappa_prime *
          elliptic_integral_1st_kind_arbitrary_m(theta, kappa * kappa);

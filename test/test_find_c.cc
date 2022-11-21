@@ -18,6 +18,7 @@
 */
 
 #include <cassert>
+#include <numbers>
 #include <stdexcept>
 #include <vector>
 
@@ -36,7 +37,7 @@ int main() {
 
   SpherePointSampler sph_pt_samp;
 
-  bool error_thrown = false;
+  [[maybe_unused]] bool error_thrown = false;
   try {
     sph_pt_samp.find_c(1);
   } catch (const std::invalid_argument &e) {
@@ -52,6 +53,9 @@ int main() {
     // The fixed-point formula that defines the optimum c {Eq. (8) in Ref. \cite
     // Koay2011} provides a straightforward test.
     test_numerical_equality<double>(
-        c, 2. * n_points * M_PI / sph_pt_samp.segment_length(M_PI, c), 1e-8);
+        c,
+        2. * n_points * std::numbers::pi /
+            sph_pt_samp.segment_length(std::numbers::pi, c),
+        1e-8);
   }
 }

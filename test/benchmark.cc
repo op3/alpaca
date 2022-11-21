@@ -20,6 +20,9 @@
 #include <chrono>
 #include <iostream>
 
+#include <enoki/array.h>
+#include <enoki/special.h>
+
 #include "alpaca/AngularCorrelation.hh"
 #include "alpaca/CascadeRejectionSampler.hh"
 #include "alpaca/State.hh"

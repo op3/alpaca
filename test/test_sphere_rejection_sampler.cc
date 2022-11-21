@@ -18,11 +18,10 @@
 */
 
 #include <array>
+#include <numbers>
 
 #include <cassert>
 using std::array;
-
-#include <gsl/gsl_math.h>
 
 #include "alpaca/EulerAngleRotation.hh"
 #include "alpaca/SphereRejectionSampler.hh"
@@ -50,7 +49,7 @@ int main() {
 
   SphereRejectionSampler sph_rej_sam(
       []([[maybe_unused]] const double theta, const double phi) {
-        return phi < M_PI ? 1. : 0.;
+        return phi < std::numbers::pi ? 1. : 0.;
       },
       1., 0);
 
@@ -60,7 +59,7 @@ int main() {
 
   SphereRejectionSampler sph_rej_sam_2(
       []([[maybe_unused]] const double theta, const double phi) {
-        return phi < M_PI ? 1. : 0.;
+        return phi < std::numbers::pi ? 1. : 0.;
       },
       2., 0);
 
@@ -73,8 +72,8 @@ int main() {
       []([[maybe_unused]] const double theta,
          [[maybe_unused]] const double phi) { return -1.; },
       0.5, 0);
-  const pair<unsigned int, array<double, 2>> theta_phi_default =
-      sph_rej_sam_3.sample();
+  [[maybe_unused]] const pair<unsigned int, array<double, 2>>
+      theta_phi_default = sph_rej_sam_3.sample();
   assert(theta_phi_default.first == 1000);
   assert(theta_phi_default.second[0] == 0.);
   assert(theta_phi_default.second[1] == 0.);
@@ -91,10 +90,11 @@ int main() {
          [[maybe_unused]] const double phi) { return 1.; },
       1., 0);
   const array<double, 3> euler_angles = {0.1, 0.2, 0.3};
-  array<double, 2> theta_phi_rotated = sph_rej_sam_uni_2(euler_angles);
+  [[maybe_unused]] array<double, 2> theta_phi_rotated =
+      sph_rej_sam_uni_2(euler_angles);
 
   const EulerAngleRotation euler_angle_rotation;
-  array<double, 2> theta_phi_rotated_manually =
+  [[maybe_unused]] array<double, 2> theta_phi_rotated_manually =
       euler_angle_rotation.rotate(theta_phi, euler_angles);
 
   // Test that the rotation has an effect.

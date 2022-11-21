@@ -18,6 +18,7 @@
 */
 
 #include <cassert>
+#include <numbers>
 #include <stdexcept>
 
 #include "alpaca/SpherePointSampler.hh"
@@ -32,7 +33,7 @@ int main() {
   SpherePointSampler sph_pt_samp;
   const double c = sph_pt_samp.find_c(n);
 
-  bool error_thrown{false};
+  [[maybe_unused]] bool error_thrown{false};
   try {
     sph_pt_samp.find_Theta_j(0, n, c);
   } catch (const std::invalid_argument &e) {
@@ -49,7 +50,7 @@ int main() {
     // Test using the defining equation {Eq. (11) in Ref. \cite Koay2011} for
     // Theta_j
     test_numerical_equality<double>(sph_pt_samp.segment_length(Theta_j, c),
-                                    (2. * j - 1) * M_PI / c, 1e-8);
+                                    (2. * j - 1) * std::numbers::pi / c, 1e-8);
   }
 
   try {

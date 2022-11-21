@@ -26,7 +26,7 @@ using namespace alpaca;
 int main() {
   // Test IO of the State class.
 
-  bool error_thrown = false;
+  [[maybe_unused]] bool error_thrown = false;
 
   {
     const State state(2);

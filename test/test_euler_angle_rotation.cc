@@ -18,8 +18,7 @@
 */
 
 #include <array>
-
-#include <gsl/gsl_math.h>
+#include <numbers>
 
 #include "alpaca/EulerAngleRotation.hh"
 #include "alpaca/TestUtilities.hh"
@@ -38,9 +37,9 @@ int main() {
   EulerAngleRotation eul_ang_rot;
 
   array<double, 3> x_axis{1., 0., 0.};
-  array<double, 2> x_axis_sph{M_PI_2, 0.};
+  array<double, 2> x_axis_sph{0.5 * std::numbers::pi, 0.};
   array<double, 3> y_axis{0., 1., 0.};
-  array<double, 2> y_axis_sph{M_PI_2, M_PI_2};
+  array<double, 2> y_axis_sph{0.5 * std::numbers::pi, 0.5 * std::numbers::pi};
   array<double, 3> z_axis{0., 0., 1.};
   // Warning: On the z axis, the angle phi in spherical coordinates is actually
   // undefined. Therefore, a test in which, after a rotation into the z axis,
@@ -58,7 +57,7 @@ int main() {
   // Phi   = -pi/2
   // Theta = 0
   // Psi   = 0
-  euler_angles = {-M_PI_2, 0., 0.};
+  euler_angles = {-0.5 * std::numbers::pi, 0., 0.};
 
   xp_yp_zp = eul_ang_rot.rotate(x_axis, euler_angles);
   test_numerical_equality<double>(3, xp_yp_zp.data(), y_axis.data(), epsilon);
@@ -77,7 +76,7 @@ int main() {
   // Phi   = pi/2
   // Theta = pi/2
   // Psi   = 0
-  euler_angles = {M_PI_2, M_PI_2, 0.};
+  euler_angles = {0.5 * std::numbers::pi, 0.5 * std::numbers::pi, 0.};
 
   xp_yp_zp = eul_ang_rot.rotate(x_axis, euler_angles);
   test_numerical_equality<double>(3, xp_yp_zp.data(), z_axis.data(), epsilon);
@@ -96,7 +95,7 @@ int main() {
   // Phi   = pi/2
   // Theta = 0
   // Psi   = 0
-  euler_angles = {M_PI_2, 0., 0.};
+  euler_angles = {0.5 * std::numbers::pi, 0., 0.};
 
   xp_yp_zp = eul_ang_rot.rotate(y_axis, euler_angles);
   test_numerical_equality<double>(3, xp_yp_zp.data(), x_axis.data(), epsilon);
@@ -115,7 +114,7 @@ int main() {
   // Phi   = 0
   // Theta = -pi/2
   // Psi   = 0
-  euler_angles = {0., -M_PI_2, 0.};
+  euler_angles = {0., -0.5 * std::numbers::pi, 0.};
 
   xp_yp_zp = eul_ang_rot.rotate(y_axis, euler_angles);
   test_numerical_equality<double>(3, xp_yp_zp.data(), z_axis.data(), epsilon);
@@ -137,7 +136,7 @@ int main() {
   // Phi   = 0
   // Theta = pi/2
   // Psi   = pi/2
-  euler_angles = {0., M_PI_2, M_PI_2};
+  euler_angles = {0., 0.5 * std::numbers::pi, 0.5 * std::numbers::pi};
 
   xp_yp_zp = eul_ang_rot.rotate(z_axis, euler_angles);
   test_numerical_equality<double>(3, xp_yp_zp.data(), x_axis.data(), epsilon);
@@ -156,7 +155,7 @@ int main() {
   // Phi   = 0
   // Theta = pi/2
   // Psi   = 0
-  euler_angles = {0., M_PI_2, 0.};
+  euler_angles = {0., 0.5 * std::numbers::pi, 0.};
 
   xp_yp_zp = eul_ang_rot.rotate(z_axis, euler_angles);
   test_numerical_equality<double>(3, xp_yp_zp.data(), y_axis.data(), epsilon);
@@ -195,44 +194,58 @@ int main() {
 
   // Test the x, y, z, -x, -y, and -z axis.
   theta_phi = eul_ang_rot.get_theta_phi({1., 0., 0.});
-  test_numerical_equality<double>(theta_phi[0], M_PI_2, epsilon);
+  test_numerical_equality<double>(theta_phi[0], 0.5 * std::numbers::pi,
+                                  epsilon);
   test_numerical_equality<double>(theta_phi[1], 0., epsilon);
 
   theta_phi = eul_ang_rot.get_theta_phi({-1., 0., 0.});
-  test_numerical_equality<double>(theta_phi[0], M_PI_2, epsilon);
-  test_numerical_equality<double>(theta_phi[1], M_PI, epsilon);
+  test_numerical_equality<double>(theta_phi[0], 0.5 * std::numbers::pi,
+                                  epsilon);
+  test_numerical_equality<double>(theta_phi[1], std::numbers::pi, epsilon);
 
   theta_phi = eul_ang_rot.get_theta_phi({0., 1., 0.});
-  test_numerical_equality<double>(theta_phi[0], M_PI_2, epsilon);
-  test_numerical_equality<double>(theta_phi[1], M_PI_2, epsilon);
+  test_numerical_equality<double>(theta_phi[0], 0.5 * std::numbers::pi,
+                                  epsilon);
+  test_numerical_equality<double>(theta_phi[1], 0.5 * std::numbers::pi,
+                                  epsilon);
 
   theta_phi = eul_ang_rot.get_theta_phi({0., -1., 0.});
-  test_numerical_equality<double>(theta_phi[0], M_PI_2, epsilon);
-  test_numerical_equality<double>(theta_phi[1], 3. * M_PI_2, epsilon);
+  test_numerical_equality<double>(theta_phi[0], 0.5 * std::numbers::pi,
+                                  epsilon);
+  test_numerical_equality<double>(theta_phi[1], 3. * 0.5 * std::numbers::pi,
+                                  epsilon);
 
   theta_phi = eul_ang_rot.get_theta_phi({0., 0., 1.});
   test_numerical_equality<double>(theta_phi[0], 0., epsilon);
   test_numerical_equality<double>(theta_phi[1], 0., epsilon);
 
   theta_phi = eul_ang_rot.get_theta_phi({0., 0., -1.});
-  test_numerical_equality<double>(theta_phi[0], M_PI, epsilon);
+  test_numerical_equality<double>(theta_phi[0], std::numbers::pi, epsilon);
   test_numerical_equality<double>(theta_phi[1], 0., epsilon);
 
   // Test more vectors in the xy plane to see whether phi is set in the correct
   // quadrant.
   theta_phi = eul_ang_rot.get_theta_phi({1., 1., 0.});
-  test_numerical_equality<double>(theta_phi[0], M_PI_2, epsilon);
-  test_numerical_equality<double>(theta_phi[1], M_PI_4, epsilon);
+  test_numerical_equality<double>(theta_phi[0], 0.5 * std::numbers::pi,
+                                  epsilon);
+  test_numerical_equality<double>(theta_phi[1], 0.25 * std::numbers::pi,
+                                  epsilon);
 
   theta_phi = eul_ang_rot.get_theta_phi({-1., 1., 0.});
-  test_numerical_equality<double>(theta_phi[0], M_PI_2, epsilon);
-  test_numerical_equality<double>(theta_phi[1], 3. * M_PI_4, epsilon);
+  test_numerical_equality<double>(theta_phi[0], 0.5 * std::numbers::pi,
+                                  epsilon);
+  test_numerical_equality<double>(theta_phi[1], 3. * 0.25 * std::numbers::pi,
+                                  epsilon);
 
   theta_phi = eul_ang_rot.get_theta_phi({-1., -1., 0.});
-  test_numerical_equality<double>(theta_phi[0], M_PI_2, epsilon);
-  test_numerical_equality<double>(theta_phi[1], 5. * M_PI_4, epsilon);
+  test_numerical_equality<double>(theta_phi[0], 0.5 * std::numbers::pi,
+                                  epsilon);
+  test_numerical_equality<double>(theta_phi[1], 5. * 0.25 * std::numbers::pi,
+                                  epsilon);
 
   theta_phi = eul_ang_rot.get_theta_phi({1., -1., 0.});
-  test_numerical_equality<double>(theta_phi[0], M_PI_2, epsilon);
-  test_numerical_equality<double>(theta_phi[1], 7. * M_PI_4, epsilon);
+  test_numerical_equality<double>(theta_phi[0], 0.5 * std::numbers::pi,
+                                  epsilon);
+  test_numerical_equality<double>(theta_phi[1], 7. * 0.25 * std::numbers::pi,
+                                  epsilon);
 }
