@@ -119,7 +119,7 @@ public:
     for (size_t i = 1; i <= nu_max / 2; ++i) {
       sum_over_nu +=
           expansion_coefficients[i - 1] *
-          std::assoc_legendre(static_cast<unsigned int>(2 * i), 2, cos(theta));
+          assoc_legendre(static_cast<unsigned int>(2 * i), 2, cos(theta));
     }
 
     auto polarization_sign = -static_cast<int>(cascade_steps[0].first.em_charp);

@@ -24,6 +24,7 @@
 #include <gsl/gsl_sf_ellint.h>
 #include <gsl/gsl_sf_elljac.h>
 
+#include "alpaca/Special.hh"
 #include "alpaca/SpherePointSampler.hh"
 #include "alpaca/TestUtilities.hh"
 
@@ -49,11 +50,11 @@ using namespace alpaca;
  * kind include the value of the integral at \f$k = m = 1\f$, which can not be
  * handled by GSL.
  */
-const vector<vector<double>> elliptic_integral_1st_kind_literature_values{
+const vector<vector<double>> ellint_1_literature_values{
     {1.20, 2.067254932}, {1.40, 1.862817607}, {1.60, 1.771073176},
     {1.80, 1.718978667}, {2.00, 1.685750355},
 };
-const vector<vector<double>> elliptic_integral_2nd_kind_literature_values{
+const vector<vector<double>> ellint_2_literature_values{
     {1.00, 1.000000000}, {1.20, 1.244969258}, {1.40, 1.345488787},
     {1.60, 1.403811262}, {1.80, 1.441486811}, {2.00, 1.467462209},
 };
@@ -66,22 +67,22 @@ int main() {
 
   const double epsilon{1e-8};
 
-  SpherePointSampler sph_pt_samp;
+  [[maybe_unused]] SpherePointSampler sph_pt_samp;
 
   double ell_int_num = 0.;
 
   /**
    *  For \f$ 0 \leq m \leq 1 \f$, test a few literature values
    */
-  for (auto val : elliptic_integral_1st_kind_literature_values) {
-    ell_int_num = sph_pt_samp.elliptic_integral_1st_kind_arbitrary_m(
-        0.5 * std::numbers::pi, one_over_k_to_m(val[0]));
+  for (auto val : ellint_1_literature_values) {
+    ell_int_num =
+        ellint_1_arbitrary_m(0.5 * std::numbers::pi, one_over_k_to_m(val[0]));
     test_numerical_equality<double>(ell_int_num, val[1], epsilon);
   }
 
-  for (auto val : elliptic_integral_2nd_kind_literature_values) {
-    ell_int_num = sph_pt_samp.elliptic_integral_2nd_kind_arbitrary_m(
-        0.5 * std::numbers::pi, one_over_k_to_m(val[0]));
+  for (auto val : ellint_2_literature_values) {
+    ell_int_num =
+        ellint_2_arbitrary_m(0.5 * std::numbers::pi, one_over_k_to_m(val[0]));
     test_numerical_equality<double>(ell_int_num, val[1], epsilon);
   }
 }

@@ -107,85 +107,6 @@ public:
                                             const double r = 1.) const;
 
   /**
-   * \brief Elliptic integral of the second kind \f$E\left( \varphi | m
-   * \right)\f$ for arbitrary real parameters
-   *
-   * The length of the spiral trajectory, \f$S\left( \Theta \right)\f$, on which
-   * points are sampled in Ref. \cite Koay2011 [Eq. (4) therein] can be
-   * expressed by incomplete elliptic integrals of the second kind \f$E\left(
-   * \varphi | m \right)\f$ {Eq. (5) in Ref. \cite Koay2011}:
-   *
-   * \f[
-   *      E\left( \varphi | m \right) = \int_0^{\varphi} \sqrt{ 1 - m \left[
-   * \sin \left( \theta \right) \right]^2 } \mathrm{d} \theta. \f]
-   *
-   * where \f$\varphi\f$ is an angle, and \f$m\f$ is assumed to be a negative
-   * real number
-   * [\f$m = -c^2\f$, see Eq. (4)] in Ref. \cite Koay2011.
-   * A definition of the elliptic integrals can be found in Sec. 17 of the
-   * 'Handbook of Mathematical Functions' by Abramowitz and Stegun \cite
-   * AbramowitzStegun1974. It indicates that \f$m\f$ may even be complex [see,
-   * e.g. the discussion below Eq. (17.2.18) therein]. The functions \f$E\left(
-   * \varphi | \theta \right)\f$ are implemented in the GNU Scientific Library
-   * (GSL) \cite Galassi2009 only for \f$ 0 \leq m < 1 \f$ with a parameter
-   * \f$k\f$,
-   *
-   * \f[
-   *      k^2 = m.
-   * \f]
-   *
-   * However, for any real parameter \f$m\f$ that is negative or has an absolute
-   * value larger than 1, the evaluation of the integral can be traced back to
-   * an evaluation in the interval \f$ 0 \leq m < 1 \f$ according to Eqs.
-   * (17.4.16) and (17.4.18) in \cite AbramowitzStegun1974. These
-   * transformations assume a formulation of the incomplete elliptic integral in
-   * terms of the parameter \f$u\f$ instead of \f$\varphi\f$, i.e. \f$E \left( u
-   * | m \right)\f$. The quantity \f$u\f$ is the generalized angle \f$\varphi\f$
-   * for the case of an ellipse , such that, for example, an elliptic equivalent
-   * \f$\mathrm{sn}\f$ {a 'Jacobi Elliptic Function', see, e.g., Sec. 16 in Ref.
-   * \cite abromowitzStegun1974} of the trigonometric function \f$\sin\f$ can be
-   * defined {Eq. (17.2.2) in Ref. \cite AbramowitzStegun1974}:
-   *
-   * \f[
-   *      \mathrm{sn} \left( u \right) = \sin \left( \varphi \right).
-   * \f]
-   *
-   * The equation above provides a straightforward conversion from the Jacobi
-   * elliptic function \f$\mathrm{sn} \left( u \right)\f$ to \f$\varphi\f$ via
-   * the inverse sine. The Jacobi elliptic functions are also implemented in GSL
-   * for the argument \f$u\f$, but it should be noted that this implementation
-   * utilizes the parameter \f$m\f$ instead of \f$k\f$. The conversion from
-   * \f$\varphi\f$ to \f$u\f$ is possible via the definition of the incomplete
-   * elliptic integral of the first kind {Eq. (17.2.7) in Ref. \cite
-   * AbramowitzStegun1974}:
-   *
-   * \f[
-   *      F \left( \varphi | m \right) = u.
-   * \f]
-   *
-   * For an arbitrary \f$m\f$, the function
-   * SpherePointSampler::elliptic_integral_2nd_kind_arbitrary_m will be called
-   * recursively with transformed parameters until the parameter can be handled
-   * by the GSL implementation.
-   *
-   * In fact, the implementation does not only use the formalism of Abramowitz
-   * and Stegun, but the transformation to the interval \f$ 0 \leq m < 1 \f$ of
-   * the incomplete elliptic integral of the second kind is performed using Eq.
-   * (19.7.5) ('Imaginary Modulus Transformation') of the NIST Digital Library
-   * of Mathematical Functions (DLMF) \cite DLMF2020. This equation has the
-   * advantage that it does not require the back-and-forth conversion between
-   * \f$\varphi\f$ and \f$u\f$, and that it handles \f$m < 0\f$ and \f$|m| >
-   * 1\f$ at the same time.
-   *
-   * \param phi \f$\varphi\f$
-   * \param m \f$m\f$
-   *
-   * \return \f$E\left( \varphi | m \right)\f$
-   */
-  double elliptic_integral_2nd_kind_arbitrary_m(const double phi,
-                                                const double m) const;
-
-  /**
    * \brief Length of a spiral segment in the range \f$ 0 \leq \theta \leq
    * \Theta \f$ by elliptic integral
    *
@@ -339,25 +260,6 @@ public:
   double find_Theta_j(const unsigned int j, const unsigned int n,
                       const double c, const double epsilon = 1e-3,
                       const unsigned int max_n_iterations = 10000) const;
-
-  /**
-   * \brief Elliptic integral of the first kind \f$F\left( \varphi | m
-   * \right)\f$ for arbitrary real parameters
-   *
-   * Needed for the determination of the optimum value for \f$c\f$ according to
-   * Eq. (14) in Ref. \cite Koay2011. The transformation from arbitrary real
-   * \f$m\f$ to the range \f$0 \leq m < 1\f$ is given by Eqs. (19.7.5) in Ref.
-   * \cite DLMF2020. See also the definition of
-   * SpherePointSampler::elliptic_integral_2nd_kind_arbitrary_m for more
-   * information.
-   *
-   * \param phi \f$\varphi\f$
-   * \param m \f$m\f$
-   *
-   * \return \f$F\left( \varphi | m \right)\f$
-   */
-  double elliptic_integral_1st_kind_arbitrary_m(const double phi,
-                                                const double m) const;
 };
 
-}
+} // namespace alpaca

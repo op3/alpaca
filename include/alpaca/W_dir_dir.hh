@@ -22,6 +22,7 @@
 #include <cmath>
 
 #include "alpaca/AvCoefficient.hh"
+#include "alpaca/Special.hh"
 #include "alpaca/UvCoefficient.hh"
 #include "alpaca/W_gamma_gamma.hh"
 
@@ -125,9 +126,8 @@ public:
     double sum_over_nu{0.};
 
     for (size_t i = 0; static_cast<unsigned int>(i) <= nu_max / 2; ++i) {
-      sum_over_nu +=
-          expansion_coefficients[i] *
-          std::legendre(static_cast<unsigned int>(2 * i), cos(theta));
+      sum_over_nu += expansion_coefficients[i] *
+                     legendre(static_cast<unsigned int>(2 * i), cos(theta));
     }
 
     return sum_over_nu * normalization_factor;

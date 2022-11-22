@@ -24,7 +24,6 @@
 #include "alpaca/State.hh"
 #include "alpaca/Transition.hh"
 
-using std::invalid_argument;
 using namespace alpaca;
 
 /**

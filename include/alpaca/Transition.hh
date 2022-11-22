@@ -184,7 +184,7 @@ struct Transition {
    * \param to Transition to this state
    */
   explicit inline Transition(State from, State to, double a_delta = 0.)
-      : two_L(to.two_J - from.two_J),
+      : two_L(std::abs(to.two_J - from.two_J)),
         em_char(deduce_character(two_L, from.parity, to.parity)),
         two_Lp(two_L + 2), em_charp(alt_character(em_char)), delta(a_delta) {}
 
@@ -195,8 +195,8 @@ struct Transition {
    * \param two_J_2 Angular momentum quantum number of second state
    * \return Minimum multipolarity of emitted radiation
    */
-  constexpr unsigned int selection_rule(unsigned int two_J_1,
-                                        unsigned int two_J_2) {
+  constexpr static unsigned int selection_rule(unsigned int two_J_1,
+                                               unsigned int two_J_2) {
     if (two_J_1 == 0 && two_J_2 == 0) {
       throw std::invalid_argument(
           "An electromagnetic transition between two spin-0 states "
@@ -207,7 +207,8 @@ struct Transition {
         2, std::abs(static_cast<int>(two_J_1) - static_cast<int>(two_J_2))));
   }
 
-  constexpr EMCharacter deduce_character(int a_two_L, Parity p1, Parity p2) {
+  constexpr static EMCharacter deduce_character(int a_two_L, Parity p1,
+                                                Parity p2) {
     if (p1 == Parity::unknown || p2 == Parity::unknown) {
       return EMCharacter::unknown;
     }
@@ -255,18 +256,16 @@ struct Transition {
     string string_representation = initial_state.str_rep() + " -- ( ";
 
     if (em_char != EMCharacter::unknown) {
-      string_representation += em_str_rep(em_char) + to_string(two_L / 2);
-    } else {
-      string_representation += to_string(two_L / 2);
+      string_representation += em_str_rep(em_char);
     }
+    string_representation += to_string(two_L / 2);
 
     string_representation += " , ";
 
     if (em_charp != EMCharacter::unknown) {
-      string_representation += em_str_rep(em_charp) + to_string(two_Lp / 2);
-    } else {
-      string_representation += to_string(two_Lp / 2);
+      string_representation += em_str_rep(em_charp);
     }
+    string_representation += to_string(two_Lp / 2);
 
     string_representation += " ) --> " + final_state.str_rep();
 

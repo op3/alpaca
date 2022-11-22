@@ -19,6 +19,7 @@
 
 #include <cassert>
 
+#include "alpaca/Special.hh"
 #include "alpaca/SpherePointSampler.hh"
 #include "alpaca/TestUtilities.hh"
 
@@ -66,7 +67,5 @@ int main() {
   // which the elliptic integrals of the first kind are called for arbitrary phi
   // and m is actually never used. The test below compares to a value that was
   // calculated using Mathematica's \cite Weisstein2021 EllipticF(0.1, -1)
-  test_numerical_equality<double>(
-      sph_poi_sam.elliptic_integral_1st_kind_arbitrary_m(0.1, -0.1), 0.099,
-      1e-3);
+  test_numerical_equality<double>(ellint_1_arbitrary_m(0.1, -0.1), 0.099, 1e-3);
 }

@@ -29,6 +29,7 @@ using std::invalid_argument;
 using std::runtime_error;
 using std::stringstream;
 
+#include "alpaca/Special.hh"
 #include "alpaca/SpherePointSampler.hh"
 
 namespace alpaca {
@@ -71,89 +72,15 @@ SpherePointSampler::sample_cartesian(const unsigned int n,
   return x_y_z;
 }
 
-double SpherePointSampler::elliptic_integral_2nd_kind_arbitrary_m(
-    const double phi, const double m) const {
-
-  const double abs_m = enoki::abs(m);
-  const double abs_k = enoki::sqrt(abs_m);
-
-  // Direct call of the library function possible.
-  if (m >= 0. && abs_m < 1.) {
-    return enoki::ellint_2(phi, abs_k);
-  }
-
-  // Use Eq. (19.7.5) in Ref. \cite DLMF2020.
-  const double abs_k_squared = enoki::sqr(abs_k);
-  const double kappa_prime = enoki::rsqrt(1. + abs_k_squared);
-  const double kappa = abs_k * kappa_prime;
-  const double kappa_squared = enoki::sqr(kappa);
-  // phi == pi/2 corresponds to the complete elliptic integral
-  // This is both a shortcut and an insurance against numerical instabilities.
-  if (phi == 0.5 * pi) {
-    return enoki::comp_ellint_2(kappa) / kappa_prime;
-  }
-
-  const double theta = enoki::asin(
-      enoki::sin(phi) /
-      (kappa_prime *
-       enoki::sqrt(1. + abs_k * abs_k * enoki::pow(enoki::sin(phi), 2))));
-
-  return 1. / kappa_prime *
-         (elliptic_integral_2nd_kind_arbitrary_m(theta, kappa_squared) -
-          kappa_squared * enoki::sin(theta) * enoki::cos(theta) *
-              enoki::rsqrt(1. -
-                           kappa_squared * enoki::pow(enoki::sin(theta), 2)));
-
-  // Alternative implementation of the cases \f$m < 0\f$ and \f$ |m| > 1 \f$
-  // based on Eqs. (17.4.16) and (17.4.18) in \cite AbramowitzStegun1974, which
-  // did not give the correct results. Possibly something went wrong in the
-  // transformation between \f$\varphi\f$ and \f$u\f$.
-  //
-  // const double u = elliptic_integral_1st_kind_arbitrary_m(phi, m);
-  //
-  // if(m < 0.){
-  //     const double sqrt_1_plus_abs_m = sqrt(1. + abs_m);
-  //     const double abs_m_over_1_plus_abs_m = abs_m/(1. + abs_m);
-
-  //     double sn_u_times_sqrt_1_plus_abs_m,
-  //     cn_u_times_sqrt_1_plus_abs_m, dn_u_times_sqrt_1_plus_abs_m;
-
-  //     gsl_sf_elljac_e(u*sqrt_1_plus_abs_m, abs_m_over_1_plus_abs_m,
-  //     &sn_u_times_sqrt_1_plus_abs_m, &cn_u_times_sqrt_1_plus_abs_m,
-  //     &dn_u_times_sqrt_1_plus_abs_m);
-
-  //     return sqrt_1_plus_abs_m*(
-  //         elliptic_integral_2nd_kind_arbitrary_m(
-  //             asin(sn_u_times_sqrt_1_plus_abs_m),
-  //             abs_m_over_1_plus_abs_m)
-  //         -abs_m/sqrt_1_plus_abs_m*sn_u_times_sqrt_1_plus_abs_m*cn_u_times_sqrt_1_plus_abs_m/dn_u_times_sqrt_1_plus_abs_m
-  //     );
-  // }
-
-  // const double inverse_abs_m = 1./abs_m;
-
-  // double sn_u_times_sqrt_abs_m, cn_u_times_sqrt_abs_m, dn_u_times_sqrt_abs_m;
-
-  // gsl_sf_elljac_e(u*sqrt_abs_m, inverse_abs_m, &sn_u_times_sqrt_abs_m,
-  // &cn_u_times_sqrt_abs_m, &dn_u_times_sqrt_abs_m);
-
-  // return sqrt_abs_m*elliptic_integral_2nd_kind_arbitrary_m(
-  //     asin(sn_u_times_sqrt_abs_m),
-  //     inverse_abs_m)
-  // -(abs_m-1.)*u;
-}
-
 double SpherePointSampler::segment_length(const double Theta,
                                           const double c) const {
-  if (Theta >= 0 && Theta <= 0. * std::numbers::pi) {
-    return elliptic_integral_2nd_kind_arbitrary_m(Theta, -c * c);
+  if (Theta >= 0 && Theta <= 0.5 * std::numbers::pi) {
+    return ellint_2_arbitrary_m(Theta, -c * c);
   }
 
   const double negative_c_squared = -c * c;
-  return 2. * elliptic_integral_2nd_kind_arbitrary_m(0.5 * std::numbers::pi,
-                                                     negative_c_squared) -
-         elliptic_integral_2nd_kind_arbitrary_m(std::numbers::pi - Theta,
-                                                negative_c_squared);
+  return 2. * ellint_2_arbitrary_m(0.5 * std::numbers::pi, negative_c_squared) -
+         ellint_2_arbitrary_m(std::numbers::pi - Theta, negative_c_squared);
 }
 
 double SpherePointSampler::segment_length_linear_interpolation(
@@ -208,9 +135,9 @@ double SpherePointSampler::find_c(const unsigned int n, const double epsilon,
   for (unsigned int i = 0; i < max_n_iterations; ++i) {
     negative_c_j_squared = -c_j * c_j;
     complete_elliptic_integral_1st =
-        elliptic_integral_1st_kind_arbitrary_m(0.5 * pi, negative_c_j_squared);
+        ellint_1_arbitrary_m(0.5 * pi, negative_c_j_squared);
     complete_elliptic_integral_2nd =
-        elliptic_integral_2nd_kind_arbitrary_m(0.5 * pi, negative_c_j_squared);
+        ellint_2_arbitrary_m(0.5 * pi, negative_c_j_squared);
 
     c_j_plus_one =
         (c_j * n_times_pi *
@@ -275,36 +202,6 @@ SpherePointSampler::find_Theta_j(const unsigned int j, const unsigned int n,
                 << Theta_j_0 << " " << epsilon_segment;
 
   throw runtime_error(error_message.str());
-}
-
-double SpherePointSampler::elliptic_integral_1st_kind_arbitrary_m(
-    const double phi, const double m) const {
-
-  const double abs_m = enoki::abs(m);
-  const double abs_k = enoki::sqrt(abs_m);
-
-  if (m >= 0. && abs_m < 1.) {
-    return enoki::ellint_1(phi, abs_k);
-  }
-
-  // Use Eq. (19.7.5) in Ref. \cite DLMF2020.
-  const double abs_k_squared = enoki::sqr(abs_k);
-  const double kappa_prime = enoki::rsqrt(1. + abs_k_squared);
-  const double kappa = abs_k * kappa_prime;
-
-  // phi == pi/2 corresponds to the complete elliptic integral
-  // This is both a shortcut and an insurance against numerical instabilities.
-  if (phi == 0.5 * pi) {
-    return kappa_prime * enoki::comp_ellint_1(kappa);
-  }
-
-  const double theta = enoki::asin(
-      enoki::sin(phi) /
-      (kappa_prime *
-       enoki::sqrt(1. + abs_k_squared * enoki::pow(enoki::sin(phi), 2))));
-
-  return kappa_prime *
-         elliptic_integral_1st_kind_arbitrary_m(theta, kappa * kappa);
 }
 
 } // namespace alpaca

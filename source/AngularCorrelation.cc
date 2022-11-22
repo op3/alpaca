@@ -37,9 +37,9 @@ inline vector<CascadeStep> gen_cascade_steps(State ini_sta,
 
   cascade_steps.push_back({Transition{ini_sta, cas_sta[0]}, cas_sta[0]});
 
-  for (size_t i = 0; i < cas_sta.size() - 1; ++i) {
+  for (size_t i = 1; i < cas_sta.size(); ++i) {
     cascade_steps.push_back(
-        {Transition{cas_sta[i], cas_sta[i + 1]}, cas_sta[i + 1]});
+        {Transition{cas_sta[i - 1], cas_sta[i]}, cas_sta[i]});
   }
   return cascade_steps;
 }
@@ -109,6 +109,7 @@ void AngularCorrelation::check_triangle_inequalities(
       throw invalid_argument(
           "Triangle inequality selection rule not fulfilled for any "
           "multipolarity of transition #" +
+          std::to_string(i + 1) + ": " +
           cas_ste[i].first.str_rep(cas_ste[i - 1].second, cas_ste[i].second));
     }
   }

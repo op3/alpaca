@@ -16,6 +16,8 @@
 
 if(BUILD_TESTS)
   include_directories(${PROJECT_SOURCE_DIR}/include/)
+  include_directories(
+    SYSTEM PUBLIC $<BUILD_INTERFACE:${enoki_SOURCE_DIR}/include>)
 
   enable_testing()
 
@@ -129,6 +131,9 @@ if(BUILD_TESTS)
   add_executable(test_memory_leak test_memory_leak.cc)
   target_link_libraries(test_memory_leak angular_correlation)
   add_test(test_memory_leak test_memory_leak)
+  
+  add_executable(test_special test_special.cc)
+  add_test(test_special test_special)
 
   add_executable(test_cascade_rejection_sampler
                  test_cascade_rejection_sampler.cc)
@@ -137,7 +142,5 @@ if(BUILD_TESTS)
   add_test(test_cascade_rejection_sampler test_cascade_rejection_sampler)
 
   add_executable(benchmark benchmark.cc)
-  target_include_directories(
-    benchmark SYSTEM PUBLIC $<BUILD_INTERFACE:${enoki_SOURCE_DIR}/include>)
   target_link_libraries(benchmark angular_correlation cascadeRejectionSampler)
 endif(BUILD_TESTS)
