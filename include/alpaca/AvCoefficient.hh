@@ -339,8 +339,8 @@ public:
    * final state of a transition \param two_j Angular momentum quantum number
    * \f$2 j\f$ of the intermediate state of a transition
    */
-  AvCoefficient(const int a_two_nu, const int a_two_L, const int a_two_Lp,
-                const int a_two_jn, const int a_two_j)
+  AvCoefficient(const unsigned int a_two_nu, const int a_two_L,
+                const int a_two_Lp, const int a_two_jn, const int a_two_j)
       : two_nu(a_two_nu), two_L(a_two_L), two_Lp(a_two_Lp), two_jn(a_two_jn),
         two_j(a_two_j),
         constant_f_coefficient(a_two_nu, a_two_L, a_two_L, a_two_jn, a_two_j),
@@ -367,7 +367,7 @@ public:
                                const vector<string> variable_names = {}) const;
 
 protected:
-  int two_nu;
+  unsigned int two_nu;
   int two_L;
   int two_Lp;
   int two_jn;
