@@ -27,7 +27,7 @@
 #include "alpaca/EulerAngleRotation.hh"
 #include "alpaca/State.hh"
 #include "alpaca/Transition.hh"
-#include "alpaca/W_gamma_gamma.hh"
+#include "alpaca/W_pol_dir.hh"
 
 using std::array;
 using std::pair;
@@ -472,12 +472,9 @@ protected:
       euler_angle_rotation; /**< Instance of the EulerAngleRotation class */
 
   /**
-   * \brief Pointer to an object of the W_gamma_gamma class.
-   *
-   * W_gamma_gamma is the base class of the W_dir_dir and W_pol_dir classes.
-   * The user input decides which one is stored by this pointer.
+   * Distribution that is being correlated
    */
-  unique_ptr<W_gamma_gamma> w_gamma_gamma;
+  unique_ptr<W_pol_dir> w_gamma_gamma;
 };
 
 } // namespace alpaca

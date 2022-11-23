@@ -21,6 +21,8 @@
 
 #include <cmath>
 
+#include <enoki/array.h>
+
 #include "alpaca/AvCoefficient.hh"
 #include "alpaca/Special.hh"
 #include "alpaca/UvCoefficient.hh"
@@ -121,13 +123,13 @@ public:
    *
    * \return \f$W \left( \theta \right)\f$
    */
-  // template <typename T> T operator()(T theta) const {
-  double operator()(double theta) const {
-    double sum_over_nu{0.};
+  template <typename T> T operator()(T theta) const {
+    T sum_over_nu{0.};
 
-    for (size_t i = 0; static_cast<unsigned int>(i) <= nu_max / 2; ++i) {
-      sum_over_nu += expansion_coefficients[i] *
-                     legendre(static_cast<unsigned int>(2 * i), cos(theta));
+    for (size_t i = 0; i <= nu_max / 2; ++i) {
+      sum_over_nu +=
+          expansion_coefficients[i] *
+          legendre(static_cast<unsigned int>(2 * i), enoki::cos(theta));
     }
 
     return sum_over_nu * normalization_factor;
@@ -151,8 +153,7 @@ public:
    */
   // template <typename T> inline T operator()(T theta, [[maybe_unused]] T)
   // const {
-  inline double operator()(double theta,
-                           [[maybe_unused]] double) const override {
+  inline double operator()(double theta, [[maybe_unused]] double) const {
     return operator()(theta);
   }
 

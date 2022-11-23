@@ -49,11 +49,7 @@ AngularCorrelation::AngularCorrelation(const State ini_sta,
     : euler_angle_rotation(EulerAngleRotation()), w_gamma_gamma(nullptr) {
   check_cascade(ini_sta, cas_ste);
 
-  if (cas_ste[0].first.em_char == EMCharacter::unknown) {
-    w_gamma_gamma = std::make_unique<W_dir_dir>(ini_sta, cas_ste);
-  } else {
-    w_gamma_gamma = std::make_unique<W_pol_dir>(ini_sta, cas_ste);
-  }
+  w_gamma_gamma = std::make_unique<W_pol_dir>(ini_sta, cas_ste);
 }
 
 AngularCorrelation::AngularCorrelation(const State ini_sta,

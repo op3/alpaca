@@ -58,11 +58,11 @@ public:
       : initial_state(ini_sta), cascade_steps(cas_ste),
         n_cascade_steps(cas_ste.size()) {}
 
-  virtual ~W_gamma_gamma() = default;
-  W_gamma_gamma(const W_gamma_gamma &) = default;
-  W_gamma_gamma &operator=(const W_gamma_gamma &) = default;
-  W_gamma_gamma(W_gamma_gamma &&) = default;
-  W_gamma_gamma &operator=(W_gamma_gamma &&) = default;
+  // virtual ~W_gamma_gamma() = default;
+  // W_gamma_gamma(const W_gamma_gamma &) = default;
+  // W_gamma_gamma &operator=(const W_gamma_gamma &) = default;
+  // W_gamma_gamma(W_gamma_gamma &&) = default;
+  // W_gamma_gamma &operator=(W_gamma_gamma &&) = default;
 
   /**
    * \brief Call operator of the gamma-gamma angular correlation
@@ -77,7 +77,7 @@ public:
    *
    * \return \f$W_{\gamma \gamma} \left( \theta, \varphi \right)\f$
    */
-  virtual double operator()(const double theta, const double phi) const = 0;
+  // virtual double operator()(const double theta, const double phi) const = 0;
 
   /**
    * \brief Return an upper limit for possible values of the gamma-gamma angular
@@ -136,10 +136,10 @@ protected:
   double normalization_factor; /**< Normalization factor for the angular
                                   distribution */
   size_t n_cascade_steps;      /**< Number of transitions in the cascade. */
-  int two_nu_max; /**< Maximum value of \f$2 \nu\f$ for which the coefficients
-                     do not vanish */
-  unsigned int nu_max; /**< Maximum value of \f$\nu\f$ for which the
-                          coefficients do not vanish */
+  unsigned int two_nu_max;     /**< Maximum value of \f$2 \nu\f$ for which the
+                                  coefficients do not vanish */
+  unsigned int nu_max;         /**< Maximum value of \f$\nu\f$ for which the
+                                  coefficients do not vanish */
 };
 
 } // namespace alpaca

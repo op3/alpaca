@@ -22,6 +22,8 @@
 #include <cmath>
 #include <vector>
 
+#include <enoki/array.h>
+
 using std::vector;
 
 #include "alpaca/AlphavCoefficient.hh"
@@ -62,8 +64,8 @@ public:
    */
   W_pol_dir(const State &ini_sta, const vector<CascadeStep> cas_ste)
       : W_gamma_gamma(ini_sta, cas_ste),
+        polarized(cas_ste[0].first.em_char != EMCharacter::unknown),
         w_dir_dir(W_dir_dir(ini_sta, cas_ste)) {
-
     two_nu_max = w_dir_dir.get_two_nu_max();
     nu_max = two_nu_max / 2;
     expansion_coefficients = calculate_expansion_coefficients();
@@ -113,19 +115,25 @@ public:
    *
    * \return \f$W \left( \theta, \varphi \right)\f$
    */
-  double operator()(double theta, double phi) const override {
-    double sum_over_nu{0.};
+  template <typename T> T operator()(T theta, T phi) const {
+    if (polarized) {
+      T sum_over_nu{0.};
 
-    for (size_t i = 1; i <= nu_max / 2; ++i) {
-      sum_over_nu +=
-          expansion_coefficients[i - 1] *
-          assoc_legendre(static_cast<unsigned int>(2 * i), 2, cos(theta));
+      for (size_t i = 1; i <= nu_max / 2; ++i) {
+        sum_over_nu += expansion_coefficients[i - 1] *
+                       assoc_legendre(static_cast<unsigned int>(2 * i), 2,
+                                      enoki::cos(theta));
+      }
+
+      auto polarization_sign =
+          -static_cast<int>(cascade_steps[0].first.em_charp);
+
+      return w_dir_dir(theta) + polarization_sign * enoki::cos(2. * phi) *
+                                    sum_over_nu *
+                                    w_dir_dir.get_normalization_factor();
+    } else {
+      return w_dir_dir(theta);
     }
-
-    auto polarization_sign = -static_cast<int>(cascade_steps[0].first.em_charp);
-
-    return w_dir_dir(theta) + polarization_sign * cos(2. * phi) * sum_over_nu *
-                                  w_dir_dir.get_normalization_factor();
   }
 
   /**
@@ -199,6 +207,7 @@ public:
       const vector<string> variable_names = {}) const override;
 
 protected:
+  bool polarized; /**< Polarization of first photon is known */
   /**
    * \brief Calculate the set of expansion coefficients for the pol-dir
    * correlation.

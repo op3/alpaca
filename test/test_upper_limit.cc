@@ -30,15 +30,13 @@ using std::vector;
 #include "alpaca/State.hh"
 #include "alpaca/TestUtilities.hh"
 #include "alpaca/Transition.hh"
-#include "alpaca/W_dir_dir.hh"
-#include "alpaca/W_gamma_gamma.hh"
 #include "alpaca/W_pol_dir.hh"
 
 using namespace alpaca;
 
-vector<W_gamma_gamma *> ang_corrs{
+vector<W_pol_dir *> ang_corrs{
     // // 0 -> 1 -> 0
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(2, Parity::unknown)},
@@ -52,7 +50,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(0, Parity::unknown)}}),
 
     // 0 -> 2 -> 0
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(4, Parity::unknown)},
@@ -66,7 +64,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(0, Parity::unknown)}}),
 
     // 0 -> 1 -> 1
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(2, Parity::unknown)},
@@ -98,7 +96,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(2, Parity::unknown)}}),
 
     // 0 -> 1 -> 2
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(2, Parity::unknown)},
@@ -130,7 +128,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(4, Parity::unknown)}}),
 
     // 0 -> 1 -> 3
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(2, Parity::unknown)},
@@ -162,7 +160,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(6, Parity::unknown)}}),
 
     // 0 -> 2 -> 1
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(4, Parity::unknown)},
@@ -194,7 +192,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(2, Parity::unknown)}}),
 
     // 0 -> 2 -> 2
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(4, Parity::unknown)},
@@ -226,7 +224,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(4, Parity::unknown)}}),
 
     // 0 -> 2 -> 3
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(4, Parity::unknown)},
@@ -258,7 +256,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(6, Parity::unknown)}}),
 
     // 0 -> 2 -> 4
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(4, Parity::unknown)},
@@ -290,7 +288,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(8, Parity::unknown)}}),
 
     // 1/2 -> 5/2 -> 1/2
-    new W_dir_dir(
+    new W_pol_dir(
         State(1, Parity::unknown),
         {{Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(5, Parity::unknown)},
@@ -322,7 +320,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(1, Parity::unknown)}}),
 
     // 3/2 -> 3/2 -> 3/2
-    new W_dir_dir(
+    new W_pol_dir(
         State(3, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(3, Parity::unknown)},
@@ -354,7 +352,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(3, Parity::positive)}}),
 
     // 3/2 -> 5/2 -> 3/2
-    new W_dir_dir(
+    new W_pol_dir(
         State(3, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(5, Parity::unknown)},
@@ -386,7 +384,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(3, Parity::positive)}}),
 
     // 3/2 -> 7/2 -> 3/2
-    new W_dir_dir(
+    new W_pol_dir(
         State(3, Parity::unknown),
         {{Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(7, Parity::unknown)},
@@ -418,7 +416,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(3, Parity::unknown)}}),
 
     // 5/2 -> 3/2 -> 5/2
-    new W_dir_dir(
+    new W_pol_dir(
         State(5, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(3, Parity::unknown)},
@@ -450,7 +448,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(5, Parity::unknown)}}),
 
     // 5/2 -> 5/2 -> 5/2
-    new W_dir_dir(
+    new W_pol_dir(
         State(5, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(5, Parity::unknown)},
@@ -482,7 +480,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(5, Parity::unknown)}}),
 
     // 5/2 -> 7/2 -> 5/2
-    new W_dir_dir(
+    new W_pol_dir(
         State(5, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(7, Parity::unknown)},
@@ -514,31 +512,31 @@ vector<W_gamma_gamma *> ang_corrs{
           State(5, Parity::unknown)}}),
 
     // 5/2 -> 9/2 -> 5/2
-    new W_dir_dir(
+    new W_pol_dir(
         State(5, Parity::unknown),
         {{Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(9, Parity::unknown)},
          {Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(5, Parity::unknown)}}),
-    new W_dir_dir(
+    new W_pol_dir(
         State(5, Parity::positive),
         {{Transition(EMCharacter::electric, 4, EMCharacter::magnetic, 6, 0.),
           State(9, Parity::positive)},
          {Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(5, Parity::unknown)}}),
-    new W_dir_dir(
+    new W_pol_dir(
         State(5, Parity::positive),
         {{Transition(EMCharacter::electric, 4, EMCharacter::magnetic, 6, 1.),
           State(9, Parity::positive)},
          {Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 1.),
           State(5, Parity::unknown)}}),
-    new W_dir_dir(
+    new W_pol_dir(
         State(5, Parity::positive),
         {{Transition(EMCharacter::electric, 4, EMCharacter::magnetic, 6, -1.),
           State(9, Parity::positive)},
          {Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, -1.),
           State(5, Parity::unknown)}}),
-    new W_dir_dir(
+    new W_pol_dir(
         State(5, Parity::positive),
         {{Transition(EMCharacter::electric, 4, EMCharacter::magnetic, 6, 100.),
           State(9, Parity::positive)},
@@ -546,7 +544,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(5, Parity::unknown)}}),
 
     // 0 -> 1 -> 1 -> 0
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(2, Parity::unknown)},
@@ -554,7 +552,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(2, Parity::unknown)},
          {Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(0, Parity::unknown)}}),
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(2, Parity::unknown)},
@@ -562,7 +560,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(2, Parity::unknown)},
          {Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(0, Parity::unknown)}}),
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
           State(2, Parity::unknown)},
@@ -597,7 +595,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(0, Parity::unknown)}}),
 
     // 0 -> 2 -> 2 -> 0
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(4, Parity::unknown)},
@@ -605,7 +603,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(4, Parity::unknown)},
          {Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(0, Parity::unknown)}}),
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(4, Parity::unknown)},
@@ -613,7 +611,7 @@ vector<W_gamma_gamma *> ang_corrs{
           State(4, Parity::unknown)},
          {Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(0, Parity::unknown)}}),
-    new W_dir_dir(
+    new W_pol_dir(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::unknown, 4, EMCharacter::unknown, 6, 0.),
           State(4, Parity::unknown)},

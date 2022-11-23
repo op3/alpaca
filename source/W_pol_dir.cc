@@ -69,7 +69,7 @@ vector<double> W_pol_dir::calculate_expansion_coefficients_alphav_Av() {
 
   vector<double> exp_coef;
 
-  for (int two_nu = 4; two_nu <= two_nu_max; two_nu += 4) {
+  for (unsigned int two_nu = 4; two_nu <= two_nu_max; two_nu += 4) {
     alphav_coefficients.push_back(AlphavCoefficient(
         two_nu, cascade_steps[0].first.two_L, cascade_steps[0].first.two_Lp,
         initial_state.two_J, cascade_steps[0].second.two_J));

@@ -95,7 +95,7 @@ vector<double> W_dir_dir::calculate_expansion_coefficients_Av() {
 
   vector<double> exp_coef;
 
-  for (int two_nu = 0; two_nu <= two_nu_max; two_nu += 4) {
+  for (unsigned int two_nu = 0; two_nu <= two_nu_max; two_nu += 4) {
     av_coefficients_excitation.push_back(AvCoefficient(
         two_nu, cascade_steps[0].first.two_L, cascade_steps[0].first.two_Lp,
         initial_state.two_J, cascade_steps[0].second.two_J));
@@ -118,7 +118,7 @@ vector<double> W_dir_dir::calculate_expansion_coefficients_Uv() {
   vector<double> exp_coef;
   double uv_coef_product = 1.;
 
-  for (int two_nu = 0; two_nu <= two_nu_max; two_nu += 4) {
+  for (unsigned int two_nu = 0; two_nu <= two_nu_max; two_nu += 4) {
     uv_coefficients.push_back(vector<UvCoefficient>());
     for (size_t i = 1; i < n_cascade_steps - 1; ++i) {
       uv_coefficients[two_nu / 4].push_back(UvCoefficient(
