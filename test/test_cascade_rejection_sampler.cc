@@ -59,12 +59,12 @@ int main() {
       AngularCorrelation(State(2), {{Transition(2, 4, 0.), State(4)},
                                     {Transition(4, 6, 0.), State(0)}})};
 
-  AngCorrRejectionSampler ang_cor_rej_sam_1(cascade[0], 0);
-  AngCorrRejectionSampler ang_cor_rej_sam_2(cascade[1], 0);
+  AngCorrRejectionSampler<double> ang_cor_rej_sam_1(cascade[0], 0);
+  AngCorrRejectionSampler<double> ang_cor_rej_sam_2(cascade[1], 0);
 
-  CascadeRejectionSampler cas_rej_sam_random(
+  CascadeRejectionSampler<double> cas_rej_sam_random(
       cascade, 0); // Cascade sampler with random initial orientation.
-  CascadeRejectionSampler cas_rej_sam_z_axis(
+  CascadeRejectionSampler<double> cas_rej_sam_z_axis(
       cascade, 0, {0., 0., 0.}, true); // Cascade sampler with orientation along
                                        // the z axis (i.e. no rotation)
 
@@ -104,7 +104,7 @@ int main() {
 
   // Test the cascade sampler with a random orientation.
   // Here, both vectors must be rotated into another reference frame.
-  SphereRejectionSampler sph_rej_sam(
+  SphereRejectionSampler<double, Distribution> sph_rej_sam(
       []([[maybe_unused]] const double theta,
          [[maybe_unused]] const double phi) { return 1.; },
       1., 0);

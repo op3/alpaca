@@ -35,7 +35,7 @@ namespace alpaca {
  * object of the class AngularCorrelation cannot be passed this way. Therefore,
  * the present class was derived. For more information, see the base class.
  */
-class AngCorrRejectionSampler : public SphereRejectionSampler {
+template <typename T> class AngCorrRejectionSampler {
 
 public:
   /**
@@ -54,8 +54,8 @@ public:
    */
   AngCorrRejectionSampler(AngularCorrelation &w, const int seed,
                           const unsigned int max_tri = 1000)
-      : SphereRejectionSampler(nullptr, w.get_upper_limit(), seed, max_tri),
-        angular_correlation(w.get_initial_state(), w.get_cascade_steps()) {}
+      : angular_correlation(w.get_initial_state(), w.get_cascade_steps()),
+        sampler(angular_correlation, w.get_upper_limit(), seed, max_tri) {}
 
   /**
    * \brief Sample random vector from a probability distribution and record the
@@ -68,26 +68,44 @@ public:
    * of trials \f$N_\mathrm{max}\f$ is reached by the algorithm and no random
    * vector was accepted.
    */
-  pair<unsigned int, array<double, 2>> sample() override final {
-    array<double, 2> theta_phi;
-    double dis_val;
+  inline pair<unsigned int, array<double, 2>> sample() {
+    return sampler.sample();
+  }
 
-    for (unsigned int i = 0; i < max_tries; ++i) {
+  inline array<double, 2> operator()() { return sampler(); }
 
-      theta_phi = sample_theta_phi();
-      dis_val = uniform_random_val(random_engine);
-
-      if (dis_val <= angular_correlation(theta_phi[0], theta_phi[1])) {
-        return {i + 1, {theta_phi[0], theta_phi[1]}};
-      }
-    }
-
-    return {max_tries, {0., 0.}};
+  /**
+   * \brief Sample a random vector from an arbitrarily rotated probability
+   * distribution.
+   *
+   * This function allows to rotate the probability distribution using Euler
+   * angles in the x convention. In the present code, this is an important
+   * feature in gamma-ray cascades, where the direction of emission/propagation
+   * and the polarization axis of the initial photon define the reference frame
+   * for the emission of a subsequent photon. [Usually the analytical
+   * expressions for these angular correlations are implemented in a fixed
+   * reference frame (here, the direction of emission/propagation is along the
+   * positive \f$z\f$ axis, and the polarization along the \f$x\f$ axis) for
+   * simplicity.]
+   *
+   * \param euler_angles Euler angles \f$\Phi\f$, \f$\Theta\f$, and \f$\Psi\f$
+   * in radians which define an arbitrary rotation in 3D space in the x
+   * convention.
+   *
+   * \return Accepted vector \f$\left( \theta_\mathrm{rand},
+   * \varphi_\mathrm{rand}\right)\f$. Returns \f$\left( 0, 0 \right)\f$ if the
+   * maximum number of trials \f$N_\mathrm{max}\f$ is reached by the algorithm
+   * and no random vector was accepted.
+   */
+  inline array<double, 2> operator()(const array<double, 3> euler_angles) {
+    return sampler(euler_angles);
   }
 
 protected:
   AngularCorrelation
       angular_correlation; /**< Gamma-gamma angular correlation */
+  SphereRejectionSampler<T, AngularCorrelation>
+      sampler; /**< Spherical sampler */
 };
 
 } // namespace alpaca

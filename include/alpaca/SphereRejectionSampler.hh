@@ -19,18 +19,21 @@
 
 #pragma once
 
+#include <enoki/random.h>
 #include <functional>
 #include <numbers>
-#include <random>
+#include <numeric>
 #include <utility>
+#include <vector>
 
-using std::mt19937_64;
 using std::pair;
-using std::uniform_real_distribution;
+using std::vector;
 
 #include "alpaca/EulerAngleRotation.hh"
 
 namespace alpaca {
+
+using Distribution = std::function<double(const double, const double)>;
 
 /**
  * \brief Sample from a probability distribution in spherical coordinates using
@@ -104,11 +107,14 @@ namespace alpaca {
  * which is the inverse of the average number of trial vectors \f$\langle N
  * \rangle\f$ that have to be sampled before a vector is accepted.
  */
-class SphereRejectionSampler {
-  using Distribution = std::function<double(const double, const double)>;
+template <typename T, typename Dist> class SphereRejectionSampler {
 
 public:
-  virtual ~SphereRejectionSampler() = default;
+  // virtual ~SphereRejectionSampler() = default;
+  // SphereRejectionSampler(const SphereRejectionSampler &) = default;
+  // SphereRejectionSampler &operator=(const SphereRejectionSampler &) =
+  // default; SphereRejectionSampler(SphereRejectionSampler &&) = default;
+  // SphereRejectionSampler &operator=(SphereRejectionSampler &&) = default;
 
   /**
    * \brief Constructor
@@ -121,13 +127,10 @@ public:
    * terminates without success and returns \f$\left( 0, 0 \right)\f$ (default:
    * 1000).
    */
-  SphereRejectionSampler(Distribution dis, const double dis_max,
-                         const size_t seed, const unsigned int max_tri = 1000)
+  SphereRejectionSampler(Dist dis, const double dis_max, const size_t seed,
+                         const unsigned int max_tri = 1000)
       : distribution(dis), distribution_maximum(dis_max), max_tries(max_tri),
-        random_engine(seed), uniform_random_val(0., distribution_maximum),
-        uniform_random_unit(-1., 1.),
-        uniform_random_phi(0., 2. * std::numbers::pi),
-        euler_angle_rotation(EulerAngleRotation()) {}
+        rng(seed), euler_angle_rotation(EulerAngleRotation()) {}
 
   /**
    * \brief Sample a random vector from probability distribution and record the
@@ -140,14 +143,14 @@ public:
    * of trials \f$N_\mathrm{max}\f$ is reached by the algorithm and no random
    * vector was accepted.
    */
-  virtual pair<unsigned int, array<double, 2>> sample() {
+  pair<unsigned int, array<double, 2>> sample() {
     array<double, 2> theta_phi;
     double dis_val;
 
     for (unsigned int i = 0; i < max_tries; ++i) {
 
       theta_phi = sample_theta_phi();
-      dis_val = uniform_random_val(random_engine);
+      dis_val = sample_val();
 
       if (dis_val <= distribution(theta_phi[0], theta_phi[1])) {
         return {i + 1, {theta_phi[0], theta_phi[1]}};
@@ -157,15 +160,7 @@ public:
     return {max_tries, {0., 0.}};
   }
 
-  /**
-   * \brief Sample a random vector from probability distribution.
-   *
-   * \return Accepted vector \f$\left( \theta_\mathrm{rand},
-   * \varphi_\mathrm{rand}\right)\f$. Returns \f$\left( 0, 0 \right)\f$ if the
-   * maximum number of trials \f$N_\mathrm{max}\f$ is reached by the algorithm
-   * and no random vector was accepted.
-   */
-  inline array<double, 2> operator()() {
+  array<double, 2> operator()() {
     pair<unsigned int, array<double, 2>> sampled_theta_phi = sample();
 
     return {sampled_theta_phi.second[0], sampled_theta_phi.second[1]};
@@ -210,18 +205,36 @@ public:
    *
    * \return Estimate for \f$\epsilon\f$ from the \f$n\f$ samples.
    */
-  double estimate_efficiency(const unsigned int n_tries);
+  double estimate_efficiency(const unsigned int n_tries) {
+    vector<unsigned int> required_tries(n_tries);
+
+    pair<unsigned int, array<double, 2>> sampled_theta_phi;
+
+    for (unsigned int i = 0; i < n_tries; ++i) {
+      sampled_theta_phi = sample();
+      required_tries[i] = sampled_theta_phi.first;
+    }
+
+    return static_cast<double>(n_tries) /
+           static_cast<double>(std::accumulate(required_tries.begin(),
+                                               required_tries.end(), 0));
+  }
 
 protected:
+  /**
+   * \brief Sample random value for W between [0, distribution_maximum).
+   *
+   * \return Random (uniform) value for W.
+   */
+  inline T sample_val() { return rng.next_float64() * distribution_maximum; }
+
   /**
    * \brief Sample polar angle of a uniformly randomly distributed point on a
    * sphere surface.
    *
    * \return \f$\theta_\mathrm{rand}\f$, random polar angle.
    */
-  inline double sample_theta() {
-    return acos(uniform_random_unit(random_engine));
-  }
+  inline T sample_theta() { return enoki::acos(2. * rng.next_float64() - 1.); }
 
   /**
    * \brief Sample azimuthal angle of a uniformly randomly distributed point on
@@ -229,7 +242,7 @@ protected:
    *
    * \return \f$\varphi_\mathrm{rand}\f$, random azimuthal angle.
    */
-  inline double sample_phi() { return uniform_random_phi(random_engine); };
+  inline T sample_phi() { return 2. * std::numbers::pi * rng.next_float64(); };
 
   /**
    * \brief Sample uniformly randomly distributed point on a sphere surface.
@@ -237,27 +250,18 @@ protected:
    * \return \f$\left( \theta_\mathrm{rand}, \varphi_\mathrm{rand} \right)\f$,
    * random point on sphere surface.
    */
-  inline array<double, 2> sample_theta_phi() {
+  inline array<T, 2> sample_theta_phi() {
     return {sample_theta(), sample_phi()};
   }
 
-  Distribution distribution;   /**< \f$W \left( \theta, \varphi \right)\f$,
-                                  (unnormalized)   probability distribution. */
+  Dist distribution;           /**< \f$W \left( \theta, \varphi \right)\f$,
+                                          (unnormalized)   probability distribution. */
   double distribution_maximum; /**< \f$W_\mathrm{max}\f$, maximum of
                                         probability distribution. */
   unsigned int max_tries;      /**< \f$N_\mathrm{max}\f$, maximum number of
                                         tries to find a random vector. */
 
-  mt19937_64 random_engine; /**< Deterministic random number engine. */
-  uniform_real_distribution<double>
-      uniform_random_val; /**< Uniform distribution from which all random
-                             numbers for values are derived. */
-  uniform_real_distribution<double>
-      uniform_random_unit; /**< Uniform distribution from which all random
-                              numbers within [-1, 1] are derived. */
-  uniform_real_distribution<double>
-      uniform_random_phi; /**< Uniform distribution from which all random phi
-                             angles are derived. */
+  enoki::PCG32<T> rng; /**< Deterministic random number engine. */
   EulerAngleRotation
       euler_angle_rotation; /**< Instance of the EulerAngleRotation class */
 };

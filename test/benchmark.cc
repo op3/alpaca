@@ -62,8 +62,8 @@ int main() {
 
   static constexpr int random_number_seed = 1;
 
-  CascadeRejectionSampler cas_rej_sam =
-      CascadeRejectionSampler(cascade, random_number_seed, {0., 0., 0.}, false);
+  CascadeRejectionSampler<double> cas_rej_sam{
+      cascade, random_number_seed, {0., 0., 0.}, false};
 
   double result = 1.;
   size_t count = 10000000;

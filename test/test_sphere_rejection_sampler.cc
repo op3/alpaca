@@ -47,7 +47,7 @@ using namespace alpaca;
  */
 int main() {
 
-  SphereRejectionSampler sph_rej_sam(
+  SphereRejectionSampler<double, Distribution> sph_rej_sam(
       []([[maybe_unused]] const double theta, const double phi) {
         return phi < std::numbers::pi ? 1. : 0.;
       },
@@ -57,7 +57,7 @@ int main() {
 
   test_numerical_equality<double>(efficiency, 0.5, 1e-3);
 
-  SphereRejectionSampler sph_rej_sam_2(
+  SphereRejectionSampler<double, Distribution> sph_rej_sam_2(
       []([[maybe_unused]] const double theta, const double phi) {
         return phi < std::numbers::pi ? 1. : 0.;
       },
@@ -68,7 +68,7 @@ int main() {
   test_numerical_equality<double>(efficiency, 0.25, 1e-3);
 
   // Test the case in which no vector can be found.
-  SphereRejectionSampler sph_rej_sam_3(
+  SphereRejectionSampler<double, Distribution> sph_rej_sam_3(
       []([[maybe_unused]] const double theta,
          [[maybe_unused]] const double phi) { return -1.; },
       0.5, 0);
@@ -80,12 +80,12 @@ int main() {
 
   // Test Euler-angle rotation
 
-  SphereRejectionSampler sph_rej_sam_uni(
+  SphereRejectionSampler<double, Distribution> sph_rej_sam_uni(
       []([[maybe_unused]] const double theta,
          [[maybe_unused]] const double phi) { return 1.; },
       1., 0);
   const array<double, 2> theta_phi = sph_rej_sam_uni();
-  SphereRejectionSampler sph_rej_sam_uni_2(
+  SphereRejectionSampler<double, Distribution> sph_rej_sam_uni_2(
       []([[maybe_unused]] const double theta,
          [[maybe_unused]] const double phi) { return 1.; },
       1., 0);

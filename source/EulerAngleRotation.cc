@@ -20,6 +20,8 @@
 #include <cmath>
 #include <numbers>
 
+#include <enoki/array.h>
+
 #include "alpaca/EulerAngleRotation.hh"
 
 namespace alpaca {
@@ -44,9 +46,9 @@ EulerAngleRotation::get_x_y_z_norm(const array<double, 2> theta_phi) const {
 array<array<double, 3>, 3> EulerAngleRotation::rotation_matrix(
     const array<double, 3> Phi_Theta_Psi) const {
 
-  const double cos_phi{cos(Phi_Theta_Psi[0])}, sin_phi{sin(Phi_Theta_Psi[0])},
-      cos_the{cos(Phi_Theta_Psi[1])}, sin_the{sin(Phi_Theta_Psi[1])},
-      cos_psi{cos(Phi_Theta_Psi[2])}, sin_psi{sin(Phi_Theta_Psi[2])};
+  auto [sin_phi, cos_phi] = enoki::sincos(Phi_Theta_Psi[0]);
+  auto [sin_the, cos_the] = enoki::sincos(Phi_Theta_Psi[1]);
+  auto [sin_psi, cos_psi] = enoki::sincos(Phi_Theta_Psi[2]);
 
   return array<array<double, 3>, 3>{
       array<double, 3>{cos_psi * cos_phi - cos_the * sin_phi * sin_psi,

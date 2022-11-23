@@ -143,7 +143,7 @@ namespace alpaca {
  * instance of SphereRejectionSampler).
  */
 
-class CascadeRejectionSampler {
+template <typename T> class CascadeRejectionSampler {
 
 public:
   /**
@@ -165,7 +165,19 @@ public:
    * Will be used for all internal random-number samplers.
    */
   CascadeRejectionSampler(vector<AngularCorrelation> &cascade, const int seed,
-                          const unsigned int max_tri = 1000);
+                          const unsigned int max_tri = 1000)
+      : initial_direction_random(true), PhiThetaPsi({0., 0., 0.}),
+        return_first_direction(true),
+        uniform_direction_sampler(
+            []([[maybe_unused]] const double theta,
+               [[maybe_unused]] const double phi) { return 1.; },
+            1., seed, max_tri),
+        euler_angle_rotation(EulerAngleRotation()) {
+    for (size_t i = 0; i < cascade.size(); ++i) {
+      angular_correlation_samplers.push_back(
+          AngCorrRejectionSampler<T>(cascade[i], seed, max_tri));
+    }
+  }
 
   /**
    * \brief Constructor for a cascade in which the second second state is
@@ -205,9 +217,21 @@ public:
    * Will be used for all internal random-number samplers.
    */
   CascadeRejectionSampler(vector<AngularCorrelation> &cascade, const int seed,
-                          const array<double, 3> PhiThetaPsi,
-                          const bool return_first_direction = false,
-                          const unsigned int max_tri = 1000);
+                          const array<double, 3> a_PhiThetaPsi,
+                          const bool a_return_first_direction = false,
+                          const unsigned int max_tri = 1000)
+      : initial_direction_random(false), PhiThetaPsi(a_PhiThetaPsi),
+        return_first_direction(a_return_first_direction),
+        uniform_direction_sampler(
+            []([[maybe_unused]] const double theta,
+               [[maybe_unused]] const double phi) { return 1.; },
+            1., seed, max_tri),
+        euler_angle_rotation(EulerAngleRotation()) {
+    for (size_t i = 0; i < cascade.size(); ++i) {
+      angular_correlation_samplers.push_back(
+          AngCorrRejectionSampler<T>(cascade[i], seed, max_tri));
+    }
+  }
 
   /**
    * \brief Sample random gamma-ray directions from the cascade.
@@ -266,11 +290,11 @@ protected:
                                     the first gamma ray. */
   bool return_first_direction; /**< Indicates whether the direction of the first
                                   gamma ray should be returned or not */
-  vector<AngCorrRejectionSampler>
+  vector<AngCorrRejectionSampler<T>>
       angular_correlation_samplers; /**< List of AngCorrRejectionSamplers which
                                        are initialized on construction with
                                        AngularCorrelation objects. */
-  SphereRejectionSampler
+  SphereRejectionSampler<T, Distribution>
       uniform_direction_sampler; /**< Instance of SphereRejectionSampler with an
                                     uniform distribution to sample the direction
                                     of the first gamma ray. */

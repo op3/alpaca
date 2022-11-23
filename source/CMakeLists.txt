@@ -96,29 +96,9 @@ set_target_properties(spherePointSampler
                       PROPERTIES PUBLIC_HEADER include/SpherePointSampler.hh)
 
 add_library(sphereIntegrator SphereIntegrator.cc)
-target_link_libraries(sphereIntegrator spherePointSampler)
+target_link_libraries(sphereIntegrator euler_angle_rotation spherePointSampler)
 target_include_directories(
   sphereIntegrator PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 set_target_properties(sphereIntegrator PROPERTIES PUBLIC_HEADER
                                                   include/SphereIntegrator.hh)
-
-add_library(sphereRejectionSampler SphereRejectionSampler.cc)
-target_link_libraries(sphereRejectionSampler euler_angle_rotation)
-target_include_directories(
-  sphereRejectionSampler
-  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(
-  sphereRejectionSampler PROPERTIES PUBLIC_HEADER
-                                    include/SphereRejectionSampler.hh)
-
-add_library(cascadeRejectionSampler CascadeRejectionSampler.cc)
-target_link_libraries(cascadeRejectionSampler angular_correlation)
-target_include_directories(
-  cascadeRejectionSampler
-  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(
-  cascadeRejectionSampler PROPERTIES PUBLIC_HEADER
-                                     include/CascadeRejectionSampler.hh)

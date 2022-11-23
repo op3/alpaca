@@ -87,12 +87,11 @@ set(installable_libs
     angular_correlation
     alphavCoefficient
     avCoefficient
-    cascadeRejectionSampler
     euler_angle_rotation
     fCoefficient
     kappa_coefficient
-    sphereRejectionSampler
     uvCoefficient
+    spherePointSampler
     w_dir_dir
     w_pol_dir)
 install(

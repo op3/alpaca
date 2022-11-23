@@ -114,7 +114,7 @@ if(BUILD_TESTS)
   add_test(test_sphere_point_sampler test_sphere_point_sampler)
 
   add_executable(test_sphere_rejection_sampler test_sphere_rejection_sampler.cc)
-  target_link_libraries(test_sphere_rejection_sampler sphereRejectionSampler
+  target_link_libraries(test_sphere_rejection_sampler 
                         euler_angle_rotation)
   add_test(test_sphere_rejection_sampler test_sphere_rejection_sampler)
 
@@ -137,10 +137,9 @@ if(BUILD_TESTS)
 
   add_executable(test_cascade_rejection_sampler
                  test_cascade_rejection_sampler.cc)
-  target_link_libraries(test_cascade_rejection_sampler angular_correlation
-                        cascadeRejectionSampler)
+  target_link_libraries(test_cascade_rejection_sampler angular_correlation)
   add_test(test_cascade_rejection_sampler test_cascade_rejection_sampler)
 
   add_executable(benchmark benchmark.cc)
-  target_link_libraries(benchmark angular_correlation cascadeRejectionSampler)
+  target_link_libraries(benchmark angular_correlation)
 endif(BUILD_TESTS)
