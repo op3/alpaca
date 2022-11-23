@@ -184,7 +184,7 @@ struct Transition {
    * \param to Transition to this state
    */
   explicit inline Transition(State from, State to, double a_delta = 0.)
-      : two_L(std::abs(to.two_J - from.two_J)),
+      : two_L(selection_rule(to.two_J, from.two_J)),
         em_char(deduce_character(two_L, from.parity, to.parity)),
         two_Lp(two_L + 2), em_charp(alt_character(em_char)), delta(a_delta) {}
 
@@ -199,8 +199,7 @@ struct Transition {
                                                unsigned int two_J_2) {
     if (two_J_1 == 0 && two_J_2 == 0) {
       throw std::invalid_argument(
-          "An electromagnetic transition between two spin-0 states "
-          "with the "
+          "An electromagnetic transition between two spin-0 states with the "
           "absorption/emission of a single photon is not possible.");
     }
     return static_cast<unsigned int>(std::max(
@@ -212,6 +211,7 @@ struct Transition {
     if (p1 == Parity::unknown || p2 == Parity::unknown) {
       return EMCharacter::unknown;
     }
+    // electric if (p1 == p2) XOR (a_two_L % 4)
     if ((p1 != p2) != !(a_two_L % 4)) {
       return EMCharacter::electric;
     }

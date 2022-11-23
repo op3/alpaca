@@ -107,8 +107,12 @@ int main() {
   [[maybe_unused]] auto trans_M2 = Transition(s0p, s2m);
   assert(trans_M2 == Transition::M2());
 
-  [[maybe_unused]] auto trans_D1_0 = Transition(s0, s0);
-  assert(trans_D1_0 == Transition::Dipole());
+  try {
+    Transition(s0, s0);
+  } catch (const invalid_argument &e) {
+    error_thrown = true;
+  }
+  assert(error_thrown);
 
   [[maybe_unused]] auto trans_D1 = Transition(s2, s1);
   assert(trans_D1 == Transition::Dipole());
@@ -122,6 +126,10 @@ int main() {
   [[maybe_unused]] auto trans_E1_L0 = Transition(s1p, s1m);
   assert(trans_E1_L0 == Transition::E1());
 
-  [[maybe_unused]] auto trans_M1_0 = Transition(s0p, s0p);
-  assert(trans_M1_0 == Transition::M1());
+  try {
+    Transition(s0p, s0p);
+  } catch (const invalid_argument &e) {
+    error_thrown = true;
+  }
+  assert(error_thrown);
 }
