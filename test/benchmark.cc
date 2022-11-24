@@ -51,8 +51,8 @@ int main() {
   using std::chrono::high_resolution_clock;
   using std::chrono::milliseconds;
 
-  vector<AngularCorrelation> cascade{
-      AngularCorrelation(
+  vector<AngularCorrelation<double>> cascade{
+      AngularCorrelation<double>(
           State(0, Parity::positive),
           {{Transition(EMCharacter::magnetic, 2, EMCharacter::electric, 4, 0.),
             State(2, Parity::positive)},

@@ -15,8 +15,8 @@
 # Copyright (C) 2021 Udo Friman-Gayer
 
 # include_directories(${PROJECT_SOURCE_DIR}/include/)
-include_directories(
-  SYSTEM PUBLIC $<BUILD_INTERFACE:${enoki_SOURCE_DIR}/include>)
+include_directories(SYSTEM PUBLIC
+                    $<BUILD_INTERFACE:${enoki_SOURCE_DIR}/include>)
 
 add_library(fCoefficient FCoefficient.cc)
 target_link_libraries(fCoefficient ${GSL_LIBRARIES})
@@ -73,20 +73,12 @@ target_include_directories(
 set_target_properties(w_pol_dir PROPERTIES PUBLIC_HEADER include/W_pol_dir.hh)
 
 add_library(angular_correlation SHARED AngularCorrelation.cc)
-target_link_libraries(angular_correlation PUBLIC euler_angle_rotation w_dir_dir
-                                                 w_pol_dir)
+target_link_libraries(angular_correlation PUBLIC w_dir_dir w_pol_dir)
 target_include_directories(
   angular_correlation PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 set_target_properties(angular_correlation
                       PROPERTIES PUBLIC_HEADER include/AngularCorrelation.hh)
-
-add_library(euler_angle_rotation EulerAngleRotation.cc)
-target_include_directories(
-  euler_angle_rotation PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(euler_angle_rotation
-                      PROPERTIES PUBLIC_HEADER include/EulerAngleRotation.hh)
 
 add_library(spherePointSampler SpherePointSampler.cc)
 target_include_directories(
@@ -96,7 +88,7 @@ set_target_properties(spherePointSampler
                       PROPERTIES PUBLIC_HEADER include/SpherePointSampler.hh)
 
 add_library(sphereIntegrator SphereIntegrator.cc)
-target_link_libraries(sphereIntegrator euler_angle_rotation spherePointSampler)
+target_link_libraries(sphereIntegrator spherePointSampler)
 target_include_directories(
   sphereIntegrator PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

@@ -52,7 +52,7 @@ public:
    * before the algorithm terminates without success and returns \f$\left( 0, 0
    * \right)\f$.
    */
-  AngCorrRejectionSampler(AngularCorrelation &w, const int seed,
+  AngCorrRejectionSampler(AngularCorrelation<T> &w, const int seed,
                           const unsigned int max_tri = 1000)
       : angular_correlation(w.get_initial_state(), w.get_cascade_steps()),
         sampler(angular_correlation, w.get_upper_limit(), seed, max_tri) {}
@@ -102,9 +102,9 @@ public:
   }
 
 protected:
-  AngularCorrelation
+  AngularCorrelation<T>
       angular_correlation; /**< Gamma-gamma angular correlation */
-  SphereRejectionSampler<T, AngularCorrelation>
+  SphereRejectionSampler<T, AngularCorrelation<T>>
       sampler; /**< Spherical sampler */
 };
 

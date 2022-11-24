@@ -87,7 +87,6 @@ set(installable_libs
     angular_correlation
     alphavCoefficient
     avCoefficient
-    euler_angle_rotation
     fCoefficient
     kappa_coefficient
     uvCoefficient

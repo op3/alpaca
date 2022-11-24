@@ -43,7 +43,7 @@ int main() {
   const double epsilon = 1e-8;
 
   // Test unpolarized angular correlation
-  AngularCorrelation ang_corr_0_1_0{
+  AngularCorrelation<double> ang_corr_0_1_0{
       State(0, Parity::unknown),
       {{Transition(EMCharacter::unknown, 2, EMCharacter::unknown, 4, 0.),
         State(2, Parity::negative)},
@@ -66,7 +66,7 @@ int main() {
   }
 
   // Test polarized angular correlation and rotation
-  AngularCorrelation ang_corr_0p_1p_0p{
+  AngularCorrelation<double> ang_corr_0p_1p_0p{
       State(0, Parity::positive),
       {{Transition(EMCharacter::magnetic, 2, EMCharacter::electric, 4, 0.),
         State(2, Parity::positive)},
@@ -99,6 +99,6 @@ int main() {
   }
 
   // Test the copy constructor
-  AngularCorrelation ang_corr_0_1_0_prime = ang_corr_0_1_0;
+  AngularCorrelation<double> ang_corr_0_1_0_prime = ang_corr_0_1_0;
   assert(ang_corr_0_1_0_prime(0.1, 0.2) == ang_corr_0_1_0(0.1, 0.2));
 }

@@ -40,7 +40,7 @@ int main() {
 
   const int seed = 0;
 
-  AngularCorrelation ang_cor(
+  AngularCorrelation<double> ang_cor(
       State(0, Parity::positive),
       {{Transition(EMCharacter::magnetic, 2, EMCharacter::electric, 4, 0.),
         State(2, Parity::positive)},

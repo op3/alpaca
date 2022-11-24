@@ -49,15 +49,15 @@ int main() {
   const double epsilon = 1e-8;
 
   // Create a cascade of two angular correlations.
-  vector<AngularCorrelation> cascade{
-      AngularCorrelation(
+  vector<AngularCorrelation<double>> cascade{
+      AngularCorrelation<double>(
           State(0, Parity::positive),
           {{Transition(EMCharacter::magnetic, 2, EMCharacter::electric, 4, 0.),
             State(2, Parity::positive)},
            {Transition(EMCharacter::magnetic, 2, EMCharacter::electric, 4, 0.),
             State(4, Parity::positive)}}),
-      AngularCorrelation(State(2), {{Transition(2, 4, 0.), State(4)},
-                                    {Transition(4, 6, 0.), State(0)}})};
+      AngularCorrelation<double>(State(2), {{Transition(2, 4, 0.), State(4)},
+                                            {Transition(4, 6, 0.), State(0)}})};
 
   AngCorrRejectionSampler<double> ang_cor_rej_sam_1(cascade[0], 0);
   AngCorrRejectionSampler<double> ang_cor_rej_sam_2(cascade[1], 0);
@@ -93,7 +93,7 @@ int main() {
   //      Second step of the cascade
   // This vector must be rotated into the reference frame given by the first
   // emission.
-  const EulerAngleRotation eul_ang_rot;
+  const EulerAngleRotation<double> eul_ang_rot;
   array<double, 2> theta_phi_single_2_rotated = eul_ang_rot.rotate(
       theta_phi_single_2, {0., theta_phi_single_1[0],
                            -theta_phi_single_1[1] + 0.5 * std::numbers::pi});

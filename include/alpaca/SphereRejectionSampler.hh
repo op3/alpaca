@@ -130,7 +130,7 @@ public:
   SphereRejectionSampler(Dist dis, const double dis_max, const size_t seed,
                          const unsigned int max_tri = 1000)
       : distribution(dis), distribution_maximum(dis_max), max_tries(max_tri),
-        rng(seed), euler_angle_rotation(EulerAngleRotation()) {}
+        rng(seed) {}
 
   /**
    * \brief Sample a random vector from probability distribution and record the
@@ -262,7 +262,7 @@ protected:
                                         tries to find a random vector. */
 
   enoki::PCG32<T> rng; /**< Deterministic random number engine. */
-  EulerAngleRotation
+  EulerAngleRotation<T>
       euler_angle_rotation; /**< Instance of the EulerAngleRotation class */
 };
 

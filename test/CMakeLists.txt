@@ -16,8 +16,8 @@
 
 if(BUILD_TESTS)
   include_directories(${PROJECT_SOURCE_DIR}/include/)
-  include_directories(
-    SYSTEM PUBLIC $<BUILD_INTERFACE:${enoki_SOURCE_DIR}/include>)
+  include_directories(SYSTEM PUBLIC
+                      $<BUILD_INTERFACE:${enoki_SOURCE_DIR}/include>)
 
   enable_testing()
 
@@ -61,8 +61,7 @@ if(BUILD_TESTS)
   add_test(test_unobserved test_unobserved)
 
   add_executable(test_euler_angle_rotation test_euler_angle_rotation.cc)
-  target_link_libraries(test_euler_angle_rotation euler_angle_rotation
-                        w_dir_dir w_pol_dir)
+  target_link_libraries(test_euler_angle_rotation w_dir_dir w_pol_dir)
   add_test(test_euler_angle_rotation test_euler_angle_rotation)
 
   add_executable(test_angcorr_rejection_sampler
@@ -71,9 +70,8 @@ if(BUILD_TESTS)
   add_test(test_angcorr_rejection_sampler test_angcorr_rejection_sampler)
 
   add_executable(test_angular_correlation test_angular_correlation.cc)
-  target_link_libraries(
-    test_angular_correlation angular_correlation euler_angle_rotation w_dir_dir
-    w_pol_dir)
+  target_link_libraries(test_angular_correlation angular_correlation w_dir_dir
+                        w_pol_dir)
   add_test(test_angular_correlation test_angular_correlation)
 
   add_executable(test_angular_correlation_io test_angular_correlation_io.cc)
@@ -114,8 +112,7 @@ if(BUILD_TESTS)
   add_test(test_sphere_point_sampler test_sphere_point_sampler)
 
   add_executable(test_sphere_rejection_sampler test_sphere_rejection_sampler.cc)
-  target_link_libraries(test_sphere_rejection_sampler 
-                        euler_angle_rotation)
+  target_link_libraries(test_sphere_rejection_sampler)
   add_test(test_sphere_rejection_sampler test_sphere_rejection_sampler)
 
   add_executable(test_state test_state.cc)
@@ -131,7 +128,7 @@ if(BUILD_TESTS)
   add_executable(test_memory_leak test_memory_leak.cc)
   target_link_libraries(test_memory_leak angular_correlation)
   add_test(test_memory_leak test_memory_leak)
-  
+
   add_executable(test_special test_special.cc)
   add_test(test_special test_special)
 

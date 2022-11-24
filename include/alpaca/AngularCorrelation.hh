@@ -21,20 +21,37 @@
 
 #include <array>
 #include <memory>
+#include <stdexcept>
 #include <utility>
 #include <vector>
 
 #include "alpaca/EulerAngleRotation.hh"
 #include "alpaca/State.hh"
+#include "alpaca/TestUtilities.hh"
 #include "alpaca/Transition.hh"
 #include "alpaca/W_pol_dir.hh"
 
 using std::array;
+using std::invalid_argument;
 using std::pair;
 using std::unique_ptr;
 using std::vector;
 
 namespace alpaca {
+
+inline vector<CascadeStep> gen_cascade_steps(State ini_sta,
+                                             const vector<State> cas_sta) {
+  vector<CascadeStep> cascade_steps;
+  cascade_steps.reserve(cas_sta.size());
+
+  cascade_steps.push_back({Transition{ini_sta, cas_sta[0]}, cas_sta[0]});
+
+  for (size_t i = 1; i < cas_sta.size(); ++i) {
+    cascade_steps.push_back(
+        {Transition{cas_sta[i - 1], cas_sta[i]}, cas_sta[i]});
+  }
+  return cascade_steps;
+}
 
 /**
  * \brief Class for a gamma-gamma correlation.
@@ -145,7 +162,7 @@ namespace alpaca {
  * \right) \sin \left( \theta \right) \mathrm{d} \theta \mathrm{d} \varphi = 4
  * \pi \f]
  */
-class AngularCorrelation {
+template <typename T> class AngularCorrelation {
 
 public:
   /**
@@ -189,7 +206,12 @@ public:
    * only a single multipolarity is allowed.
    */
   AngularCorrelation(const State ini_sta,
-                     const vector<pair<Transition, State>> cas_ste);
+                     const vector<pair<Transition, State>> cas_ste)
+      : euler_angle_rotation(EulerAngleRotation<T>()), w_gamma_gamma(nullptr) {
+    check_cascade(ini_sta, cas_ste);
+
+    w_gamma_gamma = std::make_unique<W_pol_dir>(ini_sta, cas_ste);
+  }
 
   /**
    * \brief Constructor with transition inference
@@ -225,7 +247,8 @@ public:
    * \throw invalid_argument if the number of cascade steps is smaller or equal
    * to one, because two transitions are needed for a gamma-gamma correlation.
    */
-  AngularCorrelation(const State ini_sta, const vector<State> cas_sta);
+  AngularCorrelation(const State ini_sta, const vector<State> cas_sta)
+      : AngularCorrelation(ini_sta, gen_cascade_steps(ini_sta, cas_sta)) {}
 
   /**
    * Copy constructor
@@ -347,7 +370,16 @@ protected:
    * \throw invalid_argument if the cascade has less than two steps.
    */
   static void check_cascade(const State ini_sta,
-                            const vector<pair<Transition, State>> cas_ste);
+                            const vector<CascadeStep> cas_ste) {
+    if (cas_ste.size() < 2) {
+      throw invalid_argument(
+          "Cascade must have at least two transition - state pairs.");
+    }
+
+    check_angular_momenta(ini_sta, cas_ste);
+    check_triangle_inequalities(ini_sta, cas_ste);
+    check_em_transitions(ini_sta, cas_ste);
+  }
 
   /**
    * \brief Check whether angular momenta are either all half integer or all
@@ -368,7 +400,16 @@ protected:
    */
   static void
   check_angular_momenta(const State ini_sta,
-                        const vector<pair<Transition, State>> cas_ste);
+                        const vector<pair<Transition, State>> cas_ste) {
+    const int even_odd = ini_sta.two_J % 2;
+
+    for (size_t i = 0; i < cas_ste.size(); ++i) {
+      if (cas_ste[i].second.two_J % 2 != even_odd) {
+        throw invalid_argument(
+            "Unphysical mixing of half-integer and integer spins in cascade.");
+      }
+    }
+  }
   /**
    * \brief Check triangle inequality for all cascade steps.
    *
@@ -395,14 +436,39 @@ protected:
    */
   static void
   check_triangle_inequalities(const State ini_sta,
-                              const vector<pair<Transition, State>> cas_ste);
+                              const vector<pair<Transition, State>> cas_ste) {
 
+    if (!fulfils_triangle_inequality<int>(
+            ini_sta.two_J, cas_ste[0].second.two_J, cas_ste[0].first.two_L) &&
+        !fulfils_triangle_inequality<int>(
+            ini_sta.two_J, cas_ste[0].second.two_J, cas_ste[0].first.two_Lp)) {
+      throw invalid_argument(
+          "Triangle inequality selection rule not fulfilled for any "
+          "multipolarity of transition #1: " +
+          cas_ste[0].first.str_rep(ini_sta, cas_ste[0].second));
+    }
+
+    for (size_t i = 1; i < cas_ste.size(); ++i) {
+      if (!fulfils_triangle_inequality<int>(cas_ste[i - 1].second.two_J,
+                                            cas_ste[i].second.two_J,
+                                            cas_ste[i].first.two_L) &&
+          !fulfils_triangle_inequality<int>(cas_ste[i - 1].second.two_J,
+                                            cas_ste[i].second.two_J,
+                                            cas_ste[i].first.two_Lp)) {
+        throw invalid_argument(
+            "Triangle inequality selection rule not fulfilled for any "
+            "multipolarity of transition #" +
+            std::to_string(i + 1) + ": " +
+            cas_ste[i].first.str_rep(cas_ste[i - 1].second, cas_ste[i].second));
+      }
+    }
+  }
   /**
    * \brief Check parity selections rules for all cascade steps.
    *
    * For each cascade step, first checks whether any of \f$\pi_i\f$,
-   * \f$\pi_{i+1}\f$, \f$\lambda_i\f$, \f$\lambda_i^\prime\f$ is given. If yes,
-   * checks whether all of them are given. If yes, checks whether the EM
+   * \f$\pi_{i+1}\f$, \f$\lambda_i\f$, \f$\lambda_i^\prime\f$ is given. If
+   * yes, checks whether all of them are given. If yes, checks whether the EM
    * selections rules (see, e.g. Appendix 'Electromagnetic Transitions and
    * Moments' in Ref. \cite deShalitTalmi2004)
    *
@@ -423,8 +489,8 @@ protected:
    * \param cas_ste Cascade steps, given as a list of arbitrary length which
    * contains Transition-State pairs.
    *
-   * \throw invalid_argument if at least one of the following conditions is not
-   * fulfilled for any cascade step:
+   * \throw invalid_argument if at least one of the following conditions is
+   * not fulfilled for any cascade step:
    * 1. Either all information about parities and EM characters for a cascade
    * step is given, or none.
    * 2. The parity selection rules apply for both multipolarities of the
@@ -432,7 +498,110 @@ protected:
    */
   static void
   check_em_transitions(const State ini_sta,
-                       const vector<pair<Transition, State>> cas_ste);
+                       const vector<pair<Transition, State>> cas_ste) {
+    if (ini_sta.parity != Parity::unknown &&
+        cas_ste[0].second.parity != Parity::unknown) {
+      if (cas_ste[0].first.em_char != EMCharacter::unknown) {
+        if (!valid_em_character(ini_sta.parity, cas_ste[0].second.parity,
+                                cas_ste[0].first.two_L,
+                                cas_ste[0].first.em_char)) {
+          throw invalid_argument(
+              "Incorrect electroEMCharacter::magnetic character '" +
+              Transition::em_str_rep(cas_ste[0].first.em_char) +
+              "' for transition #1: " +
+              cas_ste[0].first.str_rep(ini_sta, cas_ste[0].second));
+        }
+
+        if (cas_ste[0].first.em_charp != EMCharacter::unknown) {
+          if (!valid_em_character(ini_sta.parity, cas_ste[0].second.parity,
+                                  cas_ste[0].first.two_Lp,
+                                  cas_ste[0].first.em_charp)) {
+            throw invalid_argument(
+                "Incorrect electroEMCharacter::magnetic character '" +
+                Transition::em_str_rep(cas_ste[0].first.em_charp) +
+                "' for transition #1: " +
+                cas_ste[0].first.str_rep(ini_sta, cas_ste[0].second));
+          }
+        } else {
+          throw invalid_argument(
+              "Only one electroEMCharacter::magnetic character defined for "
+              "transition #1: " +
+              cas_ste[0].first.str_rep(ini_sta, cas_ste[0].second));
+        }
+      }
+
+      if (cas_ste[0].first.em_char == EMCharacter::unknown &&
+          cas_ste[0].first.em_charp != EMCharacter::unknown) {
+        throw invalid_argument(
+            "Only one electroEMCharacter::magnetic character defined for "
+            "transition #1: " +
+            cas_ste[0].first.str_rep(ini_sta, cas_ste[0].second));
+      }
+    } else if (cas_ste[0].first.em_char != EMCharacter::unknown ||
+               cas_ste[0].first.em_charp != EMCharacter::unknown) {
+      throw invalid_argument(
+          "ElectroEMCharacter::magnetic character defined, but one or both "
+          "parities missing "
+          "for transition #1: " +
+          cas_ste[0].first.str_rep(ini_sta, cas_ste[0].second));
+    }
+
+    for (size_t i = 1; i < cas_ste.size(); ++i) {
+      if (cas_ste[i - 1].second.parity != Parity::unknown &&
+          cas_ste[i].second.parity != Parity::unknown) {
+        if (cas_ste[i].first.em_char != EMCharacter::unknown) {
+          if (!valid_em_character(
+                  cas_ste[i - 1].second.parity, cas_ste[i].second.parity,
+                  cas_ste[i].first.two_L, cas_ste[i].first.em_char)) {
+            throw invalid_argument(
+                "Incorrect electroEMCharacter::magnetic character '" +
+                Transition::em_str_rep(cas_ste[0].first.em_char) +
+                "' for transition #" + to_string(i + 1) + ": " +
+                cas_ste[i].first.str_rep(cas_ste[i - 1].second,
+                                         cas_ste[i].second));
+          }
+        }
+
+        if (cas_ste[i].first.em_charp != EMCharacter::unknown) {
+          if (!valid_em_character(
+                  cas_ste[i - 1].second.parity, cas_ste[i].second.parity,
+                  cas_ste[i].first.two_Lp, cas_ste[i].first.em_charp)) {
+            throw invalid_argument(
+                "Incorrect electroEMCharacter::magnetic character '" +
+                Transition::em_str_rep(cas_ste[0].first.em_charp) +
+                "' for transition #" + to_string(i + 1) + ": " +
+                cas_ste[i].first.str_rep(cas_ste[i - 1].second,
+                                         cas_ste[i].second));
+          }
+        } else {
+          throw invalid_argument(
+              "Only one electroEMCharacter::magnetic character defined for "
+              "transition #" +
+              to_string(i + 1) + ": " +
+              cas_ste[i].first.str_rep(cas_ste[i - 1].second,
+                                       cas_ste[i].second));
+        }
+
+        if (cas_ste[i].first.em_char == EMCharacter::unknown &&
+            cas_ste[i].first.em_charp != EMCharacter::unknown) {
+          throw invalid_argument(
+              "Only one electroEMCharacter::magnetic character defined for "
+              "transition #" +
+              to_string(i + 1) + ": " +
+              cas_ste[i].first.str_rep(cas_ste[i - 1].second,
+                                       cas_ste[i].second));
+        }
+      } else if (cas_ste[i].first.em_char != EMCharacter::unknown ||
+                 cas_ste[i].first.em_charp != EMCharacter::unknown) {
+        throw invalid_argument(
+            "ElectroEMCharacter::magnetic character defined, but one or both "
+            "parities missing "
+            "for transition #" +
+            to_string(i + 1) + ": " +
+            cas_ste[i].first.str_rep(cas_ste[i - 1].second, cas_ste[i].second));
+      }
+    }
+  }
 
   /**
    * \brief Checks the parity selection rule for a single transition.
@@ -442,21 +611,42 @@ protected:
    * \param p0 \f$p_i\f$Parity of initial state
    * \param p1 \f$p_{i+1}\f$Parity of final state
    * \param two_L \f$2L_i\f$, two times the multipolarity of the transition.
-   * \param em \f$\lambda_i\f$ EM character of the transition with multipolarity
-   * \f$L\f$.
+   * \param em \f$\lambda_i\f$ EM character of the transition with
+   * multipolarity \f$L\f$.
    *
    * \return true, if the parity selection rule is fulfilled, false otherwise.
    */
   static bool valid_em_character(const Parity p0, const Parity p1,
-                                 const int two_L, const EMCharacter em);
+                                 const int two_L, const EMCharacter em) {
+    if (p0 == p1) {
+      if ((two_L / 2) % 2 == 0) {
+        if (em != EMCharacter::electric) {
+          return false;
+        }
+      } else if (em != EMCharacter::magnetic) {
+        return false;
+      }
 
+      return true;
+    }
+
+    if ((two_L / 2) % 2 == 0) {
+      if (em != EMCharacter::magnetic) {
+        return false;
+      }
+    } else if (em != EMCharacter::electric) {
+      return false;
+    }
+
+    return true;
+  }
   /**
    * \brief Infer the most likely transition that connects two given states.
    *
    * This method is used in connection with the simplified constructor of the
-   * AngularCorrelation class. Given two states of a cascade, it infers the most
-   * likely transition that connects them. See the corresponding constructor for
-   * more information.
+   * AngularCorrelation class. Given two states of a cascade, it infers the
+   * most likely transition that connects them. See the corresponding
+   * constructor for more information.
    *
    * \param states Two states for which the most likely transition should be
    * inferred.
@@ -468,7 +658,7 @@ protected:
    */
   Transition infer_transition(const pair<State, State> states) const;
 
-  EulerAngleRotation
+  EulerAngleRotation<T>
       euler_angle_rotation; /**< Instance of the EulerAngleRotation class */
 
   /**

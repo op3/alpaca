@@ -164,15 +164,14 @@ public:
    * terminates without success and returns its default value (default: 1000).
    * Will be used for all internal random-number samplers.
    */
-  CascadeRejectionSampler(vector<AngularCorrelation> &cascade, const int seed,
-                          const unsigned int max_tri = 1000)
+  CascadeRejectionSampler(vector<AngularCorrelation<T>> &cascade,
+                          const int seed, const unsigned int max_tri = 1000)
       : initial_direction_random(true), PhiThetaPsi({0., 0., 0.}),
         return_first_direction(true),
         uniform_direction_sampler(
             []([[maybe_unused]] const double theta,
                [[maybe_unused]] const double phi) { return 1.; },
-            1., seed, max_tri),
-        euler_angle_rotation(EulerAngleRotation()) {
+            1., seed, max_tri) {
     for (size_t i = 0; i < cascade.size(); ++i) {
       angular_correlation_samplers.push_back(
           AngCorrRejectionSampler<T>(cascade[i], seed, max_tri));
@@ -216,8 +215,8 @@ public:
    * terminates without success and returns its default value (default: 1000).
    * Will be used for all internal random-number samplers.
    */
-  CascadeRejectionSampler(vector<AngularCorrelation> &cascade, const int seed,
-                          const array<double, 3> a_PhiThetaPsi,
+  CascadeRejectionSampler(vector<AngularCorrelation<T>> &cascade,
+                          const int seed, const array<double, 3> a_PhiThetaPsi,
                           const bool a_return_first_direction = false,
                           const unsigned int max_tri = 1000)
       : initial_direction_random(false), PhiThetaPsi(a_PhiThetaPsi),
@@ -225,8 +224,7 @@ public:
         uniform_direction_sampler(
             []([[maybe_unused]] const double theta,
                [[maybe_unused]] const double phi) { return 1.; },
-            1., seed, max_tri),
-        euler_angle_rotation(EulerAngleRotation()) {
+            1., seed, max_tri) {
     for (size_t i = 0; i < cascade.size(); ++i) {
       angular_correlation_samplers.push_back(
           AngCorrRejectionSampler<T>(cascade[i], seed, max_tri));
@@ -298,7 +296,7 @@ protected:
       uniform_direction_sampler; /**< Instance of SphereRejectionSampler with an
                                     uniform distribution to sample the direction
                                     of the first gamma ray. */
-  EulerAngleRotation
+  EulerAngleRotation<double>
       euler_angle_rotation; /**< Instance of EulerAngleRotation. */
 };
 

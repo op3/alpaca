@@ -38,7 +38,7 @@ using namespace alpaca;
  */
 bool test_first_em_character_not_given() {
   try {
-    AngularCorrelation ang_corr(
+    AngularCorrelation<double> ang_corr(
         State(0, Parity::positive),
         {{Transition(EMCharacter::unknown, 2, EMCharacter::magnetic, 4, 0.),
           State(2, Parity::negative)},
@@ -52,7 +52,7 @@ bool test_first_em_character_not_given() {
 
 bool test_first_em_character_not_given_for_second_transition() {
   try {
-    AngularCorrelation ang_corr(
+    AngularCorrelation<double> ang_corr(
         State(0, Parity::positive),
         {{Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
           State(2, Parity::negative)},
@@ -66,7 +66,7 @@ bool test_first_em_character_not_given_for_second_transition() {
 
 bool test_second_em_character_not_given() {
   try {
-    AngularCorrelation ang_corr(
+    AngularCorrelation<double> ang_corr(
         State(0, Parity::positive),
         {{Transition(EMCharacter::electric, 2, EMCharacter::unknown, 4, 0.),
           State(2, Parity::negative)},
@@ -80,7 +80,7 @@ bool test_second_em_character_not_given() {
 
 bool test_second_em_character_not_given_for_second_transition() {
   try {
-    AngularCorrelation ang_corr(
+    AngularCorrelation<double> ang_corr(
         State(0, Parity::positive),
         {{Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
           State(2, Parity::negative)},
@@ -94,7 +94,7 @@ bool test_second_em_character_not_given_for_second_transition() {
 
 bool test_em_character_given_but_first_parity_missing() {
   try {
-    AngularCorrelation ang_corr(
+    AngularCorrelation<double> ang_corr(
         State(0, Parity::unknown),
         {{Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
           State(2, Parity::negative)},
@@ -108,7 +108,7 @@ bool test_em_character_given_but_first_parity_missing() {
 
 bool test_em_character_given_but_second_parity_missing() {
   try {
-    AngularCorrelation ang_corr(
+    AngularCorrelation<double> ang_corr(
         State(0, Parity::positive),
         {{Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
           State(2, Parity::unknown)},
@@ -122,7 +122,7 @@ bool test_em_character_given_but_second_parity_missing() {
 
 bool test_em_character_given_but_parity_missing_for_final_state_of_second_transition() {
   try {
-    AngularCorrelation ang_corr(
+    AngularCorrelation<double> ang_corr(
         State(0, Parity::positive),
         {{Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
           State(2, Parity::negative)},
@@ -136,7 +136,7 @@ bool test_em_character_given_but_parity_missing_for_final_state_of_second_transi
 
 bool test_triangle_inequality_violated_for_first_transition() {
   try {
-    AngularCorrelation ang_corr(
+    AngularCorrelation<double> ang_corr(
         State(0, Parity::positive),
         {{Transition(EMCharacter::magnetic, 4, EMCharacter::electric, 6, 0.),
           State(2, Parity::negative)},
@@ -150,7 +150,7 @@ bool test_triangle_inequality_violated_for_first_transition() {
 
 bool test_triangle_inequality_violated_for_second_transition() {
   try {
-    AngularCorrelation ang_corr(
+    AngularCorrelation<double> ang_corr(
         State(0, Parity::positive),
         {{Transition(EMCharacter::magnetic, 2, EMCharacter::electric, 4, 0.),
           State(2, Parity::negative)},
@@ -178,7 +178,7 @@ int main() {
 
   // Not an error: Triangle inequality fulfilled by second transition
   {
-    AngularCorrelation ang_corr(
+    AngularCorrelation<double> ang_corr(
         State(0, Parity::positive),
         {{Transition(EMCharacter::electric, 10, EMCharacter::electric, 2, 0.),
           State(2, Parity::negative)},
@@ -189,7 +189,7 @@ int main() {
   // Error: First electromagnetic character wrong
   {
     try {
-      AngularCorrelation ang_corr(
+      AngularCorrelation<double> ang_corr(
           State(0, Parity::positive),
           {{Transition(EMCharacter::magnetic, 2, EMCharacter::magnetic, 4, 0.),
             State(2, Parity::negative)},
@@ -205,7 +205,7 @@ int main() {
 
   {
     try {
-      AngularCorrelation ang_corr(
+      AngularCorrelation<double> ang_corr(
           State(0, Parity::positive),
           {{Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
             State(2, Parity::positive)},
@@ -221,7 +221,7 @@ int main() {
 
   {
     try {
-      AngularCorrelation ang_corr(
+      AngularCorrelation<double> ang_corr(
           State(0, Parity::positive),
           {{Transition(EMCharacter::magnetic, 4, EMCharacter::magnetic, 6, 0.),
             State(4, Parity::positive)},
@@ -239,7 +239,7 @@ int main() {
   // transition
   {
     try {
-      AngularCorrelation ang_corr(
+      AngularCorrelation<double> ang_corr(
           State(0, Parity::positive),
           {{Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
             State(2, Parity::negative)},
@@ -256,7 +256,7 @@ int main() {
   // Error: Second electromagnetic character wrong
   {
     try {
-      AngularCorrelation ang_corr(
+      AngularCorrelation<double> ang_corr(
           State(0, Parity::positive),
           {{Transition(EMCharacter::electric, 2, EMCharacter::electric, 4, 0.),
             State(2, Parity::negative)},
@@ -274,7 +274,7 @@ int main() {
   // transition
   {
     try {
-      AngularCorrelation ang_corr(
+      AngularCorrelation<double> ang_corr(
           State(0, Parity::positive),
           {{Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
             State(2, Parity::negative)},
@@ -291,7 +291,7 @@ int main() {
   // Error: Mixing of half-integer and integer spins
   {
     try {
-      AngularCorrelation ang_corr(
+      AngularCorrelation<double> ang_corr(
           State(0, Parity::positive),
           {{Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
             State(1, Parity::negative)},
@@ -309,7 +309,7 @@ int main() {
   // possibilities. Error: Transition between spin-0 states
   {
     try {
-      AngularCorrelation ang_corr_0_1_0{
+      AngularCorrelation<double> ang_corr_0_1_0{
           State(0, Parity::unknown),
           {State(0, Parity::negative), State(0, Parity::unknown)}};
     } catch (const std::invalid_argument &e) {
@@ -323,10 +323,10 @@ int main() {
   // Error: Too few steps in cascade
   {
     try {
-      AngularCorrelation ang_corr_0_1{State(0, Parity::unknown),
-                                      {
-                                          State(2, Parity::negative),
-                                      }};
+      AngularCorrelation<double> ang_corr_0_1{State(0, Parity::unknown),
+                                              {
+                                                  State(2, Parity::negative),
+                                              }};
     } catch (const std::invalid_argument &e) {
       error_thrown = true;
     }
@@ -338,7 +338,7 @@ int main() {
   // Error: Same as above with more general constructor.
   {
     try {
-      AngularCorrelation ang_corr_0p_1p{
+      AngularCorrelation<double> ang_corr_0p_1p{
           State(0, Parity::positive),
           {
               {Transition(EMCharacter::magnetic, 2, EMCharacter::electric, 4,
@@ -353,7 +353,7 @@ int main() {
   assert(error_thrown);
   error_thrown = false;
 
-  AngularCorrelation ang_corr_0_1_0{
+  AngularCorrelation<double> ang_corr_0_1_0{
       State(0, Parity::positive),
       {State(2, Parity::negative), State(6, Parity::negative)}};
 
@@ -370,10 +370,10 @@ int main() {
   assert(cas_ste[1].first.em_charp == EMCharacter::magnetic);
   assert(cas_ste[1].first.delta == 0.);
 
-  AngularCorrelation ang_corr_3_5_3_9 =
-      AngularCorrelation{State(3, Parity::positive),
-                         {State(5, Parity::unknown), State(3, Parity::negative),
-                          State(9, Parity::negative)}};
+  AngularCorrelation<double> ang_corr_3_5_3_9 = AngularCorrelation<double>{
+      State(3, Parity::positive),
+      {State(5, Parity::unknown), State(3, Parity::negative),
+       State(9, Parity::negative)}};
 
   cas_ste = ang_corr_3_5_3_9.get_cascade_steps();
 
@@ -387,12 +387,12 @@ int main() {
   // Check that the correct transition is inferred between states of equal spin.
   // The triangle inequality gives a monopole transition as the lowest possible
   // multipolarity in that case, but this is not possible for a single photon.
-  AngularCorrelation ang_corr_0_4_4 =
-      AngularCorrelation{State(0, Parity::positive),
-                         {
-                             State(4, Parity::positive),
-                             State(4, Parity::positive),
-                         }};
+  AngularCorrelation<double> ang_corr_0_4_4 =
+      AngularCorrelation<double>{State(0, Parity::positive),
+                                 {
+                                     State(4, Parity::positive),
+                                     State(4, Parity::positive),
+                                 }};
 
   cas_ste = ang_corr_0_4_4.get_cascade_steps();
 
@@ -405,12 +405,12 @@ int main() {
   assert(cas_ste[1].first.em_charp == EMCharacter::electric);
   assert(cas_ste[1].first.two_Lp == 4);
 
-  AngularCorrelation ang_corr_0_4m_4 =
-      AngularCorrelation{State(0, Parity::positive),
-                         {
-                             State(4, Parity::negative),
-                             State(4, Parity::positive),
-                         }};
+  AngularCorrelation<double> ang_corr_0_4m_4 =
+      AngularCorrelation<double>{State(0, Parity::positive),
+                                 {
+                                     State(4, Parity::negative),
+                                     State(4, Parity::positive),
+                                 }};
 
   cas_ste = ang_corr_0_4m_4.get_cascade_steps();
 

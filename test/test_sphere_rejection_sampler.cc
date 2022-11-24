@@ -93,7 +93,7 @@ int main() {
   [[maybe_unused]] array<double, 2> theta_phi_rotated =
       sph_rej_sam_uni_2(euler_angles);
 
-  const EulerAngleRotation euler_angle_rotation;
+  const EulerAngleRotation<double> euler_angle_rotation;
   [[maybe_unused]] array<double, 2> theta_phi_rotated_manually =
       euler_angle_rotation.rotate(theta_phi, euler_angles);
 

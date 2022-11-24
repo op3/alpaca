@@ -24,7 +24,7 @@
 using namespace alpaca;
 
 void calculate_angular_correlation() {
-  AngularCorrelation ang_corr(
+  AngularCorrelation<double> ang_corr(
       State(0, Parity::positive),
       {{Transition(EMCharacter::electric, 2, EMCharacter::magnetic, 4, 0.),
         State(2, Parity::negative)},

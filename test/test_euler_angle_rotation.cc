@@ -34,7 +34,7 @@ int main() {
 
   const double epsilon = 1e-8;
 
-  EulerAngleRotation eul_ang_rot;
+  EulerAngleRotation<double> eul_ang_rot;
 
   array<double, 3> x_axis{1., 0., 0.};
   array<double, 2> x_axis_sph{0.5 * std::numbers::pi, 0.};
