@@ -22,75 +22,85 @@ add_library(fCoefficient FCoefficient.cc)
 target_link_libraries(fCoefficient ${GSL_LIBRARIES})
 target_include_directories(
   fCoefficient PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+                      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
 set_target_properties(fCoefficient PROPERTIES PUBLIC_HEADER
-                                              include/FCoefficient.hh)
+                                              include/alpaca/FCoefficient.hh)
 
 add_library(avCoefficient AvCoefficient.cc)
 target_link_libraries(avCoefficient fCoefficient)
 target_include_directories(
   avCoefficient PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+                       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
 set_target_properties(avCoefficient PROPERTIES PUBLIC_HEADER
-                                               include/AvCoefficient.hh)
+                                               include/alpaca/AvCoefficient.hh)
 
 add_library(w_dir_dir W_dir_dir.cc)
 target_link_libraries(w_dir_dir avCoefficient uvCoefficient)
 target_include_directories(
   w_dir_dir PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(w_dir_dir PROPERTIES PUBLIC_HEADER include/W_dir_dir.hh)
+                   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
+set_target_properties(w_dir_dir PROPERTIES PUBLIC_HEADER
+                                           include/alpaca/W_dir_dir.hh)
 
 add_library(kappa_coefficient KappaCoefficient.cc)
 target_link_libraries(kappa_coefficient ${GSL_LIBRARIES})
 target_include_directories(
-  kappa_coefficient PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(kappa_coefficient PROPERTIES PUBLIC_HEADER
-                                                   include/KappaCoefficient.hh)
+  kappa_coefficient
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
+set_target_properties(
+  kappa_coefficient PROPERTIES PUBLIC_HEADER include/alpaca/KappaCoefficient.hh)
 
 add_library(alphavCoefficient AlphavCoefficient.cc)
 target_link_libraries(alphavCoefficient fCoefficient kappa_coefficient)
 target_include_directories(
-  alphavCoefficient PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(alphavCoefficient PROPERTIES PUBLIC_HEADER
-                                                   include/AlphavCoefficient.hh)
+  alphavCoefficient
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
+set_target_properties(
+  alphavCoefficient PROPERTIES PUBLIC_HEADER
+                               include/alpaca/AlphavCoefficient.hh)
 
 add_library(uvCoefficient UvCoefficient.cc)
 target_link_libraries(uvCoefficient ${GSL_LIBRARIES})
 target_include_directories(
   uvCoefficient PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+                       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
 set_target_properties(uvCoefficient PROPERTIES PUBLIC_HEADER
-                                               include/UvCoefficient.hh)
+                                               include/alpaca/UvCoefficient.hh)
 
 add_library(w_pol_dir W_pol_dir.cc)
 target_link_libraries(w_pol_dir alphavCoefficient avCoefficient w_dir_dir)
 target_include_directories(
   w_pol_dir PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(w_pol_dir PROPERTIES PUBLIC_HEADER include/W_pol_dir.hh)
+                   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
+set_target_properties(w_pol_dir PROPERTIES PUBLIC_HEADER
+                                           include/alpaca/W_pol_dir.hh)
 
 add_library(angular_correlation SHARED AngularCorrelation.cc)
 target_link_libraries(angular_correlation PUBLIC w_dir_dir w_pol_dir)
 target_include_directories(
-  angular_correlation PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(angular_correlation
-                      PROPERTIES PUBLIC_HEADER include/AngularCorrelation.hh)
+  angular_correlation
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
+set_target_properties(
+  angular_correlation PROPERTIES PUBLIC_HEADER
+                                 include/alpaca/AngularCorrelation.hh)
 
 add_library(spherePointSampler SpherePointSampler.cc)
 target_include_directories(
-  spherePointSampler PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(spherePointSampler
-                      PROPERTIES PUBLIC_HEADER include/SpherePointSampler.hh)
+  spherePointSampler
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
+set_target_properties(
+  spherePointSampler PROPERTIES PUBLIC_HEADER
+                                include/alpaca/SpherePointSampler.hh)
 
 add_library(sphereIntegrator SphereIntegrator.cc)
 target_link_libraries(sphereIntegrator spherePointSampler)
 target_include_directories(
-  sphereIntegrator PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(sphereIntegrator PROPERTIES PUBLIC_HEADER
-                                                  include/SphereIntegrator.hh)
+  sphereIntegrator
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
+set_target_properties(
+  sphereIntegrator PROPERTIES PUBLIC_HEADER include/alpaca/SphereIntegrator.hh)
