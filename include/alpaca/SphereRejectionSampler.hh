@@ -33,7 +33,7 @@ using std::vector;
 
 namespace alpaca {
 
-using Distribution = std::function<double(const double, const double)>;
+template <typename T> using Distribution = std::function<T(const T, const T)>;
 
 /**
  * \brief Sample from a probability distribution in spherical coordinates using
@@ -127,7 +127,7 @@ public:
    * terminates without success and returns \f$\left( 0, 0 \right)\f$ (default:
    * 1000).
    */
-  SphereRejectionSampler(Dist dis, const double dis_max, const size_t seed,
+  SphereRejectionSampler(Dist dis, const T dis_max, const size_t seed,
                          const unsigned int max_tri = 1000)
       : distribution(dis), distribution_maximum(dis_max), max_tries(max_tri),
         rng(seed) {}
@@ -143,9 +143,9 @@ public:
    * of trials \f$N_\mathrm{max}\f$ is reached by the algorithm and no random
    * vector was accepted.
    */
-  pair<unsigned int, array<double, 2>> sample() {
-    array<double, 2> theta_phi;
-    double dis_val;
+  pair<unsigned int, CoordDir<T>> sample() {
+    CoordDir<T> theta_phi;
+    T dis_val;
 
     for (unsigned int i = 0; i < max_tries; ++i) {
 
@@ -160,10 +160,9 @@ public:
     return {max_tries, {0., 0.}};
   }
 
-  array<double, 2> operator()() {
-    pair<unsigned int, array<double, 2>> sampled_theta_phi = sample();
-
-    return {sampled_theta_phi.second[0], sampled_theta_phi.second[1]};
+  inline CoordDir<T> operator()() {
+    auto sampled_theta_phi = sample();
+    return sampled_theta_phi.second;
   }
 
   /**
@@ -189,7 +188,7 @@ public:
    * maximum number of trials \f$N_\mathrm{max}\f$ is reached by the algorithm
    * and no random vector was accepted.
    */
-  array<double, 2> operator()(const array<double, 3> euler_angles) {
+  CoordDir<T> operator()(const EulerAngles<T> euler_angles) {
     return euler_angle_rotation.rotate(operator()(), euler_angles);
   }
 
@@ -208,7 +207,7 @@ public:
   double estimate_efficiency(const unsigned int n_tries) {
     vector<unsigned int> required_tries(n_tries);
 
-    pair<unsigned int, array<double, 2>> sampled_theta_phi;
+    pair<unsigned int, CoordDir<T>> sampled_theta_phi;
 
     for (unsigned int i = 0; i < n_tries; ++i) {
       sampled_theta_phi = sample();
@@ -250,16 +249,16 @@ protected:
    * \return \f$\left( \theta_\mathrm{rand}, \varphi_\mathrm{rand} \right)\f$,
    * random point on sphere surface.
    */
-  inline array<T, 2> sample_theta_phi() {
+  inline CoordDir<T> sample_theta_phi() {
     return {sample_theta(), sample_phi()};
   }
 
-  Dist distribution;           /**< \f$W \left( \theta, \varphi \right)\f$,
-                                          (unnormalized)   probability distribution. */
-  double distribution_maximum; /**< \f$W_\mathrm{max}\f$, maximum of
+  Dist distribution;      /**< \f$W \left( \theta, \varphi \right)\f$,
+                                     (unnormalized)   probability distribution. */
+  T distribution_maximum; /**< \f$W_\mathrm{max}\f$, maximum of
                                         probability distribution. */
-  unsigned int max_tries;      /**< \f$N_\mathrm{max}\f$, maximum number of
-                                        tries to find a random vector. */
+  unsigned int max_tries; /**< \f$N_\mathrm{max}\f$, maximum number of
+                                   tries to find a random vector. */
 
   enoki::PCG32<T> rng; /**< Deterministic random number engine. */
   EulerAngleRotation<T>

@@ -19,13 +19,16 @@
 
 #pragma once
 
-#include <array>
 #include <enoki/array.h>
 #include <numbers>
 
-using std::array;
-
 namespace alpaca {
+
+/** Euler Angles */
+template <typename T> using EulerAngles = enoki::Array<T, 3>;
+
+/** Directional coordinates (theta, phi) */
+template <typename T> using CoordDir = enoki::Array<T, 2>;
 
 /**
  * \brief Class to perform arbitrary rotations of 3D vectors using Euler angles.
@@ -139,14 +142,14 @@ public:
    *
    * \return \f$v^\prime\f$, 3D vector
    */
-  inline array<T, 3> rotate(const array<double, 3> x_y_z,
-                            const array<T, 3> Phi_Theta_Psi) const {
+  inline EulerAngles<T> rotate(const EulerAngles<T> x_y_z,
+                               const EulerAngles<T> Phi_Theta_Psi) const {
     if (no_rotation_required(Phi_Theta_Psi)) {
       return x_y_z;
     }
 
-    const array<array<T, 3>, 3> A = rotation_matrix(Phi_Theta_Psi);
-    return array<T, 3>{
+    const enoki::Array<EulerAngles<T>, 3> A = rotation_matrix(Phi_Theta_Psi);
+    return EulerAngles<T>{
         A[0][0] * x_y_z[0] + A[0][1] * x_y_z[1] + A[0][2] * x_y_z[2],
         A[1][0] * x_y_z[0] + A[1][1] * x_y_z[1] + A[1][2] * x_y_z[2],
         A[2][0] * x_y_z[0] + A[2][1] * x_y_z[1] + A[2][2] * x_y_z[2]};
@@ -161,8 +164,8 @@ public:
    * \return \f$v^\prime\f$, spherical coordinates \f$\theta\f$ and
    * \f$\varphi\f$ in radians.
    */
-  inline array<T, 2> rotate(const array<double, 2> theta_phi,
-                            const array<T, 3> Phi_Theta_Psi) const {
+  inline CoordDir<T> rotate(const CoordDir<T> theta_phi,
+                            const EulerAngles<T> Phi_Theta_Psi) const {
     if (no_rotation_required(Phi_Theta_Psi)) {
       return theta_phi;
     }
@@ -181,8 +184,8 @@ public:
    *
    * \return \f$v\f$, 3D vector
    */
-  inline array<T, 3> rotate_back(const array<T, 3> xp_yp_zp,
-                                 const array<T, 3> Phi_Theta_Psi) const {
+  inline EulerAngles<T> rotate_back(const EulerAngles<T> xp_yp_zp,
+                                    const EulerAngles<T> Phi_Theta_Psi) const {
     if (no_rotation_required(Phi_Theta_Psi)) {
       return xp_yp_zp;
     }
@@ -202,8 +205,8 @@ public:
    * \return \f$v\f$, spherical coordinates \f$\theta\f$ and \f$\varphi\f$ in
    * radians.
    */
-  inline array<T, 2> rotate_back(const array<T, 2> thetap_phip,
-                                 const array<T, 3> Phi_Theta_Psi) const {
+  inline CoordDir<T> rotate_back(const CoordDir<T> thetap_phip,
+                                 const EulerAngles<T> Phi_Theta_Psi) const {
     if (no_rotation_required(Phi_Theta_Psi)) {
       return thetap_phip;
     }
@@ -225,7 +228,7 @@ public:
    *
    * \return Spherical coordinates \f$\theta\f$ and \f$\varphi\f$ in radians.
    */
-  inline array<T, 2> get_theta_phi(const array<T, 3> x_y_z_norm) const {
+  inline CoordDir<T> get_theta_phi(const EulerAngles<T> x_y_z_norm) const {
 
     return {enoki::acos(x_y_z_norm[2]),
             enoki::fmod(enoki::atan2(x_y_z_norm[1], x_y_z_norm[0]) +
@@ -245,12 +248,12 @@ protected:
    *
    * \return Normalized Cartesian vector.
    */
-  inline array<T, 3> get_x_y_z_norm(const array<T, 2> theta_phi) const {
+  inline EulerAngles<T> get_x_y_z_norm(const CoordDir<T> theta_phi) const {
 
     auto [sin_the, cos_the] = enoki::sincos(theta_phi[0]);
     auto [sin_phi, cos_phi] = enoki::sincos(theta_phi[1]);
 
-    return array<T, 3>{sin_the * cos_phi, sin_the * sin_phi, cos_the};
+    return EulerAngles<T>{sin_the * cos_phi, sin_the * sin_phi, cos_the};
   }
 
   /**
@@ -260,20 +263,21 @@ protected:
    *
    * \return \f$3 \times 3\f$ matrix \f$A\f$
    */
-  array<array<T, 3>, 3> rotation_matrix(const array<T, 3> Phi_Theta_Psi) const {
+  enoki::Array<EulerAngles<T>, 3>
+  rotation_matrix(const EulerAngles<T> Phi_Theta_Psi) const {
 
     auto [sin_phi, cos_phi] = enoki::sincos(Phi_Theta_Psi[0]);
     auto [sin_the, cos_the] = enoki::sincos(Phi_Theta_Psi[1]);
     auto [sin_psi, cos_psi] = enoki::sincos(Phi_Theta_Psi[2]);
 
-    return array<array<T, 3>, 3>{
-        array<T, 3>{cos_psi * cos_phi - cos_the * sin_phi * sin_psi,
-                    cos_psi * sin_phi + cos_the * cos_phi * sin_psi,
-                    sin_psi * sin_the},
-        array<T, 3>{-sin_psi * cos_phi - cos_the * sin_phi * cos_psi,
-                    -sin_psi * sin_phi + cos_the * cos_phi * cos_psi,
-                    cos_psi * sin_the},
-        array<T, 3>{sin_the * sin_phi, -sin_the * cos_phi, cos_the}};
+    return enoki::Array<EulerAngles<T>, 3>{
+        EulerAngles<T>{cos_psi * cos_phi - cos_the * sin_phi * sin_psi,
+                       cos_psi * sin_phi + cos_the * cos_phi * sin_psi,
+                       sin_psi * sin_the},
+        EulerAngles<T>{-sin_psi * cos_phi - cos_the * sin_phi * cos_psi,
+                       -sin_psi * sin_phi + cos_the * cos_phi * cos_psi,
+                       cos_psi * sin_the},
+        EulerAngles<T>{sin_the * sin_phi, -sin_the * cos_phi, cos_the}};
   }
 
   /**
@@ -286,7 +290,7 @@ protected:
    *
    * \return true, if all Euler angles are zero, else false.
    */
-  inline bool no_rotation_required(const array<T, 3> Phi_Theta_Psi) const {
+  inline bool no_rotation_required(const EulerAngles<T> Phi_Theta_Psi) const {
     return (Phi_Theta_Psi[0] == 0. && Phi_Theta_Psi[1] == 0. &&
             Phi_Theta_Psi[2] == 0.);
   }

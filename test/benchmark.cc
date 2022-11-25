@@ -70,7 +70,7 @@ int main() {
 
   auto start = high_resolution_clock::now();
   for (size_t i = 0; i < count; i++) {
-    vector<array<double, 2>> transitions = cas_rej_sam();
+    vector<CoordDir<double>> transitions = cas_rej_sam();
     result += transitions[0][0];
     result += transitions[0][1];
   }

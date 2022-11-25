@@ -17,12 +17,10 @@
     Copyright (C) 2021 Udo Friman-Gayer
 */
 
-#include <array>
 #include <cassert>
 #include <numbers>
 #include <vector>
 
-using std::array;
 using std::vector;
 
 #include "alpaca/AngCorrRejectionSampler.hh"
@@ -69,11 +67,11 @@ int main() {
                                        // the z axis (i.e. no rotation)
 
   // Test the cascade sampler along the z axis.
-  const array<double, 2> theta_phi_single_1 =
+  const CoordDir<double> theta_phi_single_1 =
       ang_cor_rej_sam_1(); // Sample first vector from AngCorrRejectionSampler
-  const array<double, 2> theta_phi_single_2 =
+  const CoordDir<double> theta_phi_single_2 =
       ang_cor_rej_sam_2(); // Sample second vector from AngCorrRejectionSampler
-  const vector<array<double, 2>> theta_phi_z_axis =
+  const vector<CoordDir<double>> theta_phi_z_axis =
       cas_rej_sam_z_axis(); // Sample both from CascadeRejectionSampler
 
   //      Initial direction of the cascade
@@ -94,7 +92,7 @@ int main() {
   // This vector must be rotated into the reference frame given by the first
   // emission.
   const EulerAngleRotation<double> eul_ang_rot;
-  array<double, 2> theta_phi_single_2_rotated = eul_ang_rot.rotate(
+  CoordDir<double> theta_phi_single_2_rotated = eul_ang_rot.rotate(
       theta_phi_single_2, {0., theta_phi_single_1[0],
                            -theta_phi_single_1[1] + 0.5 * std::numbers::pi});
   test_numerical_equality<double>(theta_phi_single_2_rotated[0],
@@ -104,14 +102,14 @@ int main() {
 
   // Test the cascade sampler with a random orientation.
   // Here, both vectors must be rotated into another reference frame.
-  SphereRejectionSampler<double, Distribution> sph_rej_sam(
+  SphereRejectionSampler<double, Distribution<double>> sph_rej_sam(
       []([[maybe_unused]] const double theta,
          [[maybe_unused]] const double phi) { return 1.; },
       1., 0);
-  array<double, 2> sphere_random_vector = sph_rej_sam();
-  const vector<array<double, 2>> theta_phi_random = cas_rej_sam_random();
+  CoordDir<double> sphere_random_vector = sph_rej_sam();
+  const vector<CoordDir<double>> theta_phi_random = cas_rej_sam_random();
   //      First step of the cascade
-  const array<double, 2> theta_phi_single_1_rotated = eul_ang_rot.rotate(
+  const CoordDir<double> theta_phi_single_1_rotated = eul_ang_rot.rotate(
       theta_phi_single_1, {0., sphere_random_vector[0],
                            -sphere_random_vector[1] + 0.5 * std::numbers::pi});
 

@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <array>
 #include <memory>
 #include <stdexcept>
 #include <utility>
@@ -31,7 +30,6 @@
 #include "alpaca/Transition.hh"
 #include "alpaca/W_pol_dir.hh"
 
-using std::array;
 using std::invalid_argument;
 using std::pair;
 using std::unique_ptr;
@@ -271,7 +269,7 @@ public:
    *
    * \return \f$W_{\gamma \gamma} \left( \theta, \varphi \right)\f$
    */
-  inline double operator()(const double theta, const double phi) const {
+  inline T operator()(const T theta, const T phi) const {
     return w_gamma_gamma->operator()(theta, phi);
   }
 
@@ -298,10 +296,10 @@ public:
    *
    * \return \f$W_{\gamma \gamma} \left( \theta, \varphi \right)\f$
    */
-  double operator()(const double theta, const double phi,
-                    const array<double, 3> euler_angles) const {
-    array<double, 2> thetap_phip = euler_angle_rotation.rotate_back(
-        array<double, 2>{theta, phi}, euler_angles);
+  T operator()(const T theta, const T phi,
+               const EulerAngles<T> euler_angles) const {
+    CoordDir<T> thetap_phip =
+        euler_angle_rotation.rotate_back(CoordDir<T>{theta, phi}, euler_angles);
 
     return (*this)(thetap_phip[0], thetap_phip[1]);
   }

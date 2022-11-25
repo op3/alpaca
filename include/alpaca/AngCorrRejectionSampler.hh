@@ -68,11 +68,9 @@ public:
    * of trials \f$N_\mathrm{max}\f$ is reached by the algorithm and no random
    * vector was accepted.
    */
-  inline pair<unsigned int, array<double, 2>> sample() {
-    return sampler.sample();
-  }
+  inline pair<unsigned int, CoordDir<T>> sample() { return sampler.sample(); }
 
-  inline array<double, 2> operator()() { return sampler(); }
+  inline CoordDir<T> operator()() { return sampler(); }
 
   /**
    * \brief Sample a random vector from an arbitrarily rotated probability
@@ -97,7 +95,7 @@ public:
    * maximum number of trials \f$N_\mathrm{max}\f$ is reached by the algorithm
    * and no random vector was accepted.
    */
-  inline array<double, 2> operator()(const array<double, 3> euler_angles) {
+  inline CoordDir<T> operator()(const EulerAngles<T> euler_angles) {
     return sampler(euler_angles);
   }
 

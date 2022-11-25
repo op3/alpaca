@@ -19,11 +19,9 @@
 
 #pragma once
 
-#include <array>
 #include <numbers>
 #include <vector>
 
-using std::array;
 using std::vector;
 
 #include "alpaca/AngCorrRejectionSampler.hh"
@@ -169,8 +167,9 @@ public:
       : initial_direction_random(true), PhiThetaPsi({0., 0., 0.}),
         return_first_direction(true),
         uniform_direction_sampler(
-            []([[maybe_unused]] const double theta,
-               [[maybe_unused]] const double phi) { return 1.; },
+            []([[maybe_unused]] const T theta, [[maybe_unused]] const T phi) {
+              return 1.;
+            },
             1., seed, max_tri) {
     for (size_t i = 0; i < cascade.size(); ++i) {
       angular_correlation_samplers.push_back(
@@ -216,14 +215,15 @@ public:
    * Will be used for all internal random-number samplers.
    */
   CascadeRejectionSampler(vector<AngularCorrelation<T>> &cascade,
-                          const int seed, const array<double, 3> a_PhiThetaPsi,
+                          const int seed, const EulerAngles<T> a_PhiThetaPsi,
                           const bool a_return_first_direction = false,
                           const unsigned int max_tri = 1000)
       : initial_direction_random(false), PhiThetaPsi(a_PhiThetaPsi),
         return_first_direction(a_return_first_direction),
         uniform_direction_sampler(
-            []([[maybe_unused]] const double theta,
-               [[maybe_unused]] const double phi) { return 1.; },
+            []([[maybe_unused]] const T theta, [[maybe_unused]] const T phi) {
+              return 1.;
+            },
             1., seed, max_tri) {
     for (size_t i = 0; i < cascade.size(); ++i) {
       angular_correlation_samplers.push_back(
@@ -239,29 +239,29 @@ public:
    * of the first (depends on the setting of return_first_direction) gamma ray
    * in the cascade, the second pair describes the second gamma ray, and so on.
    */
-  inline vector<array<double, 2>> operator()() {
-    vector<array<double, 2>> directions;
-    vector<array<double, 3>> reference_frames;
+  inline vector<CoordDir<double>> operator()() {
+    vector<CoordDir<double>> directions;
+    vector<EulerAngles<double>> reference_frames;
 
     if (initial_direction_random) {
-      const array<double, 2> initial_theta_phi = uniform_direction_sampler();
-      reference_frames.push_back(
-          {0., initial_theta_phi[0], phi_to_Psi(initial_theta_phi[1])});
+      const CoordDir<double> initial_theta_phi = uniform_direction_sampler();
+      reference_frames.emplace_back(0., initial_theta_phi[0],
+                                    phi_to_Psi(initial_theta_phi[1]));
     } else {
       reference_frames.push_back(PhiThetaPsi);
     }
 
     if (return_first_direction) {
-      directions.push_back(
-          {reference_frames[0][1], Psi_to_phi(reference_frames[0][2])});
+      directions.emplace_back(reference_frames[0][1],
+                              Psi_to_phi(reference_frames[0][2]));
     }
 
-    array<double, 2> theta_phi_random;
+    CoordDir<T> theta_phi_random;
     for (size_t i = 0; i < angular_correlation_samplers.size(); ++i) {
       theta_phi_random = angular_correlation_samplers[i](reference_frames[i]);
       directions.push_back(theta_phi_random);
-      reference_frames.push_back(
-          {0., theta_phi_random[0], phi_to_Psi(theta_phi_random[1])});
+      reference_frames.emplace_back(0., theta_phi_random[0],
+                                    phi_to_Psi(theta_phi_random[1]));
     }
 
     return directions;
@@ -270,12 +270,12 @@ public:
   inline size_t size() const { return angular_correlation_samplers.size(); }
 
 protected:
-  inline double phi_to_Psi(const double phi) const {
+  inline T phi_to_Psi(const T phi) const {
     return 0.5 * std::numbers::pi - phi;
   } /**< Conversion from the azimuthal angle \f$\varphi\f$ in spherical
        coordinates to the first Euler angle \f$\Psi\f$ in the x convention. See
        also the EulerAngleRotation class.*/
-  inline double Psi_to_phi(const double Psi) const {
+  inline T Psi_to_phi(const T Psi) const {
     return 0.5 * std::numbers::pi - Psi;
   } /**< Conversion from the first Euler angle \f$\Psi\f$ in the x convention to
        the azimuthal angle \f$\varphi\f$ in spherical coordinates. See also the
@@ -284,15 +284,15 @@ protected:
   bool initial_direction_random; /**< Indicates whether the direction of the
                                     first gamma ray was given by the user
                                     (false) or should be sampled (true).*/
-  array<double, 3> PhiThetaPsi;  /**< Euler angles to control the orientation of
-                                    the first gamma ray. */
+  EulerAngles<T> PhiThetaPsi;    /**< Euler angles to control the orientation of
+                                      the first gamma ray. */
   bool return_first_direction; /**< Indicates whether the direction of the first
                                   gamma ray should be returned or not */
   vector<AngCorrRejectionSampler<T>>
       angular_correlation_samplers; /**< List of AngCorrRejectionSamplers which
                                        are initialized on construction with
                                        AngularCorrelation objects. */
-  SphereRejectionSampler<T, Distribution>
+  SphereRejectionSampler<T, Distribution<T>>
       uniform_direction_sampler; /**< Instance of SphereRejectionSampler with an
                                     uniform distribution to sample the direction
                                     of the first gamma ray. */

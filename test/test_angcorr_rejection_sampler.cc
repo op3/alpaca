@@ -17,11 +17,7 @@
     Copyright (C) 2021 Udo Friman-Gayer
 */
 
-#include <array>
 #include <cassert>
-
-using std::array;
-
 #include <gsl/gsl_sf.h>
 
 #include "alpaca/AngCorrRejectionSampler.hh"
@@ -51,7 +47,7 @@ int main() {
 
   // Analytical expression for the angular correlation above.
   // See, e.g., Eq. (1) in Ref. \cite Pietralla2001.
-  SphereRejectionSampler<double, Distribution> sph_rej_sam(
+  SphereRejectionSampler<double, Distribution<double>> sph_rej_sam(
       [](const double theta, const double phi) {
         return 1. + 0.5 * (gsl_sf_legendre_Pl(2, cos(theta)) +
                            0.5 * cos(2. * phi) *
@@ -59,8 +55,8 @@ int main() {
       },
       static_cast<double>(ang_cor.get_upper_limit()), seed);
 
-  array<double, 2> theta_phi_1;
-  array<double, 2> theta_phi_2;
+  CoordDir<double> theta_phi_1;
+  CoordDir<double> theta_phi_2;
 
   for (unsigned int n = 0; n < 1000; ++n) {
     theta_phi_1 = ang_cor_sam();

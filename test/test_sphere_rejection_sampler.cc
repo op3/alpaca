@@ -17,11 +17,8 @@
     Copyright (C) 2021 Udo Friman-Gayer
 */
 
-#include <array>
-#include <numbers>
-
 #include <cassert>
-using std::array;
+#include <numbers>
 
 #include "alpaca/EulerAngleRotation.hh"
 #include "alpaca/SphereRejectionSampler.hh"
@@ -47,7 +44,7 @@ using namespace alpaca;
  */
 int main() {
 
-  SphereRejectionSampler<double, Distribution> sph_rej_sam(
+  SphereRejectionSampler<double, Distribution<double>> sph_rej_sam(
       []([[maybe_unused]] const double theta, const double phi) {
         return phi < std::numbers::pi ? 1. : 0.;
       },
@@ -57,7 +54,7 @@ int main() {
 
   test_numerical_equality<double>(efficiency, 0.5, 1e-3);
 
-  SphereRejectionSampler<double, Distribution> sph_rej_sam_2(
+  SphereRejectionSampler<double, Distribution<double>> sph_rej_sam_2(
       []([[maybe_unused]] const double theta, const double phi) {
         return phi < std::numbers::pi ? 1. : 0.;
       },
@@ -68,11 +65,11 @@ int main() {
   test_numerical_equality<double>(efficiency, 0.25, 1e-3);
 
   // Test the case in which no vector can be found.
-  SphereRejectionSampler<double, Distribution> sph_rej_sam_3(
+  SphereRejectionSampler<double, Distribution<double>> sph_rej_sam_3(
       []([[maybe_unused]] const double theta,
          [[maybe_unused]] const double phi) { return -1.; },
       0.5, 0);
-  [[maybe_unused]] const pair<unsigned int, array<double, 2>>
+  [[maybe_unused]] const pair<unsigned int, CoordDir<double>>
       theta_phi_default = sph_rej_sam_3.sample();
   assert(theta_phi_default.first == 1000);
   assert(theta_phi_default.second[0] == 0.);
@@ -80,21 +77,21 @@ int main() {
 
   // Test Euler-angle rotation
 
-  SphereRejectionSampler<double, Distribution> sph_rej_sam_uni(
+  SphereRejectionSampler<double, Distribution<double>> sph_rej_sam_uni(
       []([[maybe_unused]] const double theta,
          [[maybe_unused]] const double phi) { return 1.; },
       1., 0);
-  const array<double, 2> theta_phi = sph_rej_sam_uni();
-  SphereRejectionSampler<double, Distribution> sph_rej_sam_uni_2(
+  const CoordDir<double> theta_phi = sph_rej_sam_uni();
+  SphereRejectionSampler<double, Distribution<double>> sph_rej_sam_uni_2(
       []([[maybe_unused]] const double theta,
          [[maybe_unused]] const double phi) { return 1.; },
       1., 0);
-  const array<double, 3> euler_angles = {0.1, 0.2, 0.3};
-  [[maybe_unused]] array<double, 2> theta_phi_rotated =
+  const EulerAngles<double> euler_angles = {0.1, 0.2, 0.3};
+  [[maybe_unused]] CoordDir<double> theta_phi_rotated =
       sph_rej_sam_uni_2(euler_angles);
 
   const EulerAngleRotation<double> euler_angle_rotation;
-  [[maybe_unused]] array<double, 2> theta_phi_rotated_manually =
+  [[maybe_unused]] CoordDir<double> theta_phi_rotated_manually =
       euler_angle_rotation.rotate(theta_phi, euler_angles);
 
   // Test that the rotation has an effect.
