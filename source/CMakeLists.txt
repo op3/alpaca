@@ -104,3 +104,10 @@ target_include_directories(
          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
 set_target_properties(
   sphereIntegrator PROPERTIES PUBLIC_HEADER include/alpaca/SphereIntegrator.hh)
+
+find_package(pybind11 CONFIG)
+pybind11_add_module(alpyca alpyca.cpp)
+target_link_libraries(alpyca PRIVATE angular_correlation)
+target_include_directories(
+  alpyca PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
