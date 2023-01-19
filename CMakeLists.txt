@@ -31,6 +31,8 @@ if(BUILD_DOCUMENTATION)
   add_custom_target(doc_doxygen ALL COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile)
 endif(BUILD_DOCUMENTATION)
 
+add_compile_options(-Ofast -march=native -ffast-math)
+
 option(BUILD_TESTS "Build self tests." OFF)
 if(BUILD_TESTS)
   add_compile_options(
