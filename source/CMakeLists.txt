@@ -87,6 +87,17 @@ set_target_properties(
   angular_correlation PROPERTIES PUBLIC_HEADER
                                  include/alpaca/AngularCorrelation.hh)
 
+add_library(angular_correlation_static STATIC AngularCorrelation.cc)
+target_link_libraries(angular_correlation_static PUBLIC w_dir_dir w_pol_dir)
+target_include_directories(
+  angular_correlation_static
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
+set_target_properties(
+  angular_correlation_static PROPERTIES PUBLIC_HEADER
+                                 include/alpaca/AngularCorrelation.hh)
+set_target_properties(angular_correlation_static PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 add_library(spherePointSampler SpherePointSampler.cc)
 target_include_directories(
   spherePointSampler
@@ -107,7 +118,7 @@ set_target_properties(
 
 find_package(pybind11 CONFIG)
 pybind11_add_module(alpyca alpyca.cpp)
-target_link_libraries(alpyca PRIVATE angular_correlation)
+target_link_libraries(alpyca PRIVATE angular_correlation_static)
 target_include_directories(
   alpyca PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
